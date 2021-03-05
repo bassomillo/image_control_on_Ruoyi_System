@@ -113,9 +113,9 @@ public class SwaggerConfig
         // 用ApiInfoBuilder进行定制
         return new ApiInfoBuilder()
                 // 设置标题
-                .title("员工诚信管理系统")
+                .title("智慧工会")
                 // 描述
-                .description("员工诚信管理系统")
+                .description("智慧工会")
                 // 作者信息
                 .contact(new Contact(ruoyiConfig.getName(), null, null))
                 // 版本
