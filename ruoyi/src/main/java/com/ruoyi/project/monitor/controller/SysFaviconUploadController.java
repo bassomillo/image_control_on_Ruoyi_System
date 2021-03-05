@@ -1,6 +1,7 @@
 package com.ruoyi.project.monitor.controller;
 
 
+import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.project.common.FastdfsClientUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -29,15 +30,16 @@ public class SysFaviconUploadController {
     @PostMapping("/admin/setting/site/uploadFavicon")
     @ApiOperation("上传图片到服务器")
     @ApiImplicitParam(name = "file",value = "图片文件",required = true,dataType = "MultipartFile")
-    public String uploadImage(@RequestParam("file") MultipartFile file){
+    public AjaxResult uploadImage(@RequestParam("file") MultipartFile file){
         String imageStorePath = null;
         try{
             imageStorePath = fastdfsClientUtil.uploadImage(file);
         }catch (IOException e){
             e.printStackTrace();
+            return AjaxResult.error("上传失败");
         }
 //        Map<String, String> result = new HashMap<String, String>();
-        return imageStorePath;
+        return AjaxResult.success("上传成功", imageStorePath);
     }
 
 
