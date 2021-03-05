@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class SysSiteEmailSettingController {
     @Autowired
     private SysSiteEmailSettingService sysSiteEmailSettingService;
-    @ApiOperation(value = "新增网页基础数据")
+    @ApiOperation(value = "系统管理-站点设置-邮件服务设置")
     @PostMapping("/insertSite")
     public AjaxResult insertSiteSetting(@RequestBody SysSiteEmailSetting sysSiteEmailSetting)
     {

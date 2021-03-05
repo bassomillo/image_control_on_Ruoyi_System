@@ -34,7 +34,7 @@ public class SysSiteEmailSettingServiceImpl implements SysSiteEmailSettingServic
             }
             if(sysSiteEmailSetting.getEmailOpenStatus() != null){
                 if(!("0".toString().equals(sysSiteEmailSetting.getEmailOpenStatus()) ||"1".toString().equals(sysSiteEmailSetting.getEmailOpenStatus()))){
-                    msg += "邮箱发送状态不符合要求，邮箱状态值只能为0或1的字符串; ";
+                    msg += "邮箱发送状态不符合要求，邮箱状态值只能为0或1的字符串，开启为1关闭为0; ";
 
                 }
             }

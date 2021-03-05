@@ -22,7 +22,7 @@ public class SysSiteSettingController {
     @Autowired
     private SysLogoUploadController fastdfsController;
 
-    @ApiOperation(value = "新增网页基础数据")
+    @ApiOperation(value = "系统管理-站点设置-基础信息")
     @PostMapping("/insertSite")
     public AjaxResult insertSiteSetting(@RequestBody SysSiteSetting sysSiteSetting)
     {
