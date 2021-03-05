@@ -46,7 +46,7 @@ spring:
     # 国际化资源文件路径
     basename: i18n/messages
   profiles:
-    active: dev
+    active: dev1
   # 文件上传
   servlet:
     multipart:
@@ -155,3 +155,13 @@ gen:
   autoRemovePre: false
   # 表前缀（生成类名不会包含表前缀，多个用逗号分隔）
   tablePrefix: sys_
+
+fdfs:
+  so-timeout: 1500
+  connect-timeout: 600
+  thumb-image:
+    width: 150
+    height: 150
+  tracker-list: 182.254.171.122:22122
+  excelTemplate:
+    employeeInfo: group1/M00/00/00/tv6remA8XbqAO5MBAABKAAyXSP0630.xls
