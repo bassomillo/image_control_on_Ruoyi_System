@@ -1,6 +1,7 @@
 package com.ruoyi.project.monitor.service.impl;
 
 import com.ruoyi.framework.web.domain.AjaxResult;
+import com.ruoyi.project.common.FastdfsClientUtil;
 import com.ruoyi.project.monitor.domain.SysSiteSetting;
 import com.ruoyi.project.monitor.mapper.SysSiteSettingMapper;
 import com.ruoyi.project.monitor.service.ISysJobLogService;
@@ -8,6 +9,7 @@ import com.ruoyi.project.monitor.service.SysSiteSettingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -15,16 +17,12 @@ import java.util.Date;
 public class SysSiteSettingServiceImpl implements SysSiteSettingService {
     @Autowired
     private SysSiteSettingMapper sysSiteSettingMapper;
-
+    @Resource
+    FastdfsClientUtil fastdfsClientUtil;
     @Override
     public AjaxResult SysSiteSetting(SysSiteSetting sysSiteSetting) {
+
         try {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYYMMddHHssmmSSS");
-            String id = simpleDateFormat.format(new Date());
-            sysSiteSetting.setId(id);
-            sysSiteSetting.setTime(new Date());
-
-
             String msg = "";
             String regex = "\\w+@\\w+(\\.\\w{2,3})*\\.\\w{2,3}";
             String regex1 = "^([hH][tT]{2}[pP]:/*|[hH][tT]{2}[pP][sS]:/*|[fF][tT][pP]:/*)(([A-Za-z0-9-~]+).)+([A-Za-z0-9-~\\/])+(\\?{0,1}(([A-Za-z0-9-~]+\\={0,1})([A-Za-z0-9-~]*)\\&{0,1})*)$";
@@ -41,10 +39,30 @@ public class SysSiteSettingServiceImpl implements SysSiteSettingService {
                 }
             }
 
-            if (!"".equals(msg)){
+            if (!"".equals(msg)) {
                 return AjaxResult.error(msg);
             }
-            sysSiteSettingMapper.SysSiteSetting(sysSiteSetting);
+            if (sysSiteSetting.getId() == null || sysSiteSetting.getId().equals("")) {
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYYMMddHHssmmSSS");
+                String id = simpleDateFormat.format(new Date());
+                sysSiteSetting.setId(id);
+                sysSiteSetting.setTime(new Date());
+
+
+
+                sysSiteSettingMapper.SysSiteSetting(sysSiteSetting);
+            }
+            else {
+                // 判断前端传回的图片路径与数据库中之前的路径是否一致，不一致的话删除数据库的图片路径下的图片
+                SysSiteSetting sysSiteSetting1 = sysSiteSettingMapper.SysSiteGetting();
+                if(sysSiteSetting.getSysSiteLogo() != sysSiteSetting1.getSysSiteLogo()){
+                    fastdfsClientUtil.deleteFile(sysSiteSetting1.getSysSiteLogo());
+                }
+                if(sysSiteSetting.getSysSiteFavicon() != sysSiteSetting1.getSysSiteFavicon()){
+                    fastdfsClientUtil.deleteFile(sysSiteSetting1.getSysSiteFavicon());
+                }
+                sysSiteSettingMapper.SysSiteUpdate(sysSiteSetting);
+            }
         }catch (Exception e){
             System.out.println(e.getMessage());
             return AjaxResult.error(e.getMessage());
@@ -52,5 +70,12 @@ public class SysSiteSettingServiceImpl implements SysSiteSettingService {
 
         return AjaxResult.success("提交成功");
     }
+
+    @Override
+    public AjaxResult SysSiteGetting() {
+        SysSiteSetting sysSiteSetting = sysSiteSettingMapper.SysSiteGetting();
+        return AjaxResult.success("提交成功", sysSiteSetting);
+    }
+
 }
 

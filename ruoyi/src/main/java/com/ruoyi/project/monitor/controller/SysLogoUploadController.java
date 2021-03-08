@@ -6,6 +6,7 @@ import com.ruoyi.project.common.FastdfsClientUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
+import org.apache.ibatis.javassist.bytecode.stackmap.BasicBlock;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -43,6 +44,17 @@ public class SysLogoUploadController {
         String totalImagePath = preImagePath + imageStorePath;
         return AjaxResult.success("上传成功", totalImagePath);
     }
-
+//    @PostMapping("/admin/setting/site/deleteLogo")
+//    @ApiOperation("从服务器删除图片")
+//    @ApiImplicitParam(name = "file",value = "图片文件",required = true,dataType = "MultipartFile")
+//    public AjaxResult deletfile(String fileUrl) {
+//        try {
+//            fastdfsClientUtil.deleteFile(fileUrl);
+//        } catch (Exception e){
+//            e.printStackTrace();
+//            return AjaxResult.error("上传失败");
+//        }
+//        return AjaxResult.success("删除成功");
+//    }
 
 }

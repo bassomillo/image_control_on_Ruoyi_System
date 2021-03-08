@@ -36,4 +36,20 @@
 
         </insert>
 
+    <update id="SysSiteUpdate" parameterType="com.ruoyi.project.monitor.domain.SysSiteSetting">
+        UPDATE sys_sitesetting_basicinformation SET sys_site_name = #{sysSiteName}, sys_site_slogan = #{sysSiteSlogan},
+                                                    sys_site_url = #{sysSiteUrl}, sys_site_logo = #{sysSiteLogo},
+                                                    sys_site_favicon = #{sysSiteFavicon}, sys_site_master_email= #{sysSiteMasterEmail},
+                                                    sys_site_icp = #{sysSiteIcp}
+WHERE id = #{id}
+    </update>
+
+    <select id="SysSiteGetting" resultType="com.ruoyi.project.monitor.domain.SysSiteSetting">
+        select id, sys_site_name as sysSiteName, sys_site_slogan as sysSiteSlogan, sys_site_url as sysSiteUrl,
+               sys_site_logo as sysSiteLogo, sys_site_favicon as sysSiteFavicon, sys_site_master_email as sysSiteMasterEmail,
+               sys_site_icp as sysSiteIcp, time
+        from sys_sitesetting_basicinformation
+        limit 1
+    </select>
+
 </mapper>

@@ -6,6 +6,5 @@ import com.ruoyi.project.monitor.domain.SysSiteSetting;
 public interface SysSiteSettingService {
 
     public AjaxResult SysSiteSetting(SysSiteSetting sysSiteSetting);
-
-
+    public AjaxResult SysSiteGetting();
 }

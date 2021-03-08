@@ -6,5 +6,7 @@ import com.ruoyi.project.monitor.domain.SysSiteSetting;
 public interface SysSiteSettingMapper {
 
     public boolean SysSiteSetting(SysSiteSetting sysSiteSetting);
-
+    public boolean SysSiteUpdate(SysSiteSetting sysSiteSetting);
+    public SysSiteSetting SysSiteGetting();
 }
+
