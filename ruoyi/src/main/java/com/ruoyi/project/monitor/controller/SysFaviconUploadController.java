@@ -32,6 +32,7 @@ public class SysFaviconUploadController {
     @ApiImplicitParam(name = "file",value = "图片文件",required = true,dataType = "MultipartFile")
     public AjaxResult uploadImage(@RequestParam("file") MultipartFile file){
         String imageStorePath = null;
+        String preImagePath = "http://182.254.171.122/";
         try{
             imageStorePath = fastdfsClientUtil.uploadImage(file);
         }catch (IOException e){
@@ -39,7 +40,8 @@ public class SysFaviconUploadController {
             return AjaxResult.error("上传失败");
         }
 //        Map<String, String> result = new HashMap<String, String>();
-        return AjaxResult.success("上传成功", imageStorePath);
+        String totalImagePath = preImagePath + imageStorePath;
+        return AjaxResult.success("上传成功", totalImagePath);
     }
 
 
