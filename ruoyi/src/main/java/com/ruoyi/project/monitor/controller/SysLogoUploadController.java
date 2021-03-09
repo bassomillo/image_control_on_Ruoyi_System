@@ -3,10 +3,14 @@ package com.ruoyi.project.monitor.controller;
 
 import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.project.common.FastdfsClientUtil;
+import com.ruoyi.project.monitor.domain.SysSiteSetting;
+import com.ruoyi.project.monitor.mapper.SysSiteSettingMapper;
+import com.ruoyi.project.monitor.service.SysSiteSettingService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.apache.ibatis.javassist.bytecode.stackmap.BasicBlock;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,12 +28,15 @@ import java.util.Map;
 @Api(tags = "文件服务器相关接口")
 @RequestMapping("file")
 public class SysLogoUploadController {
+    @Autowired
+    private SysSiteSettingService sysSiteSettingService;
+
     @Resource
     FastdfsClientUtil fastdfsClientUtil;
 
 
     @PostMapping("/admin/setting/site/uploadLogo")
-    @ApiOperation("上传图片到服务器")
+    @ApiOperation("系统管理-站点设置-基础信息-上传Logo图片到服务器")
     @ApiImplicitParam(name = "file",value = "图片文件",required = true,dataType = "MultipartFile")
     public AjaxResult uploadImage(@RequestParam("file") MultipartFile file){
         String imageStorePath = null;
@@ -44,17 +51,22 @@ public class SysLogoUploadController {
         String totalImagePath = preImagePath + imageStorePath;
         return AjaxResult.success("上传成功", totalImagePath);
     }
-//    @PostMapping("/admin/setting/site/deleteLogo")
-//    @ApiOperation("从服务器删除图片")
-//    @ApiImplicitParam(name = "file",value = "图片文件",required = true,dataType = "MultipartFile")
-//    public AjaxResult deletfile(String fileUrl) {
-//        try {
-//            fastdfsClientUtil.deleteFile(fileUrl);
-//        } catch (Exception e){
-//            e.printStackTrace();
-//            return AjaxResult.error("上传失败");
-//        }
-//        return AjaxResult.success("删除成功");
-//    }
+    @PostMapping("/admin/setting/site/deletePicture")
+    @ApiOperation("从服务器删除图片")
+    //@ApiImplicitParam(name = "file",value = "图片文件",required = true,dataType = "MultipartFile")
+    public AjaxResult deletLogo(String fileUrl) {
+
+        String existLogo = sysSiteSettingService.SysSiteGettinglogo();
+        String existFavicon = sysSiteSettingService.SysSiteGettingFavicon();
+        try {
+            if(!(fileUrl.equals(existFavicon)||fileUrl.equals(existLogo))) {
+                fastdfsClientUtil.deleteFile(fileUrl);
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+            return AjaxResult.error("上传失败");
+        }
+        return AjaxResult.success("删除成功");
+    }
 
 }

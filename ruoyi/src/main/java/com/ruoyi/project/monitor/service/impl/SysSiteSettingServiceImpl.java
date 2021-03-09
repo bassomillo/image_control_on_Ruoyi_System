@@ -76,6 +76,15 @@ public class SysSiteSettingServiceImpl implements SysSiteSettingService {
         SysSiteSetting sysSiteSetting = sysSiteSettingMapper.SysSiteGetting();
         return AjaxResult.success("提交成功", sysSiteSetting);
     }
-
+    @Override
+    public String SysSiteGettinglogo(){
+        SysSiteSetting sysSiteSetting = sysSiteSettingMapper.SysSiteGetting();
+        return sysSiteSetting.getSysSiteLogo();
+    }
+    @Override
+    public String SysSiteGettingFavicon(){
+        SysSiteSetting sysSiteSetting = sysSiteSettingMapper.SysSiteGetting();
+        return sysSiteSetting.getSysSiteFavicon();
+    }
 }
 

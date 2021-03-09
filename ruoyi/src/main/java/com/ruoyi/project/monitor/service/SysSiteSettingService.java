@@ -7,4 +7,6 @@ public interface SysSiteSettingService {
 
     public AjaxResult SysSiteSetting(SysSiteSetting sysSiteSetting);
     public AjaxResult SysSiteGetting();
+    public String SysSiteGettinglogo();
+    public String SysSiteGettingFavicon();
 }
