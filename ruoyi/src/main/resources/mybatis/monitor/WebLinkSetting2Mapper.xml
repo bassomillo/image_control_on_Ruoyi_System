@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.monitor.mapper.WebLinkSetting2Mapper">
+    <!--
+    <insert id="SysSiteSetting" parameterType="com.ruoyi.project.monitor.domain.SysSiteSetting">
+        insert into sys_sitesetting_basicinformation
+            (id, sys_site_name, sys_site_slogan, sys_site_url, sys_site_logo, sys_site_favicon, sys_site_master_email, sys_site_icp, time)
+        values (#{id}, #{sysSiteName}, #{sysSiteSlogan}, #{sysSiteUrl}, #{sysSiteLogo}, #{sysSiteFavicon}, #{sysSiteMasterEmail}, #{sysSiteIcp}, #{time})
+    </insert>
+       -->
+
+    <insert id="WebLinkSetting2" parameterType="com.ruoyi.project.monitor.domain.WebLinkSetting2">
+        insert into web_link_setting2
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            id, second_column_text, second_column_address,
+            <if test="secondColumnStatus != null and secondColumnStatus != ''">
+                second_column_status,
+            </if>
+            time
+        </trim>
+
+
+
+        <trim prefix="select" suffixOverrides=",">
+            #{id}, #{secondColumnText}, #{secondColumnAddress},
+            <if test="secondColumnStatus != null and secondColumnStatus != ''">
+                #{secondColumnStatus},
+            </if>
+            #{time}
+        </trim>
+
+    </insert>
+
+    <update id="WebLinkUpdate2" parameterType="com.ruoyi.project.monitor.domain.WebLinkSetting2">
+        UPDATE web_link_setting2 SET second_column_text = #{secondColumnText}, second_column_address = #{secondColumnAddress},
+                                     second_column_status = #{secondColumnStatus}
+        WHERE id = #{id}
+    </update>
+
+    <select id="WebLinkGetting2" resultType="com.ruoyi.project.monitor.domain.WebLinkSetting2">
+        select id, second_column_text as secondColumnText, second_column_address as secondColumnAddress,
+               second_column_status as secondColumnStatus, time
+        from web_link_setting2
+    </select>
+
+    <delete id="WebLinkDelete2">
+        delete from web_link_setting2
+    </delete>
+</mapper>
