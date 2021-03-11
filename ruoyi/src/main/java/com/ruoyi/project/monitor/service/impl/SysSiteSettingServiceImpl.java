@@ -55,10 +55,10 @@ public class SysSiteSettingServiceImpl implements SysSiteSettingService {
             else {
                 // 判断前端传回的图片路径与数据库中之前的路径是否一致，不一致的话删除数据库的图片路径下的图片
                 SysSiteSetting sysSiteSetting1 = sysSiteSettingMapper.SysSiteGetting();
-                if(sysSiteSetting.getSysSiteLogo() != sysSiteSetting1.getSysSiteLogo()){
+                if((sysSiteSetting.getSysSiteLogo() != sysSiteSetting1.getSysSiteLogo())&&(sysSiteSetting.getSysSiteLogo() != null)){
                     fastdfsClientUtil.deleteFile(sysSiteSetting1.getSysSiteLogo());
                 }
-                if(sysSiteSetting.getSysSiteFavicon() != sysSiteSetting1.getSysSiteFavicon()){
+                if((sysSiteSetting.getSysSiteFavicon() != sysSiteSetting1.getSysSiteFavicon())&&(sysSiteSetting.getSysSiteFavicon() != null)){
                     fastdfsClientUtil.deleteFile(sysSiteSetting1.getSysSiteFavicon());
                 }
                 sysSiteSettingMapper.SysSiteUpdate(sysSiteSetting);
