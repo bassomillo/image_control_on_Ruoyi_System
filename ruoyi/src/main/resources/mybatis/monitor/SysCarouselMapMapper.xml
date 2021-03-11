@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.monitor.mapper.SysCarouselMapMapper">
+    <update id="CarouselMapUpdate" parameterType="com.ruoyi.project.monitor.domain.SysCarouselMap">
+        update carousel_map set display_mode = #{displayMode}, on_off = #{onOff}, pic_url = #{picUrl},
+                                back_color = #{backColor}, link_url = #{linkUrl}, pic_desc = #{picDesc}
+        where poster_id = #{posterId}
+    </update>
+
+    <select id="CarouselMapGetting" resultType="com.ruoyi.project.monitor.domain.SysCarouselMap">
+        select  display_mode as displayMode, on_off as onOff, pic_url as picUrl,
+                back_color as backColor, link_url as linkUrl, pic_desc as picDesc
+        from carousel_map where poster_id = #{posterId}
+    </select>
+
+</mapper>

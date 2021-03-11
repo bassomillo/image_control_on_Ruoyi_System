@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.monitor.mapper.SysAdvertisementMapper">
+    <update id="UpdateAdvertisement" parameterType="com.ruoyi.project.monitor.domain.SysAdvertisement">
+        update adv_management set pic_url = #{picUrl}, link_url = #{linkUrl}, new_window= #{newWindow}
+        where adv_id = #{advId}
+    </update>
+
+    <select id="GetAdvertisement" resultType="com.ruoyi.project.monitor.domain.SysAdvertisement">
+        select pic_url as picUrl, link_url as linkUrl, new_window as newWindow
+        from adv_management where adv_id = #{advId}
+    </select>
+
+</mapper>
