@@ -9,7 +9,7 @@
     </update>
 
     <select id="GetAdvertisement" resultType="com.ruoyi.project.monitor.domain.SysAdvertisement">
-        select pic_url as picUrl, link_url as linkUrl, new_window as newWindow
+        select adv_id as advId, pic_url as picUrl, link_url as linkUrl, new_window as newWindow
         from adv_management where adv_id = #{advId}
     </select>
 

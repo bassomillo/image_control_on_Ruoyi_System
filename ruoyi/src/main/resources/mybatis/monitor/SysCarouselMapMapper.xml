@@ -10,7 +10,7 @@
     </update>
 
     <select id="CarouselMapGetting" resultType="com.ruoyi.project.monitor.domain.SysCarouselMap">
-        select  display_mode as displayMode, on_off as onOff, pic_url as picUrl,
+        select poster_id as posterId, display_mode as displayMode, on_off as onOff, pic_url as picUrl,
                 back_color as backColor, link_url as linkUrl, pic_desc as picDesc
         from carousel_map where poster_id = #{posterId}
     </select>
