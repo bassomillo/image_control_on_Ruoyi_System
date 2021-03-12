@@ -56,7 +56,7 @@ public class SysAdvertisementServiceImpl implements SysAdvertisementService {
                 // 判断前端传回的图片路径与数据库中之前的路径是否一致，不一致的话删除数据库的图片路径下的图片
                 SysAdvertisement sysAdvertisement1 = sysAdvertisementMapper.GetAdvertisement(sysAdvertisement.getAdvId());
                 if(sysAdvertisement1 != null && (sysAdvertisement.getPicUrl() != sysAdvertisement1.getPicUrl())){
-                    fastdfsClientUtil.deleteFile(sysAdvertisement.getPicUrl());
+                    fastdfsClientUtil.deleteFile(sysAdvertisement1.getPicUrl());
                 }
 
                 sysAdvertisementMapper.UpdateAdvertisement(sysAdvertisement);

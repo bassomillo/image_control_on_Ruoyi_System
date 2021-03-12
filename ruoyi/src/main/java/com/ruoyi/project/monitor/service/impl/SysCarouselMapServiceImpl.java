@@ -36,7 +36,7 @@ public class SysCarouselMapServiceImpl implements SysCarouselMapService {
                 // 判断前端传回的图片路径与数据库中之前的路径是否一致，不一致的话删除数据库的图片路径下的图片
                 SysCarouselMap sysCarouselMap1 = sysCarouselMapMapper.CarouselMapGetting(sysCarouselMap.getPosterId());
                 if(sysCarouselMap1.getPicUrl() != null && (sysCarouselMap.getPicUrl() != sysCarouselMap1.getPicUrl())){
-                    fastdfsClientUtil.deleteFile(sysCarouselMap.getPicUrl());
+                    fastdfsClientUtil.deleteFile(sysCarouselMap1.getPicUrl());
                 }
 
                 sysCarouselMapMapper.CarouselMapUpdate(sysCarouselMap);

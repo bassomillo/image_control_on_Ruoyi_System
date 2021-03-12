@@ -33,7 +33,7 @@ public class WebLinkPictureController {
 
 
     @PostMapping("/admin/setting/webLink/uploadPicture")
-    @ApiOperation("网站管理-友情链接管理-上传图片到服务器")
+    @ApiOperation("网站管理-上传图片到服务器")
     @ApiImplicitParam(name = "file",value = "图片文件",required = true,dataType = "MultipartFile")
     public AjaxResult uploadImage(@RequestParam("file") MultipartFile file){
         String imageStorePath = null;
@@ -64,7 +64,7 @@ public class WebLinkPictureController {
             }
         } catch (Exception e){
             e.printStackTrace();
-            return AjaxResult.error("上传失败");
+            return AjaxResult.error("删除失败");
         }
         return AjaxResult.success("删除成功");
     }
