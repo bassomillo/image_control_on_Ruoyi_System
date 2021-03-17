@@ -18,17 +18,17 @@ import java.util.*;
 
 public class MysqlGenerator {
 
-	private static final String PACKAGE_NAME = "com.chinaunicom.cmis";//包名
-	private static final String OUT_PATH = "D:\\download\\mpdemo";//输出文件的路径
-	private static final String AUTHOR = "FJX";//代码生成者
+	private static final String PACKAGE_NAME = "com.rouyi.project.union";//包名
+	private static final String OUT_PATH = "E:\\mpdemo";//输出文件的路径
+	private static final String AUTHOR = "zjy";//代码生成者
 	/**
 	 * JDBC相关配置
 	 */
 	//private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
 	private static final String DRIVER = "com.mysql.jdbc.Driver";
-	private static final String URL = "jdbc:mysql://127.0.0.1:3306/cmis?useUnicode=true&useSSL=false&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai";
+	private static final String URL = "jdbc:mysql://10.206.142.81:3306/zhgh_210?useUnicode=true&useSSL=false&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai";
 	private static final String USER_NAME = "root";
-	private static final String PASSWORD = "Sys2_Renli0#V2Is0";
+	private static final String PASSWORD = "Railgun#3";
 
 	/**
 	 * 模块名称
@@ -113,7 +113,7 @@ public class MysqlGenerator {
 								.setTableFillList(tableFillList)
 								// 自定义实体父类
 								// .setSuperEntityClass("com.baomidou.demo.base.BsBaseEntity")
-								// // 自定义 dao 父类
+								// // 自定义 mapper 父类
 								// .setSuperMapperClass("com.baomidou.demo.base.BsBaseMapper")
 								// // 自定义 service 父类
 								// .setSuperServiceClass("com.baomidou.demo.base.BsBaseService")
@@ -140,7 +140,7 @@ public class MysqlGenerator {
 						// 包配置
 						new PackageConfig().setModuleName(MODULE_NAME).setParent(PACKAGE_NAME)// 自定义包路径
 								.setController("controller")// 这里是控制器包名，默认 web
-								.setXml("mapper").setMapper("dao").setService("service")
+								.setXml("mapper").setMapper("mapper").setService("service")
 
 				).setCfg(
 						// 注入自定义配置，可以在 VM 中使用 cfg.abc 设置的值

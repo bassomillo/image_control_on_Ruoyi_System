@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.union.mapper.UserDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, verifiedMobile, password, salt, payPassword, payPasswordSalt, locale, uri, nickname, title, tags, type, point, coin, smallAvatar, mediumAvatar, largeAvatar, emailVerified, setup, roles, promoted, promotedSeq, promotedTime, locked, lockDeadline, consecutivePasswordErrorTimes, lastPasswordFailTime, loginTime, loginIp, loginSessionId, approvalTime, approvalStatus, newMessageNum, newNotificationNum, createdIp, createdTime, updatedTime, inviteCode, orgId, orgCode, registeredWay, bindStatus, confirmTime, email, signatureImg
+    </sql>
+
+    <select id="searchUser" parameterType="com.ruoyi.project.union.pojo.UserSearchPojo" resultType="java.lang.Integer">
+        select u.id
+        from user as u
+        left join user_profile as up on u.id = up.id
+        where 1 = 1
+        <if test="nickname != null and nickname != ''">
+            and u.nickname like concat('%', #{nickname}, '%')
+        </if>
+        <if test="truename != null and truename != ''">
+            and up.truename like concat('%', #{truename}, '%')
+        </if>
+        <if test="mobile != null and mobile !=''">
+            and up.mobile like concat('%', #{mobile}, '%')
+        </if>
+        <if test="idcard != null and idcard != ''">
+            and up.idcard like concat('%', #{idcard}, '%')
+        </if>
+        <if test="workerRepresentative != null and workerRepresentative != ''">
+            and up.workerRepresentative like concat('%', #{workerRepresentative}, '%')
+        </if>
+        <if test="hardship != null and hardship != ''">
+            and up.hardship like concat('%', #{hardship}, '%')
+        </if>
+        <if test="modelWorkers != null and modelWorkers != ''">
+            and up.modelWorkers like concat('%', #{modelWorkers}, '%')
+        </if>
+        <if test="politicalAffiliation != null and politicalAffiliation != ''">
+            and up.politicalAffiliation like concat('%', #{politicalAffiliation}, '%')
+        </if>
+        <if test="highestEducation != null and highestEducation != ''">
+            and up.highestEducation like concat('%', #{highestEducation}, '%')
+        </if>
+        <if test="degree != null and degree != ''">
+            and up.degree like concat('%', #{degree}, '%')
+        </if>
+        <if test="partPost != null and partPost != ''">
+            and up.partPost like concat('%', #{partPost}, '%')
+        </if>
+        <if test="bindStatus != null">
+            and u.bindStatus = #{bindStatus}
+        </if>
+        <if test="joinWorkDateStart != null and joinWorkDateStart != ''">
+            and up.joinWorkDateStart &gt;= #{joinWorkDateStart}
+--              and left(create_time, 10) &lt;= #{endTime}
+        </if>
+        <if test="joinWorkDateEnd != null and joinWorkDateEnd != ''">
+            and up.joinWorkDateEnd &lt;= #{joinWorkDateEnd}
+        </if>
+        <if test="gender != null">
+            and up.gender = #{gender}
+        </if>
+        <if test="email != null and email != ''">
+            and up.email like concat('%', #{email}, '%')
+        </if>
+        <if test="isDerafa != null">
+            and up.isDerafa = #{isDerafa}
+        </if>
+        <if test="locked != null">
+            and u.locked = #{locked}
+        </if>
+    </select>
+</mapper>

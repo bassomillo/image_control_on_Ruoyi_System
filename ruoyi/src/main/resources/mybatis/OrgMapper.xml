@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rouyi.project.union.dao.OrgDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, name, parentId, childrenNum, depth, seq, description, honor, code, orgCode, managerIds, createdUserId, createdTime, updatedTime, simpleName, inAdminOrg, socialCode, orgCategory, orgLevel, location, orgStatus, con_mss, setTime
+    </sql>
+
+</mapper>
