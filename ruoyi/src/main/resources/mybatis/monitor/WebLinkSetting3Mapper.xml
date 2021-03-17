@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.monitor.mapper.WebLinkSetting3Mapper">
+    <!--
+    <insert id="SysSiteSetting" parameterType="com.ruoyi.project.monitor.domain.SysSiteSetting">
+        insert into sys_sitesetting_basicinformation
+            (id, sys_site_name, sys_site_slogan, sys_site_url, sys_site_logo, sys_site_favicon, sys_site_master_email, sys_site_icp, time)
+        values (#{id}, #{sysSiteName}, #{sysSiteSlogan}, #{sysSiteUrl}, #{sysSiteLogo}, #{sysSiteFavicon}, #{sysSiteMasterEmail}, #{sysSiteIcp}, #{time})
+    </insert>
+       -->
+
+    <insert id="WebLinkSetting3" parameterType="com.ruoyi.project.monitor.domain.WebLinkSetting3">
+        insert into web_link_setting3
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            id, third_column_text, third_column_address,
+            <if test="thirdColumnStatus != null and thirdColumnStatus != ''">
+                third_column_status,
+            </if>
+            time
+        </trim>
+
+
+
+        <trim prefix="select" suffixOverrides=",">
+            #{id}, #{thirdColumnText}, #{thirdColumnAddress},
+            <if test="thirdColumnStatus != null and thirdColumnStatus != ''">
+                #{thirdColumnStatus},
+            </if>
+            #{time}
+        </trim>
+
+    </insert>
+
+    <update id="WebLinkUpdate3" parameterType="com.ruoyi.project.monitor.domain.WebLinkSetting3">
+        UPDATE web_link_setting3 SET third_column_text = #{thirdColumnText}, third_column_address = #{thirdColumnAddress},
+                                     third_column_status = #{thirdColumnStatus}
+        WHERE id = #{id}
+    </update>
+
+    <select id="WebLinkGetting3" resultType="com.ruoyi.project.monitor.domain.WebLinkSetting3">
+        select id, third_column_text as thirdColumnText, third_column_address as thirdColumnAddress,
+               third_column_status as thirdColumnStatus, time
+        from web_link_setting3
+    </select>
+
+    <delete id="WebLinkDelete3">
+        delete from web_link_setting3
+    </delete>
+</mapper>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.monitor.mapper.WebStateSettingMapper">
+    <!--
+    <insert id="SysSiteSetting" parameterType="com.ruoyi.project.monitor.domain.SysSiteSetting">
+        insert into sys_sitesetting_basicinformation
+            (id, sys_site_name, sys_site_slogan, sys_site_url, sys_site_logo, sys_site_favicon, sys_site_master_email, sys_site_icp, time)
+        values (#{id}, #{sysSiteName}, #{sysSiteSlogan}, #{sysSiteUrl}, #{sysSiteLogo}, #{sysSiteFavicon}, #{sysSiteMasterEmail}, #{sysSiteIcp}, #{time})
+    </insert>
+       -->
+
+    <insert id="WebStateSetting" parameterType="com.ruoyi.project.monitor.domain.WebStateSetting">
+        insert into web_statement_manage
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            id, web_statement, published_people, status,
+            start_date, end_date, time
+        </trim>
+
+        <trim prefix="select" suffixOverrides=",">
+            #{id}, #{webStatement}, #{publishedPeople}, #{status},
+            #{startDate}, #{endDate}, #{time}
+        </trim>
+
+    </insert>
+
+    <update id="WebStateUpdate" parameterType="com.ruoyi.project.monitor.domain.WebStateSetting">
+        UPDATE web_statement_manage SET web_statement = #{webStatement}, published_people = #{publishedPeople},
+                                        status = #{status}, start_date = #{startDate},
+                                        end_date = #{endDate}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="WebStateDelete">
+        delete from web_statement_manage where id = #{id}
+    </delete>
+
+    <delete id="WebStateDeleteAll">
+        delete from web_statement_manage
+    </delete>
+
+    <select id="WebStateGetting" resultType="com.ruoyi.project.monitor.domain.WebStateSetting">
+        select id, web_statement as webStatement, published_people as publishedPeople,
+               status, start_date as startDate, end_date as endDate, time
+        from web_statement_manage
+    </select>
+
+    <select id="WebStateSearch" resultType="com.ruoyi.project.monitor.domain.WebStateSetting">
+        select id, web_statement as webStatement, published_people as publishedPeople,
+               status, start_date as startDate, end_date as endDate
+        from web_statement_manage
+        where status = #{status} and web_statement like concat('%',#{searchContent},'%') escape '/'
+
+    </select>
+
+
+
+</mapper>

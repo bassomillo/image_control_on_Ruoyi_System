@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.monitor.mapper.SysSiteUserLoginMapper">
+
+    <insert id="SysSiteUserLogin" parameterType="com.ruoyi.project.monitor.domain.SysSiteUserLogin">
+        insert into sys_sitesetting_userlogin
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            id,
+            <if test="restrictForUserLogin != null and restrictForUserLogin != ''">
+                restrict_for_user_login,
+            </if>
+            time
+        </trim>
+
+        <trim prefix="select" suffixOverrides=",">
+            #{id},
+            <if test="restrictForUserLogin != null and restrictForUserLogin != ''">
+                #{restrictForUserLogin},
+            </if>
+            #{time}
+        </trim>
+    </insert>
+
+    <update id="SysSiteUserLoginUpdate" parameterType="com.ruoyi.project.monitor.domain.SysSiteUserLogin">
+        UPDATE sys_sitesetting_userlogin SET restrict_for_user_login = #{restrictForUserLogin}
+        WHERE id = #{id}
+    </update>
+
+    <select id="SysSiteUserLoginGet" resultType="com.ruoyi.project.monitor.domain.SysSiteUserLogin">
+        select id, restrict_for_user_login as restrictForUserLogin, time
+        from sys_sitesetting_userlogin
+            limit 1
+    </select>
+
+</mapper>

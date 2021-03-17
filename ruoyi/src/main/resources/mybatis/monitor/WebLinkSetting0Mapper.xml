@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.monitor.mapper.WebLinkSetting0Mapper">
+    <!--
+    <insert id="SysSiteSetting" parameterType="com.ruoyi.project.monitor.domain.SysSiteSetting">
+        insert into sys_sitesetting_basicinformation
+            (id, sys_site_name, sys_site_slogan, sys_site_url, sys_site_logo, sys_site_favicon, sys_site_master_email, sys_site_icp, time)
+        values (#{id}, #{sysSiteName}, #{sysSiteSlogan}, #{sysSiteUrl}, #{sysSiteLogo}, #{sysSiteFavicon}, #{sysSiteMasterEmail}, #{sysSiteIcp}, #{time})
+    </insert>
+       -->
+
+    <insert id="WebLinkSetting0" parameterType="com.ruoyi.project.monitor.domain.WebLinkSetting0">
+        insert into web_link_setting0
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            id, first_column_headline, second_column_headline,
+            third_column_headline, logo_address,
+            <if test="logoStatus != null and logoStatus != ''">
+                logo_status,
+            </if>
+            weibo_text, weibo_address,
+            <if test="weiboStatus != null and weiboStatus != ''">
+                weibo_status,
+            </if>
+            weixin_qrcode_address, ios_qrcode_address, android_qrcode_address, time
+        </trim>
+
+
+
+        <trim prefix="select" suffixOverrides=",">
+            #{id}, #{firstColumnHeadline}, #{secondColumnHeadline},
+            #{thirdColumnHeadline}, #{logoAddress},
+            <if test="logoStatus != null and logoStatus != ''">
+                #{logoStatus},
+            </if>
+
+            #{weiboText}, #{weiboAddress},
+            <if test="weiboStatus != null and weiboStatus != ''">
+                #{weiboStatus},
+            </if>
+            #{weixinQrcodeAddress}, #{iosQrcodeAddress}, #{androidQrcodeAddress}, #{time}
+        </trim>
+
+    </insert>
+
+    <update id="WebLinkUpdate0" parameterType="com.ruoyi.project.monitor.domain.WebLinkSetting0">
+        UPDATE web_link_setting0 SET first_column_headline = #{firstColumnHeadline}, second_column_headline = #{secondColumnHeadline},
+                                     third_column_headline = #{thirdColumnHeadline}, logo_address = #{logoAddress},
+                                     logo_status = #{logoStatus}, weibo_text= #{weiboText},
+                                     weibo_address = #{weiboAddress}, weibo_status = #{weiboStatus},
+                                     weixin_qrcode_address = #{weixinQrcodeAddress}, ios_qrcode_address = #{iosQrcodeAddress},
+                                     android_qrcode_address = #{androidQrcodeAddress}
+        WHERE id = #{id}
+    </update>
+
+    <select id="WebLinkGetting0" resultType="com.ruoyi.project.monitor.domain.WebLinkSetting0">
+        select id, first_column_headline as firstColumnHeadline, second_column_headline as secondColumnHeadline, third_column_headline as thirdColumnHeadline,
+               logo_address as logoAddress, logo_status as logoStatus, weibo_text as weiboText,
+               weibo_address as weiboAddress, weibo_status as weiboStatus, weixin_qrcode_address as weixinQrcodeAddress,
+               ios_qrcode_address as iosQrcodeAddress, android_qrcode_address as androidQrcodeAddress, time
+        from web_link_setting0
+            limit 1
+    </select>
+
+</mapper>
