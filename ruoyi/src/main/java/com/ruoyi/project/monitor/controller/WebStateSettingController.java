@@ -31,25 +31,32 @@ public class WebStateSettingController {
         return result;
 
     }
-    /**
-     * 回显页面操作
-     */
-    @ApiOperation(value = "网站管理-站点公告管理-回显")
-    @PostMapping("/getSite")
-    public AjaxResult getSiteSetting(){
-        AjaxResult result = webStateSettingService.WebStateGetting();
-        return result;
+//    /**
+//     * 回显页面操作
+//     */
+//    @ApiOperation(value = "网站管理-站点公告管理-回显")
+//    @PostMapping("/getSite")
+//    public AjaxResult getSiteSetting(){
+//        AjaxResult result = webStateSettingService.WebStateGetting();
+//        return result;
+//
+//    }
 
-    }
-
     /**
-     * 搜索操作
+     * 搜索和回显操作
      */
-    @ApiOperation(value = "网站管理-站点公告管理-搜索")
+    @ApiOperation(value = "网站管理-站点公告管理-搜索和回显")
     @PostMapping("/searchSite")
     public AjaxResult searchSiteSetting(@RequestBody WebStateSearch webStateSearch){
-        AjaxResult result = webStateSettingService.WebStateSearch(webStateSearch);
-        return result;
+//        if(webStateSearch.getSearchContent().equals("")&&webStateSearch.getStatus().equals("")){
+//            AjaxResult result = webStateSettingService.WebStateGetting();
+//            return result;
+//        }
+//        else{
+            AjaxResult result1 = webStateSettingService.WebStateSearch(webStateSearch);
+            return result1;
+//        }
+
 
     }
 

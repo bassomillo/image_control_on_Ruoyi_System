@@ -11,7 +11,9 @@ import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class WebStateSettingServiceImpl implements WebStateSettingService {
@@ -76,7 +78,13 @@ public class WebStateSettingServiceImpl implements WebStateSettingService {
             String searchContent = webStateSearch.getSearchContent();
             String searchContent1= searchContent.replace("%", "/%");
             List<WebStateSetting> webStateSettingList = webStateSettingMapper.WebStateSearch(status, searchContent1);
-            return AjaxResult.success("提交成功", webStateSettingList);
+            int count = webStateSettingMapper.WebStateGetting1(status, searchContent1);
+            Map<String, Object> map = new HashMap<>();
+            map.put("list", webStateSettingList);
+            map.put("count", count);
+
+            return AjaxResult.success("提交成功", map);
+            //return AjaxResult.success("提交成功", webStateSettingList);
     }
 
     @Override
@@ -117,11 +125,15 @@ public class WebStateSettingServiceImpl implements WebStateSettingService {
         return AjaxResult.success("提交成功");
     }
 
-    @Override
-    public AjaxResult WebStateGetting() {
-
-        List<WebStateSetting> webStateSettingList = webStateSettingMapper.WebStateGetting();
-
-        return AjaxResult.success("提交成功", webStateSettingList);
-    }
+//    @Override
+//    public AjaxResult WebStateGetting() {
+//
+//        List<WebStateSetting> webStateSettingList = webStateSettingMapper.WebStateGetting();
+//        int count = webStateSettingMapper.WebStateGetting1();
+//        Map<String, Object> map = new HashMap<>();
+//        map.put("list", webStateSettingList);
+//        map.put("count", count);
+//
+//        return AjaxResult.success("提交成功", map);
+//    }
 }

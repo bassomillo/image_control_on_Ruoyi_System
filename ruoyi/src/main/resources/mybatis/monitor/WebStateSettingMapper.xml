@@ -50,7 +50,28 @@
         select id, web_statement as webStatement, published_people as publishedPeople,
                status, start_date as startDate, end_date as endDate
         from web_statement_manage
-        where status = #{status} and web_statement like concat('%',#{searchContent},'%') escape '/'
+        where 1=1
+        <if test="status != null and status != ''">
+            and status = #{status}
+        </if>
+
+        <if test="searchContent != null and searchContent != ''">
+            and web_statement like concat('%',#{searchContent},'%') escape '/'
+        </if>
+
+    </select>
+
+    <select id="WebStateGetting1" resultType="java.lang.Integer">
+        select count(id)
+        from web_statement_manage
+        where 1=1
+              <if test="status != null and status != ''">
+                 and status = #{status}
+              </if>
+
+              <if test="searchContent != null and searchContent != ''">
+                  and web_statement like concat('%',#{searchContent},'%') escape '/'
+              </if>
 
     </select>
 
