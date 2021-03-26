@@ -14,5 +14,5 @@ public interface WebStateSettingService {
     public AjaxResult WebStateDelete(int id);
     public AjaxResult WebStateDeleteAll();
     public AjaxResult WebStateSelectDelete(List<Integer> listId);
-    public AjaxResult WebStateGetting();
+    //public AjaxResult WebStateGetting();
 }

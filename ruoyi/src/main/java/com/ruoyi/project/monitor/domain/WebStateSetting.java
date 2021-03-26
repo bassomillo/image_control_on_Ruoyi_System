@@ -27,6 +27,9 @@ public class WebStateSetting {
     @ApiModelProperty(value = "结束时间")
     private Date endDate;
 
+    @ApiModelProperty(value = "公告数量")
+    private int count;
+
     @ApiModelProperty(value = "程序运行时间点")
     private Date time;
 

@@ -11,6 +11,7 @@ public interface WebStateSettingMapper {
     public boolean WebStateUpdate(WebStateSetting webStateSetting);
     public boolean WebStateDelete(@Param("id") int id);
     public boolean WebStateDeleteAll();
+    public int WebStateGetting1(@Param("status") String status, @Param("searchContent") String searchContent);
     public List<WebStateSetting> WebStateGetting();
     public List<WebStateSetting> WebStateSearch(@Param("status") String status, @Param("searchContent") String searchContent);
 }
