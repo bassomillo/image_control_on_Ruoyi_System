@@ -26,7 +26,7 @@ import org.springframework.stereotype.Controller;
  */
 @RestController
 @RequestMapping("/auth")
-@Api(tags = "系统管理 - 角色权限相关 zjy")
+@Api(tags = "系统管理 - 角色权限相关   zjy")
 @Slf4j
 public class AuthController {
 

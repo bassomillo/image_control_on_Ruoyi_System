@@ -31,7 +31,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/login")
-@Api(tags = "登录控制 zjy")
+@Api(tags = "登录控制   zjy")
 @Slf4j
 public class LoginController {
 

@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  */
 @Controller
 @RequestMapping("/userProfile")
-@Api(tags = "会员管理 - 用户userProfile  zjy")
+@Api(tags = "会员管理 - 用户userProfile   zjy")
 @Slf4j
 public class UserProfileController {
 
@@ -37,8 +37,7 @@ public class UserProfileController {
     @ApiImplicitParam(name = "id", value = "用户id", paramType = "query", dataType = "Integer")
     @PostMapping("/searchUserProfileById")
     public AjaxResult searchUserProfileById(@RequestParam("id") Integer id) {
-        UserProfile userProfile = userProfileService.searchUserProfileById(id);
-        return AjaxResult.success();
+        return AjaxResult.success(userProfileService.searchUserProfileById(id));
     }
 }
 
