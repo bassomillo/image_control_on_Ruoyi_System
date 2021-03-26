@@ -4,10 +4,9 @@
 		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.project.system.mapper.SysMenuMapper">
 
-	<resultMap type="SysMenu" id="SysMenuResult">
+	<resultMap type="com.ruoyi.project.system.domain.SysMenu" id="SysMenuResult">
 		<id     property="menuId"         column="menu_id"        />
 		<result property="menuName"       column="menu_name"      />
-		<result property="parentName"     column="parent_name"    />
 		<result property="parentId"       column="parent_id"      />
 		<result property="orderNum"       column="order_num"      />
 		<result property="path"           column="path"           />

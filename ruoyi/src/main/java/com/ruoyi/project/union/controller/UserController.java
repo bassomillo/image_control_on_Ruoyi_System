@@ -23,7 +23,7 @@ import org.springframework.stereotype.Controller;
  */
 @RestController
 @RequestMapping("/user")
-@Api(tags = "会员管理 - 账号user")
+@Api(tags = "会员管理 - 账号user  zjy")
 @Slf4j
 public class UserController {
 

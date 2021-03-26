@@ -16,4 +16,6 @@ import com.ruoyi.project.union.pojo.UserSearchPojo;
 public interface IUserService extends IService<User> {
 
     AjaxResult searchUser(UserSearchPojo userSearchPojo);
+
+    User searchUserByAccount(String account);
 }

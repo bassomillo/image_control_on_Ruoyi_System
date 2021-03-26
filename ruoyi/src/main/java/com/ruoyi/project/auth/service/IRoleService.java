@@ -18,5 +18,7 @@ public interface IRoleService extends IService<Role> {
 
     AjaxResult searchRole(RoleSearchPojo roleSearchPojo);
 
-    AjaxResult createRole(Role role);
+    AjaxResult createRole(RoleCreatePojo roleCreatePojo);
+
+    AjaxResult searchRoleById(Long roleId);
 }

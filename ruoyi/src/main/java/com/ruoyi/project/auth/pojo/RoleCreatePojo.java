@@ -1,5 +1,6 @@
 package com.ruoyi.project.auth.pojo;
 
+import com.ruoyi.project.system.domain.SysRole;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -16,12 +17,9 @@ import java.util.List;
 @Data
 public class RoleCreatePojo {
 
-    @ApiModelProperty(value = "角色名称")
-    private String name;
-
-    @ApiModelProperty(value = "角色编码")
-    private String code;
+    @ApiModelProperty(value = "角色实体")
+    private SysRole sysRole;
 
     @ApiModelProperty(value = "权限列表")
-    private List<String> menuList;
+    private List<Long> menuList;
 }

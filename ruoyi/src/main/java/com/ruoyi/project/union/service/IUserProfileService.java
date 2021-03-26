@@ -14,5 +14,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IUserProfileService extends IService<UserProfile> {
 
-    AjaxResult searchUserProfileById(Integer id);
+    UserProfile searchUserProfileById(Integer id);
 }
