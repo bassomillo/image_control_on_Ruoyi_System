@@ -23,7 +23,7 @@ public class UserProfileServiceImpl extends ServiceImpl<UserProfileDao, UserProf
     private UserProfileDao userProfileDao;
 
     @Override
-    public AjaxResult searchUserProfileById(Integer id) {
-        return AjaxResult.success(userProfileDao.selectById(id));
+    public UserProfile searchUserProfileById(Integer id) {
+        return userProfileDao.selectById(id);
     }
 }

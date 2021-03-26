@@ -61,4 +61,9 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
 
         return AjaxResult.success(page);
     }
+
+    @Override
+    public User searchUserByAccount(String account) {
+        return userDao.selectOne(new QueryWrapper<User>().eq(User.NICKNAME, account));
+    }
 }

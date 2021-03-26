@@ -4,6 +4,9 @@ package com.ruoyi.project.tool;
 
 public class Str {
 
+	// 不存在的id
+	public final static String NOT_EXIT_ID = "!@#$%^";
+
 	// BaseUser未查询到对应数据
 	public final static String NOT_EXIT_USER = "不存在此用户！";
 
