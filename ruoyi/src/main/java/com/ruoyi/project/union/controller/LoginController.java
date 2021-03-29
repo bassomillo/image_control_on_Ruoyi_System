@@ -47,7 +47,7 @@ public class LoginController {
     @ApiOperation(value = "登录验证", httpMethod = "GET")
     @ApiImplicitParam(name = "LoginBody", value = "登录信息实体", paramType = "body", dataType = "String")
     @GetMapping("/loginCheck")
-    public AjaxResult loginCheck(@RequestBody LoginBody loginBody) {
+    public AjaxResult loginCheck(LoginBody loginBody) {
         Map<String, Object> map = new HashMap<>();
         // 获取对应账号信息
         User user = userService.searchUserByAccount(loginBody.getUsername());

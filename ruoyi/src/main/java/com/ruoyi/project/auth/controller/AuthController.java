@@ -44,32 +44,28 @@ public class AuthController {
     }
 
     @ApiOperation(value = "角色管理页面数据显示 + 搜索", httpMethod = "POST")
-    @ApiImplicitParam(name = "RoleSearchPojo", value = "查询条件实体", paramType = "body", dataType = "String")
     @PostMapping("/searchRole")
     public AjaxResult searchRole(@RequestBody RoleSearchPojo roleSearchPojo) {
         return roleService.searchRole(roleSearchPojo);
     }
 
     @ApiOperation(value = "新建角色", httpMethod = "POST")
-    @ApiImplicitParam(name = "RoleCreatePojo", value = "角色创建实体", paramType = "body", dataType = "String")
     @PostMapping("/createRole")
     public AjaxResult createRole(@RequestBody RoleCreatePojo roleCreatePojo) {
         return roleService.createRole(roleCreatePojo);
     }
 
-    @ApiOperation(value = "删除角色", httpMethod = "POST")
-    @ApiImplicitParam(name = "Role", value = "角色实体", paramType = "body", dataType = "String")
-    @PostMapping("/delRole")
-    public AjaxResult delRole(@RequestBody Role role) {
-        return AjaxResult.success();
-    }
-
-    @ApiOperation(value = "更新角色", httpMethod = "POST")
-    @ApiImplicitParam(name = "Role", value = "角色实体", paramType = "body", dataType = "String")
-    @PostMapping("/updateRole")
-    public AjaxResult updateRole(@RequestBody Role role) {
-        return AjaxResult.success();
-    }
+//    @ApiOperation(value = "删除角色", httpMethod = "POST")
+//    @PostMapping("/delRole")
+//    public AjaxResult delRole(@RequestBody Role role) {
+//        return AjaxResult.success();
+//    }
+//
+//    @ApiOperation(value = "更新角色", httpMethod = "POST")
+//    @PostMapping("/updateRole")
+//    public AjaxResult updateRole(@RequestBody Role role) {
+//        return AjaxResult.success();
+//    }
 
     @ApiOperation(value = "查询角色详细信息", httpMethod = "GET")
     @ApiImplicitParam(name = "RoleId", value = "角色id", paramType = "body", dataType = "Integer")
