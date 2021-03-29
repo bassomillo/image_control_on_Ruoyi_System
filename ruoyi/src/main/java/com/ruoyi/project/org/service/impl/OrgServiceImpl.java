@@ -36,12 +36,10 @@ public class OrgServiceImpl extends ServiceImpl<OrgDao, Org> implements IOrgServ
     /******************************************************************************************************************/
     public List<Org> getChildPerms(List<Org> list, int parentId) {
         List<Org> returnList = new ArrayList<Org>();
-        for (Iterator<Org> iterator = list.iterator(); iterator.hasNext();)
-        {
+        for (Iterator<Org> iterator = list.iterator(); iterator.hasNext();) {
             Org t = (Org) iterator.next();
             // 一、根据传入的某个父节点ID,遍历该父节点的所有子节点
-            if (t.getParentId() == parentId)
-            {
+            if (t.getParentId() == parentId) {
                 recursionFn(list, t);
                 returnList.add(t);
             }
@@ -53,14 +51,11 @@ public class OrgServiceImpl extends ServiceImpl<OrgDao, Org> implements IOrgServ
         // 得到子节点列表
         List<Org> childList = getChildList(list, t);
         t.setChildren(childList);
-        for (Org tChild : childList)
-        {
-            if (hasChild(list, tChild))
-            {
+        for (Org tChild : childList) {
+            if (hasChild(list, tChild)) {
                 // 判断是否有子节点
                 Iterator<Org> it = childList.iterator();
-                while (it.hasNext())
-                {
+                while (it.hasNext()) {
                     Org n = (Org) it.next();
                     recursionFn(list, n);
                 }
@@ -71,11 +66,9 @@ public class OrgServiceImpl extends ServiceImpl<OrgDao, Org> implements IOrgServ
     private List<Org> getChildList(List<Org> list, Org t) {
         List<Org> tlist = new ArrayList<Org>();
         Iterator<Org> it = list.iterator();
-        while (it.hasNext())
-        {
+        while (it.hasNext()) {
             Org n = (Org) it.next();
-            if (n.getParentId().longValue() == t.getId().longValue())
-            {
+            if (n.getParentId().longValue() == t.getId().longValue()) {
                 tlist.add(n);
             }
         }
