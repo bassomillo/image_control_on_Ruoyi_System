@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.monitor.mapper.WebStateManageMapper">
+    <!--
+    <insert id="SysSiteSetting" parameterType="com.ruoyi.project.monitor.domain.SysSiteSetting">
+        insert into sys_sitesetting_basicinformation
+            (id, sys_site_name, sys_site_slogan, sys_site_url, sys_site_logo, sys_site_favicon, sys_site_master_email, sys_site_icp, time)
+        values (#{id}, #{sysSiteName}, #{sysSiteSlogan}, #{sysSiteUrl}, #{sysSiteLogo}, #{sysSiteFavicon}, #{sysSiteMasterEmail}, #{sysSiteIcp}, #{time})
+    </insert>
+       -->
+
+    <insert id="WebStateManageSetting" parameterType="com.ruoyi.project.monitor.domain.WebStateManage">
+        insert into web_statement
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            id, title, work_range, statement,
+            <if test="status != null">
+                status,
+            </if>
+             update_time, publish_time
+        </trim>
+
+        <trim prefix="select" suffixOverrides=",">
+            #{id}, #{title}, #{workRange}, #{statement},
+            <if test="status != null and status != ''">
+                #{status},
+            </if>
+             #{updateTime}, #{publishTime}
+        </trim>
+
+    </insert>
+
+    <update id="WebStateManageUpdate" parameterType="com.ruoyi.project.monitor.domain.WebStateManage">
+        UPDATE web_statement SET title = #{title}, work_range = #{workRange},
+                                 statement = #{statement},
+                                 update_time = #{updateTime}, publish_time = #{publishTime}
+        WHERE id = #{id}
+    </update>
+
+    <update id="WebStateManagePublish" parameterType="com.ruoyi.project.monitor.domain.WebStateManage">
+        UPDATE web_statement SET status = 1, update_time = #{updateTime}, publish_time = #{publishTime}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="WebStateManageDelete">
+        delete from web_statement where id = #{id}
+    </delete>
+
+    <select id="WebStateManageSearch" resultType="com.ruoyi.project.monitor.domain.WebStateManage">
+        select id, title, work_range as workRange,
+               statement, status, update_time as updateTime, publish_time as publishTime
+        from web_statement
+        where 1=1
+        <if test="status != null">
+            and status = #{status}
+        </if>
+
+        <if test="title != null and title != ''">
+            and title like concat('%',#{title},'%') escape '/'
+        </if>
+
+    </select>
+
+    <select id="WebStateManageGetting" resultType="java.lang.Integer">
+        select count(id)
+        from web_statement
+        where 1=1
+        <if test="status != null">
+            and status = #{status}
+        </if>
+
+        <if test="title != null and title != ''">
+            and title like concat('%',#{title},'%') escape '/'
+        </if>
+
+    </select>
+
+
+
+</mapper>
