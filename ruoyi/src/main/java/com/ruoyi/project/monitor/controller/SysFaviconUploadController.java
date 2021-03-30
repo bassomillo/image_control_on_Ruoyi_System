@@ -27,34 +27,22 @@ public class SysFaviconUploadController {
     FastdfsClientUtil fastdfsClientUtil;
 
 
-    @PostMapping("/admin/setting/site/uploadFavicon")
-    @ApiOperation("系统管理-站点设置-基础信息-上传浏览器图标到服务器")
-    @ApiImplicitParam(name = "file",value = "图片文件",required = true,dataType = "MultipartFile")
-    public AjaxResult uploadImage(@RequestParam("file") MultipartFile file){
-        String imageStorePath = null;
-        String preImagePath = "http://182.254.171.122/";
-        try{
-            imageStorePath = fastdfsClientUtil.uploadImage(file);
-        }catch (IOException e){
-            e.printStackTrace();
-            return AjaxResult.error("上传失败");
-        }
-//        Map<String, String> result = new HashMap<String, String>();
-        String totalImagePath = preImagePath + imageStorePath;
-        return AjaxResult.success("上传成功", totalImagePath);
-    }
-//    @PostMapping("/admin/setting/site/deleteFavicon")
-//    @ApiOperation("从服务器删除浏览器图标图片")
+//    @PostMapping("/admin/setting/site/uploadFavicon")
+//    @ApiOperation("系统管理-站点设置-基础信息-上传浏览器图标到服务器")
 //    @ApiImplicitParam(name = "file",value = "图片文件",required = true,dataType = "MultipartFile")
-//    public AjaxResult deletFavicon(String fileUrl) {
-//        try {
-//            fastdfsClientUtil.deleteFile(fileUrl);
-//        } catch (Exception e){
+//    public AjaxResult uploadImage(@RequestParam("file") MultipartFile file){
+//        String imageStorePath = null;
+//        String preImagePath = "http://182.254.171.122/";
+//        try{
+//            imageStorePath = fastdfsClientUtil.uploadImage(file);
+//        }catch (IOException e){
 //            e.printStackTrace();
 //            return AjaxResult.error("上传失败");
 //        }
-//        return AjaxResult.success("删除成功");
+//        String totalImagePath = preImagePath + imageStorePath;
+//        return AjaxResult.success("上传成功", totalImagePath);
 //    }
+
 
 
 }

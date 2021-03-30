@@ -1,10 +1,7 @@
 package com.ruoyi.project.monitor.service.impl;
 
 import com.ruoyi.framework.web.domain.AjaxResult;
-import com.ruoyi.project.monitor.domain.WebStateManage;
-import com.ruoyi.project.monitor.domain.WebStateManageRequire;
-import com.ruoyi.project.monitor.domain.WebStateSearch;
-import com.ruoyi.project.monitor.domain.WebStateSetting;
+import com.ruoyi.project.monitor.domain.*;
 import com.ruoyi.project.monitor.mapper.WebStateManageMapper;
 import com.ruoyi.project.monitor.mapper.WebStateSettingMapper;
 import com.ruoyi.project.monitor.service.WebStateManageService;
@@ -72,6 +69,7 @@ public class WebStateManageServiceImpl implements WebStateManageService{
             WebStateManage webStateManage = new WebStateManage();
             Date time = new Date();
             webStateManage.setUpdateTime(time);
+            webStateManage.setId(webStateManageRequire.getId());
             webStateManage.setTitle(webStateManageRequire.getTitle());
             webStateManage.setStatement(webStateManageRequire.getStatement());
             String workRange = ListToString(",", webStateManageRequire.getWorkRangeRequire());
@@ -106,7 +104,7 @@ public class WebStateManageServiceImpl implements WebStateManageService{
             webStateManageRequire.setWorkRangeRequire(workRangeRequire);
             webStateManageRequireList.add(webStateManageRequire);
         }
-        int count = webStateManageMapper.WebStateManageGetting(title1, status);
+        int count = webStateManageMapper.WebStateManageCounting(title1, status);
         Map<String, Object> map = new HashMap<>();
         map.put("list", webStateManageRequireList);
         map.put("count", count);
@@ -140,5 +138,20 @@ public class WebStateManageServiceImpl implements WebStateManageService{
         }
 
         return AjaxResult.success("提交成功");
+    }
+
+    @Override
+    public AjaxResult WebStateManageGetting(int id){
+        WebStateManage webStateManage = webStateManageMapper.WebStateManageGetting(id);
+        WebStateManageRequire webStateManageRequire = new WebStateManageRequire();
+        webStateManageRequire.setId(webStateManage.getId());
+        webStateManageRequire.setStatus(webStateManage.getStatus());
+        webStateManageRequire.setStatement(webStateManage.getStatement());
+        webStateManageRequire.setUpdateTime(webStateManage.getUpdateTime());
+        webStateManageRequire.setTitle(webStateManage.getTitle());
+        webStateManageRequire.setPublishTime(webStateManage.getPublishTime());
+        List<String> workRangeRequire = StringToList(webStateManage.getWorkRange());
+        webStateManageRequire.setWorkRangeRequire(workRangeRequire);
+        return AjaxResult.success("提交成功", webStateManageRequire);
     }
 }

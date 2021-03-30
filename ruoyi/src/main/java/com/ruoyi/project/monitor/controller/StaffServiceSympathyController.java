@@ -1,10 +1,7 @@
 package com.ruoyi.project.monitor.controller;
 
 import com.ruoyi.framework.web.domain.AjaxResult;
-import com.ruoyi.project.monitor.domain.StaffServiceSympathy;
-import com.ruoyi.project.monitor.domain.StaffServiceSympathySearch;
-import com.ruoyi.project.monitor.domain.WebStateSearch;
-import com.ruoyi.project.monitor.domain.WebStateSetting;
+import com.ruoyi.project.monitor.domain.*;
 import com.ruoyi.project.monitor.service.StaffServiceSympathyService;
 import com.ruoyi.project.monitor.service.WebStateSettingService;
 import io.swagger.annotations.Api;
@@ -27,10 +24,10 @@ public class StaffServiceSympathyController {
      */
     @ApiOperation(value = "工会管理-慰问记录-新增记录")
     @PostMapping("/insertSite")
-    public AjaxResult insertSiteSetting(@RequestBody StaffServiceSympathy staffServiceSympathy)
+    public AjaxResult insertSiteSetting(@RequestBody StaffServiceSympathyRequire staffServiceSympathyRequire)
     {
 
-        AjaxResult result = staffServiceSympathyService.StaffServiceSympathySetting(staffServiceSympathy);
+        AjaxResult result = staffServiceSympathyService.StaffServiceSympathySetting(staffServiceSympathyRequire);
         //返回插入成功数据
         return result;
 
@@ -51,8 +48,8 @@ public class StaffServiceSympathyController {
      */
     @ApiOperation(value = "工会管理-慰问记录-编辑记录")
     @PostMapping("/updateSite")
-    public AjaxResult updateSiteSetting(@RequestBody StaffServiceSympathy staffServiceSympathy){
-        AjaxResult result = staffServiceSympathyService.StaffServiceSympathyUpdate(staffServiceSympathy);
+    public AjaxResult updateSiteSetting(@RequestBody StaffServiceSympathyRequire staffServiceSympathyRequire){
+        AjaxResult result = staffServiceSympathyService.StaffServiceSympathyUpdate(staffServiceSympathyRequire);
         return result;
     }
 

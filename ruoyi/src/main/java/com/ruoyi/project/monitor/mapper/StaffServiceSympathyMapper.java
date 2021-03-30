@@ -15,4 +15,5 @@ public interface StaffServiceSympathyMapper {
     public List<StaffServiceSympathy> StaffServiceSympathySearch(@Param("expenseOrgId") int expenseOrgId, @Param("orgId") int orgId, @Param("createdUserOrg") int createdUserOrg, @Param("submitStatus") int submitStatus);
     public boolean StaffServiceSympathySubmit(@Param("id") int id, @Param("updateTime") Date updateTime, @Param("submitTime") Date submitTime);
     public int StaffServiceSympathySearchOrg(@Param("id") int id);
+    public String StaffServiceSympathyGetOrg(@Param("orgId") int orgId);
 }

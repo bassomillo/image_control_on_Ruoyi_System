@@ -78,4 +78,18 @@ public class WebStateManageController {
         AjaxResult result = webStateManageService.WebStateManagePublish(id);
         return result;
     }
+
+    /**
+     * 查看
+     */
+    @ApiOperation(value = "网站管理-公告管理-查看公告")
+    @PostMapping("/gettingSite")
+    public AjaxResult searchSiteSetting(@RequestParam int id){
+
+        AjaxResult result = webStateManageService.WebStateManageGetting(id);
+        return result;
+
+
+
+    }
 }

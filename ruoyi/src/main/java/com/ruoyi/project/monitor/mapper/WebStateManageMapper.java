@@ -14,4 +14,6 @@ public interface WebStateManageMapper {
     public int WebStateManageGetting(@Param("title") String title, @Param("status") Integer status);
     public List<WebStateManage> WebStateManageSearch(@Param("title") String title, @Param("status") Integer status);
     public boolean WebStateManagePublish(@Param("id") int id, @Param("updateTime") Date updateTime, @Param("publishTime") Date publishTime);
+    public WebStateManage WebStateManageGetting(@Param("id") int id);
+    public int WebStateManageCounting(@Param("title") String title, @Param("status") Integer status);
 }
