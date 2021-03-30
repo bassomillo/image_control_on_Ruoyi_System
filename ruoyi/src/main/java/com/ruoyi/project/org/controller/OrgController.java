@@ -34,7 +34,6 @@ public class OrgController {
     private IOrgService orgService;
 
     @ApiOperation(value = "获取组织机构树", httpMethod = "GET")
-//    @ApiImplicitParam(name = "userId", value = "用户id", paramType = "body", dataType = "Long")
     @GetMapping("/searchOrgTree")
     public AjaxResult searchOrgTree() {
         return AjaxResult.success(orgService.searchOrgTree());

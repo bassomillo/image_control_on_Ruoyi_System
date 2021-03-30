@@ -5,6 +5,7 @@ import com.ruoyi.project.auth.entity.Role;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ruoyi.project.auth.pojo.RoleCreatePojo;
 import com.ruoyi.project.auth.pojo.RoleSearchPojo;
+import com.ruoyi.project.system.domain.SysRole;
 
 /**
  * <p>
@@ -19,6 +20,10 @@ public interface IRoleService extends IService<Role> {
     AjaxResult searchRole(RoleSearchPojo roleSearchPojo);
 
     AjaxResult createRole(RoleCreatePojo roleCreatePojo);
+
+    AjaxResult del(Long roleId);
+
+    AjaxResult updateRole(SysRole sysRole);
 
     AjaxResult searchRoleById(Long roleId);
 }
