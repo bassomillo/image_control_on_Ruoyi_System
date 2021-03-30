@@ -36,6 +36,8 @@ public class SysUserRole
         this.roleId = roleId;
     }
 
+    public static final String ROLE_ID = "role_id";
+
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
