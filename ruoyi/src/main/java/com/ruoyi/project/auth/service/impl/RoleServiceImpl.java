@@ -1,5 +1,6 @@
 package com.ruoyi.project.auth.service.impl;
 
+import cn.hutool.core.util.EscapeUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -14,9 +15,11 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.project.system.domain.SysMenu;
 import com.ruoyi.project.system.domain.SysRole;
 import com.ruoyi.project.system.domain.SysRoleMenu;
+import com.ruoyi.project.system.domain.SysUserRole;
 import com.ruoyi.project.system.mapper.SysMenuMapper;
 import com.ruoyi.project.system.mapper.SysRoleMapper;
 import com.ruoyi.project.system.mapper.SysRoleMenuMapper;
+import com.ruoyi.project.system.mapper.SysUserRoleMapper;
 import com.ruoyi.project.system.service.impl.SysMenuServiceImpl;
 import com.ruoyi.project.tool.Str;
 import com.ruoyi.project.union.mapper.UserDao;
@@ -60,43 +63,52 @@ public class RoleServiceImpl extends ServiceImpl<RoleDao, Role> implements IRole
     private SysMenuServiceImpl sysMenuService;
 
     @Autowired
+    private SysUserRoleMapper sysUserRoleMapper;
+
+    @Autowired
     private SysRoleMenuMapper sysRoleMenuMapper;
 
     @Override
+    @Transactional
     public AjaxResult searchRole(RoleSearchPojo roleSearchPojo) {
-        List<Role> roleList = new ArrayList<>();
-        PHPSerializer phpSerializer = new PHPSerializer();
         IPage page = new Page<>(roleSearchPojo.getCurrent(), roleSearchPojo.getSize());
-        IPage<Role> role = roleDao.selectPage(page, new QueryWrapper<Role>()
-                .like(!StringUtils.isEmpty(roleSearchPojo.getName()), Role.NAME, roleSearchPojo.getName()).or()
-                .like(!StringUtils.isEmpty(roleSearchPojo.getCode()), Role.CODE, roleSearchPojo.getCode()));
-        for(Role r : role.getRecords()) {
-            r.setCreateName(null != userDao.selectById(r.getCreatedUserId()) ? userDao.selectById(r.getCreatedUserId()).getNickname() : null);
-            r.setCreateTime(null);
+        IPage<SysRole> sysRoles = sysRoleMapper.selectPage(page, new QueryWrapper<SysRole>()
+                .like(!StringUtils.isEmpty(roleSearchPojo.getName()), SysRole.ROLE_NAME, roleSearchPojo.getName()).or()
+                .like(!StringUtils.isEmpty(roleSearchPojo.getCode()), SysRole.ROLE_KEY, roleSearchPojo.getCode()));
 
-            // 处理角色对应的menu
-            List<String> menuList = new ArrayList<>();
-            try {
-                AssocArray array = (AssocArray) phpSerializer.unserialize(r.getData().getBytes());
-                for (int i = 0; i < array.size(); i++) {
-                    String t = (String) Cast.cast(array.get(i), String.class);
-                    menuList.add(t);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            r.setMenuList(menuList);
+//        List<Role> roleList = new ArrayList<>();
+//        PHPSerializer phpSerializer = new PHPSerializer();
+//        IPage page = new Page<>(roleSearchPojo.getCurrent(), roleSearchPojo.getSize());
+//        IPage<Role> role = roleDao.selectPage(page, new QueryWrapper<Role>()
+//                .like(!StringUtils.isEmpty(roleSearchPojo.getName()), Role.NAME, roleSearchPojo.getName()).or()
+//                .like(!StringUtils.isEmpty(roleSearchPojo.getCode()), Role.CODE, roleSearchPojo.getCode()));
+//        for(Role r : role.getRecords()) {
+//            r.setCreateName(null != userDao.selectById(r.getCreatedUserId()) ? userDao.selectById(r.getCreatedUserId()).getNickname() : null);
+//            r.setCreateTime(null);
+//
+//            // 处理角色对应的menu
+//            List<String> menuList = new ArrayList<>();
+//            try {
+//                AssocArray array = (AssocArray) phpSerializer.unserialize(r.getData().getBytes());
+//                for (int i = 0; i < array.size(); i++) {
+//                    String t = (String) Cast.cast(array.get(i), String.class);
+//                    menuList.add(t);
+//                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//            r.setMenuList(menuList);
+//
+//            // 处理创建时间
+//            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//            String res = simpleDateFormat.format(new Date(r.getCreatedTime() * 1000L));
+//            r.setCreateTime(res);
+//
+//            roleList.add(r);
+//        }
+//        page.setRecords(roleList);
 
-            // 处理创建时间
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String res = simpleDateFormat.format(new Date(r.getCreatedTime() * 1000L));
-            r.setCreateTime(res);
-
-            roleList.add(r);
-        }
-        page.setRecords(roleList);
-
-        return AjaxResult.success(page);
+        return AjaxResult.success(sysRoles);
     }
 
     @Override
@@ -136,6 +148,33 @@ public class RoleServiceImpl extends ServiceImpl<RoleDao, Role> implements IRole
     }
 
     @Override
+    @Transactional
+    public AjaxResult del(Long roleId) {
+        // 删除角色-菜单表中对应的数据
+        sysRoleMenuMapper.delete(new QueryWrapper<SysRoleMenu>().eq(SysRoleMenu.ROLE_ID, roleId));
+
+        // 删除用户-角色表中对应的数据
+        sysUserRoleMapper.delete(new QueryWrapper<SysUserRole>().eq(SysUserRole.ROLE_ID, roleId));
+
+        // 删除角色
+        roleDao.delete(new QueryWrapper<Role>().eq(Role.ID, roleId));
+
+        return AjaxResult.success();
+    }
+
+    @Override
+    @Transactional
+    public AjaxResult updateRole(SysRole sysRole) {
+        sysRole.setUpdateTime(Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()));
+        int i = sysRoleMapper.updateRole(sysRole);
+
+        if(0 == i)
+            return AjaxResult.error("不存在此角色！");
+        return AjaxResult.success();
+    }
+
+    @Override
+    @Transactional
     public AjaxResult searchRoleById(Long roleId) {
         Map<String, Object> map = new HashMap<>();
 

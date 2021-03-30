@@ -31,7 +31,6 @@ public class UserController {
     private IUserService userService;
 
     @ApiOperation(value = "会员管理页面数据显示 + 搜索", httpMethod = "POST")
-    @ApiImplicitParam(name = "userSearchPojo", value = "查询条件实体", paramType = "body", dataType = "String")
     @PostMapping("/searchUser")
     public AjaxResult searchUser(@RequestBody UserSearchPojo userSearchPojo) {
         return userService.searchUser(userSearchPojo);

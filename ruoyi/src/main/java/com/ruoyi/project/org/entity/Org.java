@@ -6,6 +6,8 @@ import java.time.LocalDate;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableField;
 import java.io.Serializable;
+import java.util.List;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -154,6 +156,9 @@ public class Org extends Model<Org> {
      */
     @TableField("setTime")
     private LocalDate setTime;
+
+    @TableField(exist = false)
+    private List<Org> children;
 
 
     public static final String ID = "id";
