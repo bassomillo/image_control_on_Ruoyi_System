@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.democratic.mapper.SuggestMapper">
+
+    <!--条件查询建言列表，包含发送者信息-->
+    <select id="getBackSuggestList" resultType="com.ruoyi.project.democratic.entity.VO.SuggestBackVO">
+        select sb.*, u.orgId, u.id as userId, up.truename as userName
+        from suggest_box sb
+            left join user u on (u.id = sb.createUserId)
+            left join user_profile up on (up.id = u.id)
+        <where>
+            sb.isShow = 1
+            and sb.parentId = 0
+            <if test="content != null and content != ''">
+                and sb.content like concat('%', #{content}, '%') escape '/'
+            </if>
+            <if test="year != null and year != ''">
+                and left(sb.createDate, 4) = #{year}
+            </if>
+        </where>
+        order by sb.createDate desc
+    </select>
+</mapper>
