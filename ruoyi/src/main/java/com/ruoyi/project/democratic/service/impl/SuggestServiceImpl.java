@@ -321,6 +321,8 @@ public class SuggestServiceImpl extends ServiceImpl<SuggestMapper, SuggestBox> i
     @Override
     public AjaxResult export(String content, Integer year, HttpServletResponse response, HttpServletRequest request) {
         try {
+            //转义
+            content = Str.fuzzyQuery(content);
             List<SuggestExportDO> exportList = suggestMapper.getExportData(content, year);
 
             int i = 1;
