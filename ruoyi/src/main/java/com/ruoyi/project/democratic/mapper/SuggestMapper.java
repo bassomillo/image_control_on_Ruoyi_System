@@ -1,6 +1,7 @@
 package com.ruoyi.project.democratic.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.ruoyi.project.democratic.entity.DO.SuggestExportDO;
 import com.ruoyi.project.democratic.entity.SuggestBox;
 import com.ruoyi.project.democratic.entity.VO.SuggestBackVO;
 import org.apache.ibatis.annotations.Param;
@@ -27,4 +28,13 @@ public interface SuggestMapper extends BaseMapper<SuggestBox> {
      */
     List<SuggestBackVO> getBackSuggestList(@Param("content") String content,
                                            @Param("year") String year);
+
+    /**
+     * 条件查询导出的数据
+     * @param content
+     * @param year
+     * @return
+     */
+    List<SuggestExportDO> getExportData(@Param("content") String content,
+                                        @Param("year") Integer year);
 }

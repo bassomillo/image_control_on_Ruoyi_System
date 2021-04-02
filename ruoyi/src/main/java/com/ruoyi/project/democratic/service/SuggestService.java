@@ -4,6 +4,8 @@ import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.project.democratic.entity.SuggestBox;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -82,4 +84,31 @@ public interface SuggestService {
      */
     AjaxResult uploadSuggestFile(MultipartFile file,
                                  Integer userId);
+
+    /**
+     * 删除首页建言文件
+     * @param id
+     * @return
+     */
+    AjaxResult deleteFile(Integer id);
+
+    /**
+     * 下载上传的文件
+     * @param id
+     * @param response
+     */
+    AjaxResult downloadFile(Integer id,
+                      HttpServletResponse response);
+
+    /**
+     * 批量导出
+     * @param content
+     * @param year
+     * @param response
+     * @param request
+     */
+    AjaxResult export(String content,
+                Integer year,
+                HttpServletResponse response,
+                HttpServletRequest request);
 }

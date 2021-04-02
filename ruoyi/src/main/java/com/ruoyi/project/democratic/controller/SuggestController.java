@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -53,7 +55,7 @@ public class SuggestController {
         return suggestService.getTopSuggestList(userId, pageNum, pageSize);
     }
 
-    @ApiOperation(value = "首页-根据id查找单个记录详情")
+    @ApiOperation(value = "首页/后台-根据id查找单个记录详情")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "记录id", required = true)
     })
@@ -106,5 +108,32 @@ public class SuggestController {
                                         @RequestParam("userId") Integer userId){
 
         return suggestService.uploadSuggestFile(file, userId);
+    }
+
+    @ApiOperation(value = "首页-删除文件")
+    @PostMapping("/deleteFile")
+    public AjaxResult deleteFile(@RequestParam("id") Integer id){
+
+        return suggestService.deleteFile(id);
+    }
+
+    @ApiOperation(value = "首页/后台-下载文件")
+    @PostMapping("/downloadFile")
+    public AjaxResult downloadFile(@RequestParam("id") Integer id,
+                             HttpServletResponse response){
+        return suggestService.downloadFile(id, response);
+    }
+
+    @ApiOperation(value = "后台-批量导出")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "content", value = "搜索内容"),
+            @ApiImplicitParam(name = "year", value = "年份")
+    })
+    @PostMapping("/export")
+    public AjaxResult export(@RequestParam(value = "content", required = false) String content,
+                       @RequestParam(value = "year", required = false) Integer year,
+                       HttpServletResponse response,
+                       HttpServletRequest request){
+        return suggestService.export(content, year, response, request);
     }
 }
