@@ -55,21 +55,29 @@
                 cover_type as coverType, sympathy_cost as sympathyCost, remark
         from staff_service_sympathy
         where 1=1
-        <if test="expenseOrgId != null and expenseOrgId != ''">
+        <if test="expenseOrgId != ''">
             and expense_orgId = #{expenseOrgId}
         </if>
 
-        <if test="orgId != null and orgId != ''">
+        <if test="orgId != ''">
             and orgId = #{orgId}
         </if>
 
-        <if test="createdUserOrg != null and createdUserOrg != ''">
+        <if test="status == 0">
             and orgId = #{createdUserOrg}
         </if>
 
-        <if test="submitStatus != null and submitStatus != ''">
+        <if test="status == 1">
+            and orgId in
+            <foreach collection="sons" item="son" open="(" separator="," close=")" index="index">
+                #{son}
+            </foreach>
+        </if>
+
+        <if test="submitStatus != null">
             and submit_status = #{submitStatus}
         </if>
+
 
     </select>
 
@@ -77,19 +85,26 @@
         select count(id)
         from staff_service_sympathy
         where 1=1
-        <if test="expenseOrgId != null and expenseOrgId != ''">
+        <if test="expenseOrgId != ''">
             and expense_orgId = #{expenseOrgId}
         </if>
 
-        <if test="orgId != null and orgId != ''">
+        <if test="orgId != ''">
             and orgId = #{orgId}
         </if>
 
-        <if test="createdUserOrg != null and createdUserOrg != ''">
+        <if test="status == 0">
             and orgId = #{createdUserOrg}
         </if>
 
-        <if test="submitStatus != null and submitStatus != ''">
+        <if test="status == 1">
+            and orgId in
+            <foreach collection="sons" item="son" open="(" separator="," close=")" index="index">
+                #{son}
+            </foreach>
+        </if>
+
+        <if test="submitStatus != null">
             and submit_status = #{submitStatus}
         </if>
 
@@ -107,4 +122,14 @@
         where id = #{orgId}
     </select>
 
+    <select id="StaffServiceSympathySearchBelowOrg" resultType="java.lang.Integer">
+        select id
+        from org
+        where parentId = #{id}
+    </select>
+
+    <select id="StaffServiceSympathyFindSon" resultType="com.ruoyi.project.monitor.domain.StaffServiceSympathyFindSon">
+        select id, orgCode
+        from org
+    </select>
 </mapper>

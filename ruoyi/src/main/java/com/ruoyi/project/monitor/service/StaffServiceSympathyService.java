@@ -14,4 +14,5 @@ public interface StaffServiceSympathyService {
     public AjaxResult StaffServiceSympathySubmit(int id);
     public  List<String> StringToList(String strs);
     public  String ListToString(@NonNull CharSequence delimiter, @NonNull Iterable tokens);
+    public List<Integer> FindSon(int id);
 }
