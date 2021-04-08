@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.democratic.mapper.ManagerLetterMapper">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, fromId, object, content, isReply, parentId, isShow, createdTime, imgUrl, toId, isRead, evaluate, evaluateContent, createDate
+    </sql>
+
+    <!--条件查询信箱列表-->
+    <select id="getLetterList" resultType="com.ruoyi.project.democratic.entity.VO.ManagerLetterBackVO">
+        select mlb.*, u.orgId, u.id as userId, up.truename as userName
+        from manager_letter_box mlb
+            left join user u on (u.id = mlb.fromId)
+            left join user_profile up on (up.id = u.id)
+            left join org o on (
+                o.id = u.orgId
+                <if test="isAdmin == 2">
+                    <if test="provinceInt.size() == 0 and cityInt.size() == 0">
+                        and o.id is null
+                    </if>
+                    <if test="provinceInt.size() != 0 or cityInt.size() != 0">
+                        <if test="provinceInt.size() != 0">
+                            and (
+                            <foreach collection="provinceInt" index="index" item="province" separator="or" open="(" close=")">
+                                o.orgCode like concat('%', #{province}, '%')
+                            </foreach>
+                        </if>
+                        <if test="cityInt.size() != 0">
+                            <if test="provinceInt.size() != 0">or </if>
+                            <if test="provinceInt.size() == 0">and (</if>
+                            <foreach collection="cityInt" index="index" item="city" separator="or" open="(" close=")">
+                                o.orgCode like concat('%', #{city}, '%')
+                            </foreach>
+                        </if>
+                        )
+                    </if>
+                </if>
+            )
+        <where>
+            mlb.isShow = 1
+            and o.id is not null
+            and mlb.parentId = 0
+            <if test="year != null">
+                and left(mlb.createDate, 4) = #{year}
+            </if>
+            <if test="content != null and content != ''">
+                and mlb.content like concat('%', #{content}, '%') escape '/'
+            </if>
+        </where>
+        order by mlb.createDate desc
+    </select>
+
+    <!--查询用户角色-->
+    <select id="getUserRole" resultType="com.ruoyi.project.system.domain.SysRole">
+        select sr.*
+        from sys_role sr
+            left join sys_user_role sur on sur.user_id = #{userId}
+        where
+            sr.role_id = sur.role_id
+    </select>
+
+</mapper>
