@@ -34,7 +34,7 @@ public class StaffServiceSympathy {
     private Date submitTime;
 
     @ApiModelProperty(value = "提交状态，0为未提交，1为已提交")
-    private int submitStatus;
+    private Integer submitStatus;
 
     @ApiModelProperty(value = "资金来源")
     private String fundsSources;

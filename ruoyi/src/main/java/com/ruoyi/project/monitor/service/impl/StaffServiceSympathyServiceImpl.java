@@ -104,11 +104,14 @@ public class StaffServiceSympathyServiceImpl implements StaffServiceSympathyServ
     @Override
     public AjaxResult StaffServiceSympathySearch(StaffServiceSympathySearch staffServiceSympathySearch) {
 
-        int submitStatus = staffServiceSympathySearch.getSubmitStatus();
+        Integer submitStatus = staffServiceSympathySearch.getSubmitStatus();
         int createdUserOrg = staffServiceSympathySearch.getCreatedUserOrg();
         int expenseOrgId = staffServiceSympathySearch.getExpenseOrgId();
         int orgId = staffServiceSympathySearch.getOrgId();
-        List<StaffServiceSympathy> staffServiceSympathyList = staffServiceSympathyMapper.StaffServiceSympathySearch(expenseOrgId, orgId, createdUserOrg, submitStatus);
+        Integer status = staffServiceSympathySearch.getStatus();
+        List<Integer> sons = FindSon(staffServiceSympathySearch.getCreatedUserOrg());
+
+        List<StaffServiceSympathy> staffServiceSympathyList = staffServiceSympathyMapper.StaffServiceSympathySearch(expenseOrgId, orgId, createdUserOrg, submitStatus, status, sons);
         List<StaffServiceSympathyReview> staffServiceSympathyReviewList = new ArrayList<>();
         for(StaffServiceSympathy staffServiceSympathy: staffServiceSympathyList){
             StaffServiceSympathyReview staffServiceSympathyReview = new StaffServiceSympathyReview();
@@ -135,12 +138,29 @@ public class StaffServiceSympathyServiceImpl implements StaffServiceSympathyServ
 
             staffServiceSympathyReviewList.add(staffServiceSympathyReview);
         }
-        int count = staffServiceSympathyMapper.StaffServiceSympathyCount(expenseOrgId, orgId, createdUserOrg, submitStatus);
+        int count = staffServiceSympathyMapper.StaffServiceSympathyCount(expenseOrgId, orgId, createdUserOrg, submitStatus, status, sons);
         Map<String, Object> map = new HashMap<>();
         map.put("list", staffServiceSympathyReviewList);
         map.put("count", count);
 
         return AjaxResult.success("提交成功", map);
+    }
+
+    @Override
+    public List<Integer> FindSon(int id){
+        List<Integer> Sons = new ArrayList<>();
+        List<StaffServiceSympathyFindSon> staffServiceSympathyFindSonList = staffServiceSympathyMapper.StaffServiceSympathyFindSon();
+        for(StaffServiceSympathyFindSon staffServiceSympathyFindSon : staffServiceSympathyFindSonList){
+            String orgCode = staffServiceSympathyFindSon.getOrgCode();
+            int orgID = staffServiceSympathyFindSon.getId();
+//            orgCode = orgCode.substring(0, orgCode.length()-1);
+//            String orgCodeList[] = orgCode.split(".");
+            String idString = String.valueOf(id);
+            if(orgCode.contains(idString)){
+                Sons.add(orgID);
+            }
+        }
+        return Sons;
     }
 
     @Override
