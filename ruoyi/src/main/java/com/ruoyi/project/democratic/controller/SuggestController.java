@@ -28,6 +28,7 @@ import java.util.List;
 @RequestMapping("/suggest")
 @Api(tags = "建言献策——cxr")
 @Slf4j
+@CrossOrigin
 public class SuggestController {
 
     @Autowired
@@ -36,7 +37,7 @@ public class SuggestController {
     @ApiOperation(value = "首页-提供建议", httpMethod = "POST")
     @PostMapping("/insertSuggest")
     public AjaxResult insertSuggest(@RequestBody SuggestBox suggest,
-                                    @RequestParam(value = "fileList", required = false) List<Integer> fileList){
+                                    @RequestBody(required = false) List<Integer> fileList){
 
         return suggestService.insertSuggest(suggest, fileList);
     }
@@ -83,7 +84,7 @@ public class SuggestController {
 
     @ApiOperation(value = "后台-批量删除建言")
     @PostMapping("/deleteSuggest")
-    public AjaxResult deleteSuggest(@RequestParam List<Integer> idList){
+    public AjaxResult deleteSuggest(@RequestBody List<Integer> idList){
 
         return suggestService.deleteSuggest(idList);
     }

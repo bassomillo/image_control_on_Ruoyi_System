@@ -18,6 +18,4 @@ public class SuggestBackVO extends SuggestBox {
     @ApiModelProperty(value = "机构id")
     private Integer orgId;
 
-
-
 }

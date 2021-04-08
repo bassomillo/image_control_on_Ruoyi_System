@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
@@ -48,6 +49,11 @@ public class SuggestServiceImpl extends ServiceImpl<SuggestMapper, SuggestBox> i
     private SuggestMapper suggestMapper;
     @Autowired
     private UploadFilesMapper uploadFilesMapper;
+
+    @Resource
+    private FastdfsClientUtil fastdfsClientUtil;
+    @Resource
+    private ToolUtils toolUtils;
 
     /**
      * 发送建言-首页
@@ -159,8 +165,7 @@ public class SuggestServiceImpl extends ServiceImpl<SuggestMapper, SuggestBox> i
             List<SuggestBackVO> suggestList = suggestMapper.getBackSuggestList(content, year==null ? null : year.toString());
             for (SuggestBackVO suggest : suggestList){
                 //生成组织架构
-                ToolUtils tool = new ToolUtils();
-                String orgName = tool.getOrgName(suggest.getOrgId());
+                String orgName = toolUtils.getOrgName(suggest.getOrgId());
                 suggest.setOrgName(orgName);
             }
             PageInfo pageInfo = new PageInfo<>(suggestList, pageSize);
@@ -238,8 +243,7 @@ public class SuggestServiceImpl extends ServiceImpl<SuggestMapper, SuggestBox> i
     public AjaxResult uploadSuggestFile(MultipartFile file, Integer userId) {
         try {
             //上传文件至服务器
-//            FastdfsClientUtil fastDfs = new FastdfsClientUtil();
-//            String url = fastDfs.uploadFile(file);
+//            String url = fastdfsClientUtil.uploadFile(file);
             String url = null;
 
             //保存文件信息至数据库
@@ -275,9 +279,8 @@ public class SuggestServiceImpl extends ServiceImpl<SuggestMapper, SuggestBox> i
         try {
             UploadFiles uploadFile = uploadFilesMapper.selectOne(new QueryWrapper<UploadFiles>().
                     eq(UploadFiles.ID, id));
-            FastdfsClientUtil fastDfs = new FastdfsClientUtil();
             //暂时用uri，后续完善路径
-//            boolean flag = fastDfs.deleteFile(uploadFile.getUri());
+//            boolean flag = fastdfsClientUtil.deleteFile(uploadFile.getUri());
 //            if (! flag){
 //                return AjaxResult.error("删除失败，请联系管理员");
 //            }
@@ -301,8 +304,7 @@ public class SuggestServiceImpl extends ServiceImpl<SuggestMapper, SuggestBox> i
         try {
             UploadFiles uploadFile = uploadFilesMapper.selectOne(new QueryWrapper<UploadFiles>().
                     eq(UploadFiles.ID, id));
-            FastdfsClientUtil fastDfs = new FastdfsClientUtil();
-            fastDfs.downLoadFile(response, uploadFile.getUri(), uploadFile.getFilename());
+//            fastdfsClientUtil.downLoadFile(response, uploadFile.getUri(), uploadFile.getFilename());
 
             return null;
         }catch (Exception e){
@@ -332,8 +334,7 @@ public class SuggestServiceImpl extends ServiceImpl<SuggestMapper, SuggestBox> i
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 suggest.setSendDate(sdf.format(suggest.getDate()));
                 //生成组织架构
-                ToolUtils tool = new ToolUtils();
-                String orgName = tool.getOrgName(suggest.getOrgId());
+                String orgName = toolUtils.getOrgName(suggest.getOrgId());
                 suggest.setOrgName(orgName);
                 //查询附件
                 List<UploadFiles> uploadFiles = uploadFilesMapper.selectList(new QueryWrapper<UploadFiles>().
