@@ -2,8 +2,12 @@ package com.ruoyi.project.democratic.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ruoyi.framework.web.domain.AjaxResult;
+import com.ruoyi.project.democratic.entity.DO.ReplyLetterDO;
 import com.ruoyi.project.democratic.entity.ManagerLetterBox;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -26,11 +30,9 @@ public interface ManagerLetterService extends IService<ManagerLetterBox> {
     /**
      * 首页-发送信件
      * @param letterBox
-     * @param fileList
      * @return
      */
-    AjaxResult insertManagerLetter(ManagerLetterBox letterBox,
-                                   List<Integer> fileList);
+    AjaxResult insertManagerLetter(ManagerLetterBox letterBox);
 
     /**
      * 首页-查询回复记录列表
@@ -75,4 +77,58 @@ public interface ManagerLetterService extends IService<ManagerLetterBox> {
                                  Integer userId,
                                  Integer pageNum,
                                  Integer pageSize);
+
+    /**
+     * 后台批量删除信件
+     * @param idList
+     * @return
+     */
+    AjaxResult deleteLetter(List<Integer> idList);
+
+    /**
+     * 后台批量回复
+     * @param replyLetter
+     * @return
+     */
+    AjaxResult replyLetter(ReplyLetterDO replyLetter);
+
+    /**
+     * 上传文件
+     * @param file
+     * @param userId
+     * @return
+     */
+    AjaxResult uploadFile(MultipartFile file,
+                          Integer userId);
+
+    /**
+     * 删除文件
+     * @param id
+     * @return
+     */
+    AjaxResult deleteFile(Integer id);
+
+    /**
+     * 下载文件
+     * @param id
+     * @param response
+     * @return
+     */
+    AjaxResult downloadFile(Integer id,
+                            HttpServletResponse response);
+
+    /**
+     * 批量导出
+     * @param content
+     * @param year
+     * @param userId
+     * @param response
+     * @param request
+     * @return
+     */
+    AjaxResult export(String content,
+                      Integer year,
+                      Integer userId,
+                      HttpServletResponse response,
+                      HttpServletRequest request);
 }

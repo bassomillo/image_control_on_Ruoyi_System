@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.annotation.TableField;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
@@ -71,10 +72,10 @@ public class SuggestBox extends Model<SuggestBox> {
     private Integer replied;
 
     /**
-     * 回复id
+     * 回复建言id
      */
     @TableField("parentId")
-    @ApiModelProperty(value = "回复人id")
+    @ApiModelProperty(hidden = true)
     private Integer parentId;
 
     /**
@@ -106,6 +107,9 @@ public class SuggestBox extends Model<SuggestBox> {
     @ApiModelProperty(value = "创建日期")
     private Date createDate;
 
+    @TableField(exist = false)
+    @ApiModelProperty(value = "上传的附件id，如有上传附件必填")
+    private List<Integer> fileList;
 
     public static final String ID = "id";
 

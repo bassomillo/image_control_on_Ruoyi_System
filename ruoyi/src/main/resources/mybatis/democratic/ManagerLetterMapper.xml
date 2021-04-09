@@ -60,4 +60,50 @@
             sr.role_id = sur.role_id
     </select>
 
+    <select id="getExportData" resultType="com.ruoyi.project.democratic.entity.DO.ManageExportDO">
+        select mlb.id as letterId, up1.truename as fromName, u1.orgId, mlb.object, mlb.createDate as date,
+            mlb.content, up2.truename as toName
+        from manager_letter_box mlb
+            left join user u1 on (u1.id = mlb.fromId)
+            left join user_profile up1 on (up1.id = u1.id)
+            left join user u2 on (u2.id = mlb.toId)
+            left join user_profile up2 on (up2.id = u2.id)
+            left join org o on (
+                o.id = u1.orgId
+                <if test="isAdmin == 2">
+                    <if test="provinceInt.size() == 0 and cityInt.size() == 0">
+                        and o.id is null
+                    </if>
+                    <if test="provinceInt.size() != 0 or cityInt.size() != 0">
+                        <if test="provinceInt.size() != 0">
+                            and (
+                            <foreach collection="provinceInt" index="index" item="province" separator="or" open="(" close=")">
+                                o.orgCode like concat('%', #{province}, '%')
+                            </foreach>
+                        </if>
+                        <if test="cityInt.size() != 0">
+                            <if test="provinceInt.size() != 0">or </if>
+                            <if test="provinceInt.size() == 0">and (</if>
+                            <foreach collection="cityInt" index="index" item="city" separator="or" open="(" close=")">
+                                o.orgCode like concat('%', #{city}, '%')
+                            </foreach>
+                        </if>
+                        )
+                    </if>
+                </if>
+            )
+        <where>
+            mlb.isShow = 1
+            and o.id is not null
+            and mlb.parentId = 0
+            <if test="year != null">
+                and left(mlb.createDate, 4) = #{year}
+            </if>
+            <if test="content != null and content != ''">
+                and mlb.content like concat('%', #{content}, '%') escape '/'
+            </if>
+        </where>
+        order by mlb.createDate desc
+    </select>
+
 </mapper>

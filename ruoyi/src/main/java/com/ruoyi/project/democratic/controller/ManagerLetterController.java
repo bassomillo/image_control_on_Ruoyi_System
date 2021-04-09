@@ -2,6 +2,7 @@ package com.ruoyi.project.democratic.controller;
 
 
 import com.ruoyi.framework.web.domain.AjaxResult;
+import com.ruoyi.project.democratic.entity.DO.ReplyLetterDO;
 import com.ruoyi.project.democratic.entity.ManagerLetterBox;
 import com.ruoyi.project.democratic.service.ManagerLetterService;
 import io.swagger.annotations.Api;
@@ -13,7 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -25,7 +29,7 @@ import java.util.List;
  * @since 2021-04-02
  */
 @RestController
-@RequestMapping("/managerLetterBox")
+@RequestMapping("/managerLetter")
 @Api(tags = "总经理信箱——cxr")
 @Slf4j
 public class ManagerLetterController {
@@ -45,10 +49,9 @@ public class ManagerLetterController {
 
     @ApiOperation(value = "首页-发送信件")
     @PostMapping("/insertManagerLetter")
-    public AjaxResult insertManagerLetter(@RequestBody ManagerLetterBox letterBox,
-                                          @RequestBody(required = false) List<Integer> fileList){
+    public AjaxResult insertManagerLetter(@RequestBody ManagerLetterBox letterBox){
 
-        return managerLetterService.insertManagerLetter(letterBox, fileList);
+        return managerLetterService.insertManagerLetter(letterBox);
     }
 
     @ApiOperation(value = "首页-查询回复记录列表")
@@ -105,6 +108,57 @@ public class ManagerLetterController {
                                         @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize){
 
         return managerLetterService.getBackLetterList(content, year, userId, pageNum, pageSize);
+    }
+
+    @ApiOperation(value = "后台-批量删除信件")
+    @PostMapping("/deleteLetter")
+    public AjaxResult deleteLetter(@RequestBody List<Integer> idList){
+
+        return managerLetterService.deleteLetter(idList);
+    }
+
+    @ApiOperation(value = "后台-批量回复")
+    @PostMapping("/replyLetter")
+    public AjaxResult replyLetter(@RequestBody ReplyLetterDO replyLetter){
+
+        return managerLetterService.replyLetter(replyLetter);
+    }
+
+    @ApiOperation(value = "首页-上传文件")
+    @PostMapping("/uploadFile")
+    public AjaxResult uploadFile(MultipartFile file,
+                                 @RequestParam("userId") Integer userId){
+
+        return managerLetterService.uploadFile(file, userId);
+    }
+
+    @ApiOperation(value = "首页-删除文件")
+    @PostMapping("/deleteFile")
+    public AjaxResult deleteFile(@RequestParam("id") Integer id){
+
+        return managerLetterService.deleteFile(id);
+    }
+
+    @ApiOperation(value = "首页/后台-下载文件")
+    @PostMapping("/downloadFile")
+    public AjaxResult downloadFile(@RequestParam("id") Integer id,
+                                   HttpServletResponse response){
+        return managerLetterService.downloadFile(id, response);
+    }
+
+    @ApiOperation(value = "后台-批量导出")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "content", value = "搜索内容"),
+            @ApiImplicitParam(name = "year", value = "年份"),
+            @ApiImplicitParam(name = "userId", value = "当前登录者id", required = true)
+    })
+    @PostMapping("/export")
+    public AjaxResult export(@RequestParam(value = "content", required = false) String content,
+                             @RequestParam(value = "year", required = false) Integer year,
+                             @RequestParam("userId") Integer userId,
+                             HttpServletResponse response,
+                             HttpServletRequest request){
+        return managerLetterService.export(content, year, userId, response, request);
     }
 
 }

@@ -21,11 +21,9 @@ public interface SuggestService {
     /**
      * 新增建言
      * @param suggest
-     * @param fileList
      * @return
      */
-    AjaxResult insertSuggest(SuggestBox suggest,
-                             List<Integer> fileList);
+    AjaxResult insertSuggest(SuggestBox suggest);
 
     /**
      * 查询首页建言记录

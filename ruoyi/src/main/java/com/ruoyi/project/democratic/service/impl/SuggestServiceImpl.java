@@ -58,18 +58,17 @@ public class SuggestServiceImpl extends ServiceImpl<SuggestMapper, SuggestBox> i
     /**
      * 发送建言-首页
      * @param suggest
-     * @param fileList
      * @return
      */
     @Override
-    public AjaxResult insertSuggest(SuggestBox suggest, List<Integer> fileList) {
+    public AjaxResult insertSuggest(SuggestBox suggest) {
         try {
             suggest.setCreateDate(new Date());
             save(suggest);
 
-            if (fileList != null && fileList.size() != 0){
+            if (suggest.getFileList() != null && suggest.getFileList().size() != 0){
                 List<UploadFiles> files = uploadFilesMapper.selectList(new QueryWrapper<UploadFiles>().
-                        in(UploadFiles.ID, fileList));
+                        in(UploadFiles.ID, suggest.getFileList()));
                 for (UploadFiles f : files){
                     f.setTargetId(suggest.getId());
                     f.setTargetType("suggest");

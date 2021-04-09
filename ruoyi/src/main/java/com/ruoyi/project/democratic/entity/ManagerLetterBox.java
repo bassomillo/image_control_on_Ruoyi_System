@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.annotation.TableField;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
@@ -123,6 +124,9 @@ public class ManagerLetterBox extends Model<ManagerLetterBox> {
     @ApiModelProperty(value = "真实回复人id，回复时必填")
     private Integer realReply;
 
+    @TableField(exist = false)
+    @ApiModelProperty(value = "上传的附件id，如有上传附件必填")
+    private List<Integer> fileList;
 
     public static final String ID = "id";
 

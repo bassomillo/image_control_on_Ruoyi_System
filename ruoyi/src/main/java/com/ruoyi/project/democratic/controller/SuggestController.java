@@ -36,10 +36,9 @@ public class SuggestController {
 
     @ApiOperation(value = "首页-提供建议", httpMethod = "POST")
     @PostMapping("/insertSuggest")
-    public AjaxResult insertSuggest(@RequestBody SuggestBox suggest,
-                                    @RequestBody(required = false) List<Integer> fileList){
+    public AjaxResult insertSuggest(@RequestBody SuggestBox suggest){
 
-        return suggestService.insertSuggest(suggest, fileList);
+        return suggestService.insertSuggest(suggest);
     }
 
     @ApiOperation(value = "首页-查找回复记录列表")
