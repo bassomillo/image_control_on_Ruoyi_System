@@ -1,8 +1,11 @@
 package com.ruoyi.project.union.service;
 
 import com.ruoyi.framework.web.domain.AjaxResult;
+import com.ruoyi.project.org.pojo.OrgUserSearchPojo;
 import com.ruoyi.project.union.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.ruoyi.project.union.entity.UserProfile;
+import com.ruoyi.project.union.pojo.DisableUserPojo;
 import com.ruoyi.project.union.pojo.UserSearchPojo;
 
 /**
@@ -16,6 +19,16 @@ import com.ruoyi.project.union.pojo.UserSearchPojo;
 public interface IUserService extends IService<User> {
 
     AjaxResult searchUser(UserSearchPojo userSearchPojo);
+
+    void createUser(UserProfile userProfile);
+
+    AjaxResult disableUser(DisableUserPojo disableUserPojo);
+
+    void updateUser(UserProfile userProfile);
+
+    AjaxResult searchUserById(Integer userId);
+
+    AjaxResult searchOrgUser(OrgUserSearchPojo orgUserSearchPojo);
 
     User searchUserByAccount(String account);
 }

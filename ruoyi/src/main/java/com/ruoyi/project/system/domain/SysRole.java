@@ -27,6 +27,8 @@ public class SysRole extends BaseEntity
     @ApiModelProperty(value = "角色ID，自动生成")
     private Long roleId;
 
+    public static final String ROLE_ID = "role_id";
+
     @Excel(name = "角色名称")
     @ApiModelProperty(value = "角色名称，必填")
     private String roleName;

@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableField;
 import java.io.Serializable;
+
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -30,33 +32,23 @@ public class OrgCommissioner extends Model<OrgCommissioner> {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
-    /**
-     * 组织机构id
-     */
     @TableField("orgId")
+    @ApiModelProperty(value = "组织机构id")
     private Integer orgId;
 
-    /**
-     * 机构委员id
-     */
     @TableField("userId")
+    @ApiModelProperty(value = "用户id（机构委员）")
     private Integer userId;
 
-    /**
-     * 机构职位
-     */
+    @ApiModelProperty(value = "机构职位")
     private String position;
 
-    /**
-     * 创建时间
-     */
     @TableField("createdTime")
+    @ApiModelProperty(value = "创建时间")
     private Integer createdTime;
 
-    /**
-     * 最后更新时间
-     */
     @TableField("updatedTime")
+    @ApiModelProperty(value = "最后更新时间")
     private Integer updatedTime;
 
 

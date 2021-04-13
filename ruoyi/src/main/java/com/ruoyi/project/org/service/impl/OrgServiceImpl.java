@@ -1,15 +1,24 @@
 package com.ruoyi.project.org.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.project.org.entity.Org;
+import com.ruoyi.project.org.entity.OrgCommissioner;
+import com.ruoyi.project.org.mapper.OrgCommissionerDao;
 import com.ruoyi.project.org.mapper.OrgDao;
 import com.ruoyi.project.org.service.IOrgService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.project.system.domain.SysMenu;
+import com.ruoyi.project.union.entity.User;
+import com.ruoyi.project.union.mapper.UserDao;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -22,15 +31,113 @@ import java.util.List;
  * @since 2021-03-15
  */
 @Service
+@Slf4j
 public class OrgServiceImpl extends ServiceImpl<OrgDao, Org> implements IOrgService {
 
     @Autowired
     private OrgDao orgDao;
 
+    @Autowired
+    private OrgCommissionerDao orgCommissionerDao;
+
+    @Autowired
+    private UserDao userDao;
+
     @Override
     public List<Org> searchOrgTree() {
         List<Org> fatherOrg = orgDao.selectList(new QueryWrapper<Org>());
         return getChildPerms(fatherOrg, 0);
+    }
+
+    @Override
+    @Transactional
+    public void createOrg(Org org) {
+        if(null == org.getCreatedTime())
+            org.setCreatedTime(System.currentTimeMillis() / 1000);
+        if(null == org.getUpdatedTime())
+            org.setUpdatedTime(System.currentTimeMillis() / 1000);
+        orgDao.insert(org);
+
+        // 新增成功后更新orgCode
+        String orgCodeStart = org.getId().toString() + ".";
+        String orgCode = combinOrgCode(org.getParentId(), orgCodeStart);
+        org.setOrgCode(orgCode);
+        orgDao.updateById(org);
+    }
+
+    @Override
+    @Transactional
+    public AjaxResult delOrgById(Integer orgId) {
+        // 校检该机构下是否有子机构
+        List<Org> orgs = orgDao.selectList(new QueryWrapper<Org>().eq(Org.PARENTID, orgId));
+        if(0 != orgs.size())
+            return AjaxResult.error("该机构下有附属机构，不能删除");
+
+        List<Integer> orgIds = new ArrayList<>();
+        getChildOrgId(orgId, orgIds);
+        // 校检该机构及其附属下是否有对应角色
+        List<OrgCommissioner> orgCommissioners = orgCommissionerDao.selectList(new QueryWrapper<OrgCommissioner>().in(OrgCommissioner.ORGID, orgIds));
+        if(0 != orgCommissioners.size())
+            return AjaxResult.error("该机构或下属机构拥有用户，不能删除");
+
+        // 校检该机构下是否有对应会员（账号）
+        List<User> users = userDao.selectList(new QueryWrapper<User>().in(User.ORGID, orgIds));
+        if(0 != users.size())
+            return AjaxResult.error("该机构或下属机构拥有用户，不能删除");
+
+        orgDao.deleteById(orgId);
+
+        return AjaxResult.success();
+    }
+
+    @Override
+    public AjaxResult updateOrg(Org org) {
+        if(isRepeat(org))
+            return AjaxResult.error("当前机构下存在同名机构，机构名<" + org.getName() + ">不可用");
+
+        org.setUpdatedTime(System.currentTimeMillis() / 1000);
+        orgDao.updateById(org);
+
+        return AjaxResult.success();
+    }
+
+    @Override
+    public AjaxResult removeOrg(Integer orgId, Integer parentId) {
+        Org org = orgDao.selectById(orgId);
+        if(isRepeat(org))
+            return AjaxResult.error("目标机构下存在同名机构，机构名<" + org.getName() + ">不可用");
+
+        String orgCodeStart = org.getId().toString() + ".";
+        String orgCode = combinOrgCode(org.getParentId(), orgCodeStart);
+        org.setParentId(parentId);
+        org.setOrgCode(orgCode);
+        orgDao.updateById(org);
+
+        // 更新该机构下所有下属机构的orgCode
+        List<Integer> childOrgIds = new ArrayList<>();
+        getChildOrgId(orgId, childOrgIds);
+        childOrgIds.forEach(item->{
+            if(!item.equals(orgId)) {
+                String start = item.toString() + ".";
+                String code = combinOrgCode(orgId, start);
+
+                Org childOrg = new Org();
+                childOrg.setId(item);
+                childOrg.setOrgCode(code);
+                orgDao.updateById(childOrg);
+            }
+        });
+
+        return AjaxResult.success();
+    }
+
+    /**
+     * 同名机构校检
+     */
+    @Override
+    public boolean isRepeat(Org org) {
+        List<Org> repeatOrg = orgDao.selectList(new QueryWrapper<Org>().eq(Org.NAME, org.getName()).eq(Org.PARENTID, org.getParentId()));
+        return repeatOrg.size() > 0;
     }
 
     /******************************************************************************************************************/
@@ -80,5 +187,29 @@ public class OrgServiceImpl extends ServiceImpl<OrgDao, Org> implements IOrgServ
      */
     private boolean hasChild(List<Org> list, Org t) {
         return getChildList(list, t).size() > 0 ? true : false;
+    }
+
+    /**
+     * 拼接org对象中的orgCode
+     */
+    private String combinOrgCode(Integer parentId, String orgCode) {
+        if(1 == parentId)
+            return "1." + orgCode;
+        Org org = orgDao.selectById(parentId);
+        orgCode = org.getId().toString() + "." + orgCode;
+        return combinOrgCode(org.getParentId(), orgCode);
+    }
+
+    /**
+     * 获取机构下附属id
+     */
+    private void getChildOrgId(Integer orgId, List<Integer> orgIds) {
+        orgIds.add(orgId);
+        List<Org> orgs = orgDao.selectList(new QueryWrapper<Org>().eq(Org.PARENTID, orgId));
+        if(0 != orgs.size()) {
+            orgs.forEach(item -> {
+                getChildOrgId(item.getId(), orgIds);
+            });
+        }
     }
 }

@@ -1,7 +1,10 @@
 package com.ruoyi.project.org.service;
 
+import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.project.org.entity.OrgCommissioner;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.ruoyi.project.org.pojo.OrgRoleSearchPojo;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * <p>
@@ -13,4 +16,17 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IOrgCommissionerService extends IService<OrgCommissioner> {
 
+    AjaxResult searchOrgRole(OrgRoleSearchPojo roleSearchPojo);
+
+    AjaxResult delOrgRoleById(Integer id);
+
+    AjaxResult createOrgCommissioner(OrgCommissioner orgCommissioner);
+
+    AjaxResult orgRoleImport(MultipartFile file);
+
+    AjaxResult orgRoleImportCheck(MultipartFile file);
+
+    AjaxResult orgImport(MultipartFile file);
+
+    AjaxResult orgImportCheck(MultipartFile file);
 }

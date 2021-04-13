@@ -149,7 +149,7 @@ public class User extends Model<User> {
      * 帐号锁定期限
      */
     @TableField("lockDeadline")
-    private Integer lockDeadline;
+    private Long lockDeadline;
 
     /**
      * 帐号密码错误次数

@@ -48,9 +48,6 @@ import java.util.stream.Collectors;
 public class RoleServiceImpl extends ServiceImpl<RoleDao, Role> implements IRoleService {
 
     @Autowired
-    private RoleDao roleDao;
-
-    @Autowired
     private UserDao userDao;
 
     @Autowired
@@ -134,15 +131,17 @@ public class RoleServiceImpl extends ServiceImpl<RoleDao, Role> implements IRole
         Long roleId = sysRole.getRoleId();
 
         // 新增角色对应的menu
-        List<SysRoleMenu> sysRoleMenus = new ArrayList<>();
-        roleCreatePojo.getMenuList().forEach(item -> {
-            SysRoleMenu sysRoleMenu = new SysRoleMenu();
-            sysRoleMenu.setRoleId(roleId);
-            sysRoleMenu.setMenuId(item);
+        if(null != roleCreatePojo.getMenuList() && 0 != roleCreatePojo.getMenuList().size()) {
+            List<SysRoleMenu> sysRoleMenus = new ArrayList<>();
+            roleCreatePojo.getMenuList().forEach(item -> {
+                SysRoleMenu sysRoleMenu = new SysRoleMenu();
+                sysRoleMenu.setRoleId(roleId);
+                sysRoleMenu.setMenuId(item);
 
-            sysRoleMenus.add(sysRoleMenu);
-        });
-        sysRoleMenuMapper.batchRoleMenu(sysRoleMenus);
+                sysRoleMenus.add(sysRoleMenu);
+            });
+            sysRoleMenuMapper.batchRoleMenu(sysRoleMenus);
+        }
 
         return AjaxResult.success();
     }
@@ -157,7 +156,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleDao, Role> implements IRole
         sysUserRoleMapper.delete(new QueryWrapper<SysUserRole>().eq(SysUserRole.ROLE_ID, roleId));
 
         // 删除角色
-        roleDao.delete(new QueryWrapper<Role>().eq(Role.ID, roleId));
+        sysRoleMapper.delete(new QueryWrapper<SysRole>().eq(SysRole.ROLE_ID, roleId));
 
         return AjaxResult.success();
     }
@@ -165,6 +164,18 @@ public class RoleServiceImpl extends ServiceImpl<RoleDao, Role> implements IRole
     @Override
     @Transactional
     public AjaxResult updateRole(SysRole sysRole) {
+        // 更新角色对应菜单列表
+        if(null != sysRole.getMenuIds() && 0 != sysRole.getMenuIds().length) {
+            sysRoleMenuMapper.delete(new QueryWrapper<SysRoleMenu>().eq(SysRoleMenu.ROLE_ID, sysRole.getRoleId()));
+            for(Long menuId : sysRole.getMenuIds()) {
+                SysRoleMenu sysRoleMenu = new SysRoleMenu();
+                sysRoleMenu.setRoleId(sysRole.getRoleId());
+                sysRoleMenu.setMenuId(menuId);
+                sysRoleMenuMapper.insert(sysRoleMenu);
+            }
+        }
+
+        // 更新角色信息
         sysRole.setUpdateTime(Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()));
         int i = sysRoleMapper.updateRole(sysRole);
 

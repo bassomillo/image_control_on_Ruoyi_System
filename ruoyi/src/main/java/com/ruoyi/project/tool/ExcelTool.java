@@ -1,10 +1,7 @@
 package com.ruoyi.project.tool;
 
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -12,6 +9,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.text.DecimalFormat;
+import java.util.List;
 
 public class ExcelTool {
 
@@ -148,5 +146,18 @@ public class ExcelTool {
 				throw new RuntimeException(e);
 			}
 		}
+	}
+
+	public static void excelCheck(Sheet sheet, List<String> errorMsg, int rowStart, int rowEnd) {
+		int firstRowNum = sheet.getFirstRowNum();
+		Row firstRow = sheet.getRow(firstRowNum);
+		if(null == firstRow) {
+			errorMsg.add("第一行未读取到数据");
+
+			return ;
+		}
+
+		if(rowStart == rowEnd)
+			errorMsg.add("Excel文件未读取到数据");
 	}
 }

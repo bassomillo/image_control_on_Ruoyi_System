@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.rouyi.project.union.dao.OrgCommissionerDao">
+<mapper namespace="com.ruoyi.project.org.mapper.OrgCommissionerDao">
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, orgId, userId, position, createdTime, updatedTime
     </sql>
+
+    <select id="searchOrgRole" parameterType="com.ruoyi.project.org.pojo.OrgRoleSearchPojo" resultType="com.ruoyi.project.org.pojo.RoleShowPojo">
+        select om.id as id, om.position as role, u.nickname as nickname, up.truename as truename, up.mobile as mobile, u.email as email
+        from org_commissioner om
+        left join user u on om.userId = u.id
+        left join user_profile up on u.id = up.id
+        where om.orgId = #{orgId} limit #{current}, #{size}
+    </select>
 
 </mapper>

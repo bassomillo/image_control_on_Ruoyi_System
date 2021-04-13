@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import java.io.Serializable;
 import java.util.List;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -33,15 +34,11 @@ public class Org extends Model<Org> {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
-    /**
-     * 名称
-     */
+    @ApiModelProperty(value = "机构名称，必填")
     private String name;
 
-    /**
-     * 组织机构父ID
-     */
     @TableField("parentId")
+    @ApiModelProperty(value = "组织机构父ID，必填")
     private Integer parentId;
 
     /**
@@ -87,63 +84,47 @@ public class Org extends Model<Org> {
     @TableField("managerIds")
     private String managerIds;
 
-    /**
-     * 创建用户ID
-     */
     @TableField("createdUserId")
+    @ApiModelProperty(value = "创建用户ID，创建时必填")
     private Integer createdUserId;
 
     /**
      * 创建时间
      */
     @TableField("createdTime")
-    private Integer createdTime;
+    private Long createdTime;
 
     /**
      * 最后更新时间
      */
     @TableField("updatedTime")
-    private Integer updatedTime;
+    private Long updatedTime;
 
-    /**
-     * 工会组织简称
-     */
     @TableField("simpleName")
+    @ApiModelProperty(value = "工会组织简称，必填")
     private String simpleName;
 
-    /**
-     * 所在行政单位名称
-     */
     @TableField("inAdminOrg")
+    @ApiModelProperty(value = "所在行政单位名称，必填")
     private String inAdminOrg;
 
-    /**
-     * 统一社会信用代码
-     */
     @TableField("socialCode")
+    @ApiModelProperty(value = "统一社会信用代码，必填")
     private String socialCode;
 
-    /**
-     * 组织类别 
-     */
     @TableField("orgCategory")
+    @ApiModelProperty(value = "组织类别，必填")
     private String orgCategory;
 
-    /**
-     * 组织级别
-     */
     @TableField("orgLevel")
+    @ApiModelProperty(value = "组织级别，必填")
     private String orgLevel;
 
-    /**
-     *  所在地 
-     */
+    @ApiModelProperty(value = "所在地，必填")
     private String location;
 
-    /**
-     * 工会组织情况
-     */
     @TableField("orgStatus")
+    @ApiModelProperty(value = "工会组织情况，必填")
     private String orgStatus;
 
     /**
@@ -151,10 +132,8 @@ public class Org extends Model<Org> {
      */
     private String conMss;
 
-    /**
-     * 成立时间
-     */
     @TableField("setTime")
+    @ApiModelProperty(value = "成立时间，必填")
     private LocalDate setTime;
 
     @TableField(exist = false)

@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.extension.activerecord.Model;
 import java.time.LocalDate;
 import com.baomidou.mybatisplus.annotation.TableField;
 import java.io.Serializable;
+
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -26,26 +28,22 @@ public class UserProfile extends Model<UserProfile> {
     /**
      * 用户ID
      */
+    @ApiModelProperty(value = "用户id，编辑用户时必填")
     private Integer id;
 
-    /**
-     * MSS账号
-     */
+    @ApiModelProperty(value = "MSS账号")
     private String mss;
 
     /**
      * 真实姓名
      */
+    @ApiModelProperty(value = "用户姓名，必填")
     private String truename;
 
-    /**
-     * 身份证号码
-     */
+    @ApiModelProperty(value = "身份证号码，必填")
     private String idcard;
 
-    /**
-     * 性别
-     */
+    @ApiModelProperty(value = "用户性别，必填")
     private String gender;
 
     /**
@@ -58,9 +56,7 @@ public class UserProfile extends Model<UserProfile> {
      */
     private String city;
 
-    /**
-     * 手机
-     */
+    @ApiModelProperty(value = "手机号码，必填")
     private String mobile;
 
     /**
@@ -81,6 +77,7 @@ public class UserProfile extends Model<UserProfile> {
     /**
      * 公司
      */
+    @ApiModelProperty(value = "工作单位？ ")
     private String company;
 
     /**
@@ -132,21 +129,15 @@ public class UserProfile extends Model<UserProfile> {
      */
     private String site;
 
-    /**
-     * 党内职务
-     */
     @TableField("partPost")
+    @ApiModelProperty(value = "党内职务")
     private String partPost;
 
-    /**
-     * 困难员工
-     */
+    @ApiModelProperty(value = "困难员工")
     private String hardship;
 
-    /**
-     * 职工代表
-     */
     @TableField("workerRepresentative")
+    @ApiModelProperty(value = "职工代表")
     private String workerRepresentative;
 
     /**
@@ -155,59 +146,39 @@ public class UserProfile extends Model<UserProfile> {
     @TableField("postLevel")
     private String postLevel;
 
-    /**
-     * 最高学历
-     */
     @TableField("highestEducation")
+    @ApiModelProperty(value = "最高学历")
     private String highestEducation;
 
-    /**
-     * 岗位名称
-     */
     @TableField("postName")
+    @ApiModelProperty(value = "岗位名称")
     private String postName;
 
-    /**
-     * 学位
-     */
+    @ApiModelProperty(value = "学位")
     private String degree;
 
-    /**
-     * 政治面貌
-     */
     @TableField("politicalAffiliation")
+    @ApiModelProperty(value = "政治面貌")
     private String politicalAffiliation;
 
-    /**
-     * 技术职称
-     */
+    @ApiModelProperty(value = "技术职称")
     private String professional;
 
-    /**
-     * 荣誉
-     */
     @TableField("modelWorkers")
+    @ApiModelProperty(value = "荣誉")
     private String modelWorkers;
 
-    /**
-     * 邮箱
-     */
+    @ApiModelProperty(value = "邮箱")
     private String email;
 
-    /**
-     * 部门
-     */
+    @ApiModelProperty(value = "部门")
     private String department;
 
-    /**
-     * 民族
-     */
+    @ApiModelProperty(value = "民族")
     private String nation;
 
-    /**
-     * 重大疾病互助会会员
-     */
     @TableField("concurMember")
+    @ApiModelProperty(value = "重大疾病互助会会员", example = "否")
     private String concurMember;
 
     /**
@@ -216,80 +187,62 @@ public class UserProfile extends Model<UserProfile> {
     @TableField("unionJob")
     private String unionJob;
 
-    /**
-     * 工会小组划分
-     */
     @TableField("unionGroup")
+    @ApiModelProperty(value = "工会小组划分，必填")
     private String unionGroup;
 
-    /**
-     * 党群机构
-     */
     @TableField("partyGroup")
+    @ApiModelProperty(value = "党群机构")
     private String partyGroup;
 
-    /**
-     * 户口地址
-     */
     @TableField("accountAddress")
+    @ApiModelProperty(value = "户口地址")
     private String accountAddress;
 
-    /**
-     * 居住地址
-     */
+    @ApiModelProperty(value = "居住地址")
     private String address;
 
-    /**
-     * 兴趣爱好
-     */
+    @ApiModelProperty(value = "兴趣爱好")
     private String hobbies;
 
-    /**
-     * 个人荣誉
-     */
     @TableField("honoraryTitle")
+    @ApiModelProperty(value = "个人荣誉")
     private String honoraryTitle;
 
-    /**
-     * 致困原因
-     */
     @TableField("sympathyRecord")
+    @ApiModelProperty(value = "致困原因")
     private String sympathyRecord;
 
-    /**
-     * 备注
-     */
     @TableField("projectProgress")
+    @ApiModelProperty(value = "b欸住")
     private String projectProgress;
 
-    /**
-     * 用工形式
-     */
     @TableField("employmentForm")
+    @ApiModelProperty(value = "用工形式")
     private String employmentForm;
 
     /**
      * 工作起始时间
      */
     @TableField("joinWorkDate")
+    @ApiModelProperty(value = "工作时间")
     private LocalDate joinWorkDate;
 
-    /**
-     * 出生日期
-     */
+    @ApiModelProperty(value = "出生日期")
     private LocalDate birthday;
 
-    /**
-     * 是否会员
-     */
     @TableField("isDerafa")
+    @ApiModelProperty(value = "是否会员", example = "否")
     private Integer isDerafa;
 
-    /**
-     * 是否临时人员
-     */
     @TableField("isTemp")
+    @ApiModelProperty(value = "是否临时人员", example = "否")
     private Integer isTemp;
+
+    /******************************************************************************************************************/
+    @TableField(exist = false)
+    @ApiModelProperty(value = "所属机构，归类user表，必填")
+    private Integer orgId;
 
 
     public static final String ID = "id";

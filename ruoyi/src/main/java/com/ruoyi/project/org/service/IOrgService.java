@@ -1,5 +1,6 @@
 package com.ruoyi.project.org.service;
 
+import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.project.org.entity.Org;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -16,4 +17,14 @@ import java.util.List;
 public interface IOrgService extends IService<Org> {
 
     List<Org> searchOrgTree();
+
+    void createOrg(Org org);
+
+    AjaxResult delOrgById(Integer orgId);
+
+    AjaxResult updateOrg(Org org);
+
+    AjaxResult removeOrg(Integer orgId, Integer parentId);
+
+    boolean isRepeat(Org org);
 }

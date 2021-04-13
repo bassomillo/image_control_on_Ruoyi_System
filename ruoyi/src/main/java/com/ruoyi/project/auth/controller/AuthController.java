@@ -41,7 +41,7 @@ public class AuthController {
     private ISysMenuService sysMenuService;
 
     @ApiOperation(value = "根据用户id获取菜单列表（userId=0时查询所有菜单列表）", httpMethod = "GET")
-    @ApiImplicitParam(name = "userId", value = "用户id", paramType = "body", dataType = "Long")
+    @ApiImplicitParam(name = "userId", value = "用户id", paramType = "query", dataType = "Long")
     @GetMapping("/searchMenu")
     public AjaxResult searchMenu(@RequestParam("userId") Long userId) {
         return AjaxResult.success(sysMenuService.selectMenuTreeByUserId(userId));

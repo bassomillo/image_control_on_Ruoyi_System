@@ -68,4 +68,10 @@
             and u.locked = #{locked}
         </if>
     </select>
+
+    <select id="searchOrgUser" parameterType="com.ruoyi.project.org.pojo.OrgUserSearchPojo" resultType="com.ruoyi.project.org.pojo.UserShowPojo">
+        select u.id as id, u.nickname as nickname, up.truename as truename, u.email as email, up.mobile as mobile, u.smallAvatar from user u
+        left join user_profile up on u.id = up.id
+        where CONCAT_WS(u.nickname, up.truename, u.email, up.mobile) like concat('%', #{msg}, '%') limit #{current}, #{size}
+    </select>
 </mapper>

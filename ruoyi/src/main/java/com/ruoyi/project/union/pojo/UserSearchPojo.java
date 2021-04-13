@@ -63,7 +63,7 @@ public class UserSearchPojo {
     @ApiModelProperty(value = "党内职务 UserProfile", example = "支部书记")
     private String partPost;
 
-    @ApiModelProperty(value = "绑定状态 User", example = "0/1")
+    @ApiModelProperty(value = "绑定状态 User", example = "0")
     private Integer bindStatus;
 
     @ApiModelProperty(value = "工作起始时间开始范围 UserProfile", example = "yyyy-MM-dd")
@@ -78,9 +78,9 @@ public class UserSearchPojo {
     @ApiModelProperty(value = "邮箱 UserProfile", example = "~@~")
     private String email;
 
-    @ApiModelProperty(value = "是否会员 UserProfile", example = "0/1")
+    @ApiModelProperty(value = "是否会员 UserProfile", example = "0")
     private Integer isDerafa;
 
-    @ApiModelProperty(value = "是否被禁止 User", example = "0/1")
+    @ApiModelProperty(value = "是否被禁止 User", example = "0")
     private Integer locked;
 }
