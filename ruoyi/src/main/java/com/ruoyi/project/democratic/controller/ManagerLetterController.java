@@ -32,6 +32,7 @@ import java.util.List;
 @RequestMapping("/managerLetter")
 @Api(tags = "总经理信箱——cxr")
 @Slf4j
+@CrossOrigin
 public class ManagerLetterController {
 
     @Autowired
