@@ -18,5 +18,5 @@ public interface WebStateManageService {
     public AjaxResult WebStateManagePublish(int id);
     public  List<String> StringToList(String strs);
     public  String ListToString(@NonNull CharSequence delimiter, @NonNull Iterable tokens);
-
+    public AjaxResult WebStateManageGetting(int id);
 }

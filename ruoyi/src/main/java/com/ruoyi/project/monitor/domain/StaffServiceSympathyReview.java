@@ -1,12 +1,14 @@
 package com.ruoyi.project.monitor.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
-public class StaffServiceSympathy {
+public class StaffServiceSympathyReview {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "慰问ID")
@@ -16,34 +18,36 @@ public class StaffServiceSympathy {
     private int createdUserId;
 
     @ApiModelProperty(value = "填报单位名称")
-    private int orgId;
+    private String orgName;
 
     @ApiModelProperty(value = "慰问单位名称")
-    private int expenseOrgId;
+    private String expenseOrgName;
 
     @ApiModelProperty(value = "慰问类型")
     private String type;
 
     @ApiModelProperty(value = "慰问形式")
-    private String sympathyType;
+    private List<String> sympathyTypeList;
 
     @ApiModelProperty(value = "慰问时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date sympathyTime;
 
     @ApiModelProperty(value = "提交时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date submitTime;
 
     @ApiModelProperty(value = "提交状态，0为未提交，1为已提交")
     private Integer submitStatus;
 
     @ApiModelProperty(value = "资金来源")
-    private String fundsSources;
+    private List<String> fundsSourcesList;
 
     @ApiModelProperty(value = "慰问人数")
     private int sympathyNumber;
 
     @ApiModelProperty(value = "覆盖人群")
-    private String coverType;
+    private List<String> coverTypeList;
 
     @ApiModelProperty(value = "慰问费用")
     private float sympathyCost;
@@ -52,7 +56,6 @@ public class StaffServiceSympathy {
     private String remark;
 
     @ApiModelProperty(value = "更新时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date updatedTime;
-
-
 }

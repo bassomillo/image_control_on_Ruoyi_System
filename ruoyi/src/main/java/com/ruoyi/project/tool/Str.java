@@ -1,6 +1,7 @@
 package com.ruoyi.project.tool;
 
 
+import org.apache.commons.lang3.StringUtils;
 
 public class Str {
 
@@ -23,6 +24,19 @@ public class Str {
 		if( str == null ) return "";
 		String regEx = "[\n`~!@#$%^&*()+=|{}':;'\\[\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。 、？]";
 		return str.replaceAll(regEx, "");
+	}
+
+	/**
+	 * 转义%等字符
+	 * @param name
+	 * @return
+	 */
+	public static String fuzzyQuery(String name) {
+		if (StringUtils.isNotBlank(name)) {
+			name = name.replaceAll("%", "/%");
+			name = name.replaceAll("_", "/_");
+		}
+		return name;
 	}
 
     private Str() {}

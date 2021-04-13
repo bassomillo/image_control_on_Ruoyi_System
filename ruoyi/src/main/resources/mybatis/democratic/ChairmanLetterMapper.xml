@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.democratic.mapper.ChairmanLetterMapper">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, fromId, content, imgUrl, toId, receiver, isRead, isReply, createdTime, parentId, evaluate, evaluateContent, createDate, realReply
+    </sql>
+
+    <select id="selectLetterList" resultType="com.ruoyi.project.democratic.entity.VO.ChairmanLetterBackVO">
+        select clb.*, up.truename as userName, u.id as userId, u.orgId
+        from chairman_letter_box clb
+            left join user u on (u.id = clb.fromId)
+            left join user_profile up on (up.id = u.id)
+            left join org o on (
+                o.id = u.orgId
+                <if test="isAdmin == 2">
+                    <if test="intList.size() == 0">
+                        and o.id is null
+                    </if>
+                    <if test="intList.size() != 0">
+                        and
+                        <foreach collection="intList" index="index" item="i" separator="or" open="(" close=")">
+                            o.orgCode like concat('%', #{i}, '%')
+                        </foreach>
+                    </if>
+                </if>
+            )
+        <where>
+            clb.isShow = 1
+            and clb.parentId = 0
+            <if test="content != null and content != ''">
+                and clb.content like concat('%', #{content}, '%') escape '/'
+            </if>
+            <if test="year != null">
+                and left(clb.createDate, 4) = #{year}
+            </if>
+        </where>
+        order by clb.createDate desc
+    </select>
+
+</mapper>

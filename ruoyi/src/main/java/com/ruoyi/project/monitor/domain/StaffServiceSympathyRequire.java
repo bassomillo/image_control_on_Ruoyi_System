@@ -4,9 +4,10 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
-public class StaffServiceSympathy {
+public class StaffServiceSympathyRequire {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "慰问ID")
@@ -25,7 +26,7 @@ public class StaffServiceSympathy {
     private String type;
 
     @ApiModelProperty(value = "慰问形式")
-    private String sympathyType;
+    private List<String> sympathyTypeList;
 
     @ApiModelProperty(value = "慰问时间")
     private Date sympathyTime;
@@ -37,13 +38,13 @@ public class StaffServiceSympathy {
     private Integer submitStatus;
 
     @ApiModelProperty(value = "资金来源")
-    private String fundsSources;
+    private List<String> fundsSourcesList;
 
     @ApiModelProperty(value = "慰问人数")
     private int sympathyNumber;
 
     @ApiModelProperty(value = "覆盖人群")
-    private String coverType;
+    private List<String> coverTypeList;
 
     @ApiModelProperty(value = "慰问费用")
     private float sympathyCost;
@@ -53,6 +54,4 @@ public class StaffServiceSympathy {
 
     @ApiModelProperty(value = "更新时间")
     private Date updatedTime;
-
-
 }

@@ -2,13 +2,21 @@ package com.ruoyi.project.tool;
 
 
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.text.DecimalFormat;
+import java.util.List;
+import java.util.Date;
 import java.util.List;
 
 public class ExcelTool {
@@ -159,5 +167,95 @@ public class ExcelTool {
 
 		if(rowStart == rowEnd)
 			errorMsg.add("Excel文件未读取到数据");
+	}
+
+	/**
+	 *
+	 * @param req
+	 * @param filePath:webapp文件夹下的文件路径，如：指标模版.xlsx  ； 文件夹名/xxx.xx; static/xx/xx.xxx
+	 * @return
+	 * @throws Exception
+	 * @throws InvalidFormatException
+	 */
+	public static Workbook read(HttpServletRequest req, String filePath) throws Exception{
+
+		InputStream inputStream = null;
+		Workbook workbook = null;
+
+		try {
+			//读入文件到流
+			ClassPathResource classPathResource = new ClassPathResource(filePath);
+			inputStream = classPathResource.getInputStream();
+			//用流创建文件
+			workbook = WorkbookFactory.create(inputStream);
+			inputStream.close();
+		} catch (Exception e) {
+			if(inputStream != null) {
+				inputStream.close();
+			}
+			throw e;
+		} finally {
+			if(inputStream != null) {
+				inputStream.close();
+			}
+		}
+		return workbook;
+	}
+
+	/**
+	 * zxy
+	 * 文字居中带边框的cellStyle
+	 * @param wb
+	 * @return
+	 */
+	public static CellStyle getStyle(Workbook wb) {
+		CellStyle style = wb.createCellStyle();
+		//水平居中
+		style.setAlignment(HorizontalAlignment.CENTER);
+		//垂直居中
+		style.setVerticalAlignment(VerticalAlignment.CENTER);
+		//自动换行
+        style.setWrapText(true);
+		//下边框
+//		style.setBorderBottom(BorderStyle.THIN);
+//		//左边框
+//		style.setBorderLeft(BorderStyle.THIN);
+//		//上边框
+//		style.setBorderTop(BorderStyle.THIN);
+//		//右边框
+//		style.setBorderRight(BorderStyle.THIN);
+		return style;
+	}
+
+	/**
+	 * fjx
+	 * //创建一个cell并为其设置style和value
+	 * @param row
+	 * @param col
+	 * @param style
+	 * @param value:如果需要格式化请传入格式化好的String
+	 * @return  XSSFCellStyle
+	 */
+	public static Cell createCell(Row row,int col,CellStyle style,Object value){
+		Cell cell = row.createCell(col);
+		//style为空应该设置一个默认值以避免
+		cell.setCellStyle(style);
+		if (value instanceof String) {
+			cell.setCellValue( (String)value );
+		} else if  (value instanceof Integer) {
+			cell.setCellValue( (Integer)value );
+		} else if (value instanceof Double) {
+			cell.setCellValue( (Double)value );
+		} else if (value instanceof Long) {
+			cell.setCellValue( (Long)value );
+		} else if (value instanceof Date) {
+			cell.setCellValue( (Date)value );
+		} else if (value instanceof Float) {
+			cell.setCellValue( (Float)value );
+		} else if (value instanceof Boolean) {
+			cell.setCellValue( (Boolean)value );
+		}
+
+		return cell;
 	}
 }

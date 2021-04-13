@@ -13,9 +13,12 @@ public class StaffServiceSympathySearch {
     @ApiModelProperty(value = "填报单位")
     private int orgId;
 
-    @ApiModelProperty(value = "提交人的所在单位")
+    @ApiModelProperty(value = "提交人的所在单位，这个字段必填")
     private int createdUserOrg;
 
     @ApiModelProperty(value = "提交状态")
-    private int submitStatus;
+    private Integer submitStatus;
+
+    @ApiModelProperty(value = "选本人创建填0,选下级创建填1,不选不填")
+    private Integer status;
 }
