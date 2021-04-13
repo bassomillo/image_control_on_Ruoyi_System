@@ -7,6 +7,7 @@ import com.github.pagehelper.PageInfo;
 import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.project.democratic.entity.ChairmanLetterBox;
 import com.ruoyi.project.democratic.entity.UploadFiles;
+import com.ruoyi.project.democratic.entity.VO.ChairmanLetterBackVO;
 import com.ruoyi.project.democratic.mapper.ChairmanLetterMapper;
 import com.ruoyi.project.democratic.mapper.ManagerLetterMapper;
 import com.ruoyi.project.democratic.mapper.UploadFilesMapper;
@@ -19,6 +20,8 @@ import com.ruoyi.project.org.mapper.OrgCommissionerDao;
 import com.ruoyi.project.org.mapper.OrgDao;
 import com.ruoyi.project.system.domain.SysRole;
 import com.ruoyi.project.tool.Str;
+import com.ruoyi.project.union.entity.UserProfile;
+import com.ruoyi.project.union.mapper.UserProfileDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,6 +53,8 @@ public class ChairmanLetterServiceImpl extends ServiceImpl<ChairmanLetterMapper,
     private OrgCommissionerDao orgCommissionerDao;
     @Autowired
     private OrgDao orgDao;
+    @Autowired
+    private UserProfileDao userProfileDao;
 
     @Resource
     private ToolUtils toolUtils;
@@ -144,6 +149,10 @@ public class ChairmanLetterServiceImpl extends ServiceImpl<ChairmanLetterMapper,
             //查记录详情
             ChairmanLetterBox letter = chairmanLetterMapper.selectOne(new QueryWrapper<ChairmanLetterBox>().
                     eq(ChairmanLetterBox.ID, id));
+            //查发送人名字
+            UserProfile user = userProfileDao.selectOne(new QueryWrapper<UserProfile>().
+                    eq(UserProfile.ID, letter.getFromId()));
+            letter.setFromName(user.getTruename());
             //查回复列表
             List<ChairmanLetterBox> replyList = chairmanLetterMapper.selectList(new QueryWrapper<ChairmanLetterBox>().
                     eq(ChairmanLetterBox.PARENTID, id).
@@ -205,12 +214,30 @@ public class ChairmanLetterServiceImpl extends ServiceImpl<ChairmanLetterMapper,
             List<String> cityInt = getChairmanCity(userId);
             Integer isAdmin = getIsAdmin(userId);
 
-            return AjaxResult.success("查询成功");
+            List<String> intList = new ArrayList<>();
+            intList.addAll(provinceInt);
+            intList.addAll(cityInt);
+
+            PageHelper.startPage(pageNum, pageSize);
+            List<ChairmanLetterBackVO> backList = chairmanLetterMapper.selectLetterList(content, year, intList, isAdmin);
+            //生成所属组织架构名
+            for (ChairmanLetterBackVO letter : backList){
+                String orgName = toolUtils.getOrgName(letter.getOrgId());
+                letter.setOrgName(orgName);
+            }
+            PageInfo pageInfo = new PageInfo<>(backList);
+
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("total", pageInfo.getTotal());
+            jsonObject.put("list", pageInfo.getList());
+
+            return AjaxResult.success("查询成功", jsonObject);
         }catch (Exception e){
             e.printStackTrace();
             return AjaxResult.error("查询失败，请联系管理员", e.getMessage());
         }
     }
+
 
 
     /**
@@ -237,6 +264,7 @@ public class ChairmanLetterServiceImpl extends ServiceImpl<ChairmanLetterMapper,
      */
     private List<String> getChairmanProvince(Integer userId){
         List<OrgCommissioner> province = new ArrayList<>();
+        List<String> provinceInt = new ArrayList<>();
         //判断身份
         List<OrgCommissioner> commList = orgCommissionerDao.selectList(new QueryWrapper<OrgCommissioner>().
                 eq(OrgCommissioner.USERID, userId));
@@ -244,22 +272,48 @@ public class ChairmanLetterServiceImpl extends ServiceImpl<ChairmanLetterMapper,
             Org org = orgDao.selectOne(new QueryWrapper<Org>().
                     eq(Org.ID, comm.getOrgId()));
             if ("省主席".equals(comm.getPosition())){
-                province.add(comm);
+                if (org.getOrgLevel() == null || "".equals(org.getOrgLevel()) || "省级分公司或子公司".equals(org.getOrgLevel())){
+                    provinceInt.add(org.getId().toString() + ".");
+                }else {
+                    province.add(comm);
+                }
             }else if ("省副主席".equals(comm.getPosition())){
-                province.add(comm);
+                if (org.getOrgLevel() == null || "".equals(org.getOrgLevel()) || "省级分公司或子公司".equals(org.getOrgLevel())){
+                    provinceInt.add(org.getId().toString() + ".");
+                }else {
+                    province.add(comm);
+                }
             }else if ("省主席信箱管理人".equals(comm.getPosition())){
-                province.add(comm);
+                if (org.getOrgLevel() == null || "".equals(org.getOrgLevel()) || "省级分公司或子公司".equals(org.getOrgLevel())){
+                    provinceInt.add(org.getId().toString() + ".");
+                }else {
+                    province.add(comm);
+                }
             }else if ("主席".equals(comm.getPosition())){
-
+                if (org.getOrgLevel() == null || "".equals(org.getOrgLevel()) || "省级分公司或子公司".equals(org.getOrgLevel())){
+                    provinceInt.add(org.getId().toString() + ".");
+                }
             }else if ("副主席".equals(comm.getPosition())){
-
+                if (org.getOrgLevel() == null || "".equals(org.getOrgLevel()) || "省级分公司或子公司".equals(org.getOrgLevel())){
+                    provinceInt.add(org.getId().toString() + ".");
+                }
             }
         }
 
-        List<String> provinceInt = new ArrayList<>();
         //省主席+省副主席+省主席信箱管理人
         for (OrgCommissioner comm : province){
-
+            Org org = orgDao.selectOne(new QueryWrapper<Org>().
+                    eq(Org.ID, comm.getOrgId()));
+            //如果本身是在省级下被任命，则直接记录；否则层层寻找其省级节点
+            List<Integer> orgTreeIds = toolUtils.getOrgTreeInt(org.getId());
+            for (Integer id : orgTreeIds){
+                org = orgDao.selectOne(new QueryWrapper<Org>().
+                        eq(Org.ID, id));
+                if (org.getOrgLevel() == null || "".equals(org.getOrgLevel()) || "省级分公司或子公司".equals(org.getOrgLevel())){
+                    provinceInt.add(org.getId().toString() + ".");
+                    break;
+                }
+            }
         }
 
         return provinceInt;
@@ -271,9 +325,59 @@ public class ChairmanLetterServiceImpl extends ServiceImpl<ChairmanLetterMapper,
      * @return
      */
     private List<String> getChairmanCity(Integer userId){
-
-
+        List<OrgCommissioner> city = new ArrayList<>();
         List<String> cityInt = new ArrayList<>();
+
+        //判断身份
+        List<OrgCommissioner> commList = orgCommissionerDao.selectList(new QueryWrapper<OrgCommissioner>().
+                eq(OrgCommissioner.USERID, userId));
+        for (OrgCommissioner comm : commList){
+            Org org = orgDao.selectOne(new QueryWrapper<Org>().
+                    eq(Org.ID, comm.getOrgId()));
+            if ("市主席".equals(comm.getPosition())){
+                if ("市级分公司".equals(org.getOrgLevel())){
+                    cityInt.add(org.getId().toString() + ".");
+                }else {
+                    city.add(comm);
+                }
+            }else if ("市副主席".equals(comm.getPosition())){
+                if ("市级分公司".equals(org.getOrgLevel())){
+                    cityInt.add(org.getId().toString() + ".");
+                }else {
+                    city.add(comm);
+                }
+            }else if ("市主席信箱管理人".equals(comm.getPosition())){
+                if ("市级分公司".equals(org.getOrgLevel())){
+                    cityInt.add(org.getId().toString() + ".");
+                }else {
+                    city.add(comm);
+                }
+            }else if ("主席".equals(comm.getPosition())){
+                if ("市级分公司".equals(org.getOrgLevel())){
+                    cityInt.add(org.getId().toString() + ".");
+                }
+            }else if ("副主席".equals(comm.getPosition())){
+                if ("市级分公司".equals(org.getOrgLevel())){
+                    cityInt.add(org.getId().toString() + ".");
+                }
+            }
+        }
+
+        //市主席+市副主席+市主席信箱管理人
+        for (OrgCommissioner comm : city){
+            Org org = orgDao.selectOne(new QueryWrapper<Org>().
+                    eq(Org.ID, comm.getOrgId()));
+            //如果本身是在市级下被任命，则直接记录；否则层层寻找其市级节点
+            List<Integer> orgTreeIds = toolUtils.getOrgTreeInt(org.getId());
+            for (Integer id : orgTreeIds){
+                org = orgDao.selectOne(new QueryWrapper<Org>().
+                        eq(Org.ID, id));
+                if ("市级分公司".equals(org.getOrgLevel())){
+                    cityInt.add(org.getId().toString() + ".");
+                    break;
+                }
+            }
+        }
 
         return cityInt;
     }

@@ -44,6 +44,10 @@ public class ManagerLetterBox extends Model<ManagerLetterBox> {
     @ApiModelProperty(value = "发送者id，一定要填")
     private Integer fromId;
 
+    @TableField(exist = false)
+    @ApiModelProperty(value = "发送者名字")
+    private String fromName;
+
     /**
      * 发送对象
      */

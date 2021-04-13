@@ -25,7 +25,9 @@ import com.ruoyi.project.system.domain.SysRole;
 import com.ruoyi.project.tool.ExcelTool;
 import com.ruoyi.project.tool.Str;
 import com.ruoyi.project.union.entity.User;
+import com.ruoyi.project.union.entity.UserProfile;
 import com.ruoyi.project.union.mapper.UserDao;
+import com.ruoyi.project.union.mapper.UserProfileDao;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +65,8 @@ public class ManagerLetterServiceImpl extends ServiceImpl<ManagerLetterMapper, M
     private OrgCommissionerDao orgCommissionerDao;
     @Autowired
     private OrgDao orgDao;
+    @Autowired
+    private UserProfileDao userProfileDao;
 
     @Resource
     private ToolUtils toolUtils;
@@ -163,6 +167,10 @@ public class ManagerLetterServiceImpl extends ServiceImpl<ManagerLetterMapper, M
             //查记录详情
             ManagerLetterBox letterBox = managerLetterMapper.selectOne(new QueryWrapper<ManagerLetterBox>().
                     eq(ManagerLetterBox.ID, id));
+            //查发送人名字
+            UserProfile user = userProfileDao.selectOne(new QueryWrapper<UserProfile>().
+                    eq(UserProfile.ID, letterBox.getFromId()));
+            letterBox.setFromName(user.getTruename());
             //查回复详情
             List<ManagerLetterBox> requireList = managerLetterMapper.selectList(new QueryWrapper<ManagerLetterBox>().
                     eq(ManagerLetterBox.PARENTID, id).

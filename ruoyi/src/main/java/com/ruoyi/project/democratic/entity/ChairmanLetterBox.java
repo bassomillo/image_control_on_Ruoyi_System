@@ -43,6 +43,10 @@ public class ChairmanLetterBox extends Model<ChairmanLetterBox> {
     @ApiModelProperty(value = "发送人id，必传")
     private Integer fromId;
 
+    @TableField(exist = false)
+    @ApiModelProperty(value = "发送者名字")
+    private String fromName;
+
     /**
      * 发送内容
      */
@@ -68,6 +72,13 @@ public class ChairmanLetterBox extends Model<ChairmanLetterBox> {
      */
     @ApiModelProperty(value = "接收人职位，必填，按照实际情况填省主席/市主席")
     private String receiver;
+
+    /**
+     * 是否显示
+     */
+    @TableField("isShow")
+    @ApiModelProperty(value = "是否显示，1是，0否，不必填")
+    private Integer isShow;
 
     /**
      * 是否已读
@@ -140,6 +151,8 @@ public class ChairmanLetterBox extends Model<ChairmanLetterBox> {
     public static final String TOID = "toId";
 
     public static final String RECEIVER = "receiver";
+
+    public static final String ISSHOW = "isShow";
 
     public static final String ISREAD = "isRead";
 
