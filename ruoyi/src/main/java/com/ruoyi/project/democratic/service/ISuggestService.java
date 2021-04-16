@@ -16,7 +16,7 @@ import java.util.List;
  * @author cxr
  * @since 2021-03-29
  */
-public interface SuggestService {
+public interface ISuggestService {
 
     /**
      * 新增建言

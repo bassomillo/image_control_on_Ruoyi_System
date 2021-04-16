@@ -8,7 +8,7 @@ import java.util.List;
 @Data
 public class ReplyLetterDO {
 
-    @ApiModelProperty(value = "回复的信件id，必填")
+    @ApiModelProperty(value = "回复的信件id列表，必填")
     private List<Integer> idList;
 
     @ApiModelProperty(value = "回复内容，必填")
