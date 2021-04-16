@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import java.io.Serializable;
 import java.util.List;
 
+import com.ruoyi.project.org.entity.pojo.RoleShowPojo;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -136,8 +137,15 @@ public class Org extends Model<Org> {
     @ApiModelProperty(value = "成立时间，必填")
     private LocalDate setTime;
 
+    /******************************************************************************************************************/
     @TableField(exist = false)
     private List<Org> children;
+
+    @TableField(exist = false)
+    private Integer userTotal;
+
+    @TableField(exist = false)
+    private List<RoleShowPojo> roles;
 
 
     public static final String ID = "id";

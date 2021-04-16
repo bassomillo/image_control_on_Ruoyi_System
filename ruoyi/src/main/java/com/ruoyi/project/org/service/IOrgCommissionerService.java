@@ -3,7 +3,7 @@ package com.ruoyi.project.org.service;
 import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.project.org.entity.OrgCommissioner;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.ruoyi.project.org.pojo.OrgRoleSearchPojo;
+import com.ruoyi.project.org.entity.pojo.OrgRoleSearchPojo;
 import org.springframework.web.multipart.MultipartFile;
 
 /**

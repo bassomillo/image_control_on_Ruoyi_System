@@ -3,6 +3,9 @@ package com.ruoyi.project.tool;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Str {
 
 	// 不存在的id
@@ -37,6 +40,28 @@ public class Str {
 			name = name.replaceAll("_", "/_");
 		}
 		return name;
+	}
+
+	public static List<Integer> getOrgIds(String orgCodes) {
+		String[] orgs = orgCodes.split("\\.");
+		List<Integer> orgIds = new ArrayList<>();
+		for(int i = 0; i < orgs.length; i++) {
+			orgIds.add(Integer.valueOf(orgs[i]));
+		}
+		return orgIds;
+	}
+
+	public static List<Integer> getOrgChildIds(Integer orgId, String orgCodes) {
+		String[] orgs = orgCodes.split("\\.");
+		List<Integer> orgIds = new ArrayList<>();
+		boolean isAdd = false;
+		for(int i = 0; i < orgs.length; i++) {
+			if(Integer.valueOf(orgs[i]).equals(orgId))
+				isAdd = true;
+			if(isAdd)
+				orgIds.add(Integer.valueOf(orgs[i]));
+		}
+		return orgIds;
 	}
 
     private Str() {}

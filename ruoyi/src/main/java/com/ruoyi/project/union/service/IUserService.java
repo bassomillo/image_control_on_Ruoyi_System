@@ -1,12 +1,13 @@
 package com.ruoyi.project.union.service;
 
 import com.ruoyi.framework.web.domain.AjaxResult;
-import com.ruoyi.project.org.pojo.OrgUserSearchPojo;
+import com.ruoyi.project.org.entity.pojo.OrgUserSearchPojo;
 import com.ruoyi.project.union.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ruoyi.project.union.entity.UserProfile;
-import com.ruoyi.project.union.pojo.DisableUserPojo;
-import com.ruoyi.project.union.pojo.UserSearchPojo;
+import com.ruoyi.project.union.entity.vo.AccountSearchVo;
+import com.ruoyi.project.union.entity.pojo.DisableUserPojo;
+import com.ruoyi.project.union.entity.vo.UserSearchPojo;
 
 /**
  * <p>
@@ -19,6 +20,10 @@ import com.ruoyi.project.union.pojo.UserSearchPojo;
 public interface IUserService extends IService<User> {
 
     AjaxResult searchUser(UserSearchPojo userSearchPojo);
+
+    AjaxResult searchAccount(AccountSearchVo accountSearchVo);
+
+    boolean isExistMobile(String mobile);
 
     void createUser(UserProfile userProfile);
 

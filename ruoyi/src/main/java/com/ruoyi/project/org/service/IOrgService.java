@@ -24,7 +24,12 @@ public interface IOrgService extends IService<Org> {
 
     AjaxResult updateOrg(Org org);
 
+    Org searchOrgById(Integer orgId);
+
     AjaxResult removeOrg(Integer orgId, Integer parentId);
 
-    boolean isRepeat(Org org);
+    boolean isRepeat(Org org, Integer parentId);
+
+    /******************************************************************************************************************/
+    List<Integer> searchOrgMem(Integer orgId);
 }
