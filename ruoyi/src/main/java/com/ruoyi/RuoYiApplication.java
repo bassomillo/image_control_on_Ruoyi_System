@@ -25,5 +25,6 @@ public class RuoYiApplication
 //        System.setProperty("spring.devtools.restart.enabled", "false");
         SpringApplication.run(RuoYiApplication.class, args).start();
         System.out.println("(♥◠‿◠)ﾉﾞ  若依启动成功   ლ(´ڡ`ლ)ﾞ");
+        System.out.println("http://localhost:10002/swagger-ui.html#/");
     }
 }

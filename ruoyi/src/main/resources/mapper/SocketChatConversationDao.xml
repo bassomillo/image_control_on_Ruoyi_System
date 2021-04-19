@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.chairmanOnline.dao.SocketChatConversationDao">
+
+    <resultMap type="com.ruoyi.project.chairmanOnline.entity.SocketChatConversation" id="SocketChatConversationMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="senderid" column="senderId" jdbcType="INTEGER"/>
+        <result property="receiverid" column="receiverId" jdbcType="INTEGER"/>
+        <result property="messagenum" column="messageNum" jdbcType="INTEGER"/>
+        <result property="latestmessageuserid" column="latestMessageUserId" jdbcType="INTEGER"/>
+        <result property="latestmessagetime" column="latestMessageTime" jdbcType="INTEGER"/>
+        <result property="latestmessagecontent" column="latestMessageContent" jdbcType="VARCHAR"/>
+        <result property="latestmessagetype" column="latestMessageType" jdbcType="VARCHAR"/>
+        <result property="module" column="module" jdbcType="INTEGER"/>
+        <result property="latesttagid" column="latestTagId" jdbcType="INTEGER"/>
+        <result property="issticky" column="isSticky" jdbcType="INTEGER"/>
+        <result property="unreadnum" column="unreadNum" jdbcType="INTEGER"/>
+        <result property="createdtime" column="createdTime" jdbcType="VARCHAR"/>
+        <result property="updatedtime" column="updatedTime" jdbcType="VARCHAR"/>
+        <result property="topic" column="topic" jdbcType="INTEGER"/>
+        <result property="isdelete" column="isDelete" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="SocketChatConversationMap">
+        select
+          id, senderId, receiverId, messageNum, latestMessageUserId, latestMessageTime, latestMessageContent, latestMessageType, module, latestTagId, isSticky, unreadNum, createdTime, updatedTime, topic, isDelete
+        from zhgh_new_test.socket_chat_conversation
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="SocketChatConversationMap">
+        select
+          id, senderId, receiverId, messageNum, latestMessageUserId, latestMessageTime, latestMessageContent, latestMessageType, module, latestTagId, isSticky, unreadNum, createdTime, updatedTime, topic, isDelete
+        from zhgh_new_test.socket_chat_conversation
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="SocketChatConversationMap">
+        select
+        id, senderId, receiverId, messageNum, latestMessageUserId, latestMessageTime, latestMessageContent,
+        latestMessageType, module, latestTagId, isSticky, unreadNum, createdTime, updatedTime, topic, isDelete
+        from zhgh_new_test.socket_chat_conversation
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="senderid != null">
+                and senderId = #{senderid}
+            </if>
+            <if test="receiverid != null">
+                and receiverId = #{receiverid}
+            </if>
+            <if test="messagenum != null">
+                and messageNum = #{messagenum}
+            </if>
+            <if test="latestmessageuserid != null">
+                and latestMessageUserId = #{latestmessageuserid}
+            </if>
+            <if test="latestmessagetime != null">
+                and latestMessageTime = #{latestmessagetime}
+            </if>
+            <if test="latestmessagecontent != null and latestmessagecontent != ''">
+                and latestMessageContent = #{latestmessagecontent}
+            </if>
+            <if test="latestmessagetype != null and latestmessagetype != ''">
+                and latestMessageType = #{latestmessagetype}
+            </if>
+            <if test="module != null">
+                and module = #{module}
+            </if>
+            <if test="latesttagid != null">
+                and latestTagId = #{latesttagid}
+            </if>
+            <if test="issticky != null">
+                and isSticky = #{issticky}
+            </if>
+            <if test="unreadnum != null">
+                and unreadNum = #{unreadnum}
+            </if>
+            <if test="createdtime != null">
+                and createdTime = #{createdtime}
+            </if>
+            <if test="updatedtime != null">
+                and updatedTime = #{updatedtime}
+            </if>
+            <if test="topic != null">
+                and topic = #{topic}
+            </if>
+            <if test="isdelete != null">
+                and isDelete = #{isdelete}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true" keyColumn="id">
+        insert into zhgh_new_test.socket_chat_conversation(senderId, receiverId, messageNum, latestMessageUserId, latestMessageTime, latestMessageContent, latestMessageType, module, latestTagId, isSticky, unreadNum, createdTime, updatedTime, topic, isDelete)
+        values (#{senderid}, #{receiverid}, #{messagenum}, #{latestmessageuserid}, #{latestmessagetime}, #{latestmessagecontent}, #{latestmessagetype}, #{module}, #{latesttagid}, #{issticky}, #{unreadnum}, #{createdtime}, #{updatedtime}, #{topic}, #{isdelete})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into zhgh_new_test.socket_chat_conversation(senderId, receiverId, messageNum, latestMessageUserId,
+        latestMessageTime, latestMessageContent, latestMessageType, module, latestTagId, isSticky, unreadNum,
+        createdTime, updatedTime, topic, isDelete)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.senderid}, #{entity.receiverid}, #{entity.messagenum}, #{entity.latestmessageuserid},
+            #{entity.latestmessagetime}, #{entity.latestmessagecontent}, #{entity.latestmessagetype}, #{entity.module},
+            #{entity.latesttagid}, #{entity.issticky}, #{entity.unreadnum}, #{entity.createdtime},
+            #{entity.updatedtime}, #{entity.topic}, #{entity.isdelete})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into zhgh_new_test.socket_chat_conversation(senderId, receiverId, messageNum, latestMessageUserId,
+        latestMessageTime, latestMessageContent, latestMessageType, module, latestTagId, isSticky, unreadNum,
+        createdTime, updatedTime, topic, isDelete)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.senderid}, #{entity.receiverid}, #{entity.messagenum}, #{entity.latestmessageuserid},
+            #{entity.latestmessagetime}, #{entity.latestmessagecontent}, #{entity.latestmessagetype}, #{entity.module},
+            #{entity.latesttagid}, #{entity.issticky}, #{entity.unreadnum}, #{entity.createdtime},
+            #{entity.updatedtime}, #{entity.topic}, #{entity.isdelete})
+        </foreach>
+        on duplicate key update
+        senderId = values(senderId) , receiverId = values(receiverId) , messageNum = values(messageNum) ,
+        latestMessageUserId = values(latestMessageUserId) , latestMessageTime = values(latestMessageTime) ,
+        latestMessageContent = values(latestMessageContent) , latestMessageType = values(latestMessageType) , module =
+        values(module) , latestTagId = values(latestTagId) , isSticky = values(isSticky) , unreadNum = values(unreadNum)
+        , createdTime = values(createdTime) , updatedTime = values(updatedTime) , topic = values(topic) , isDelete =
+        values(isDelete)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update zhgh_new_test.socket_chat_conversation
+        <set>
+            <if test="senderid != null">
+                senderId = #{senderid},
+            </if>
+            <if test="receiverid != null">
+                receiverId = #{receiverid},
+            </if>
+            <if test="messagenum != null">
+                messageNum = #{messagenum},
+            </if>
+            <if test="latestmessageuserid != null">
+                latestMessageUserId = #{latestmessageuserid},
+            </if>
+            <if test="latestmessagetime != null">
+                latestMessageTime = #{latestmessagetime},
+            </if>
+            <if test="latestmessagecontent != null and latestmessagecontent != ''">
+                latestMessageContent = #{latestmessagecontent},
+            </if>
+            <if test="latestmessagetype != null and latestmessagetype != ''">
+                latestMessageType = #{latestmessagetype},
+            </if>
+            <if test="module != null">
+                module = #{module},
+            </if>
+            <if test="latesttagid != null">
+                latestTagId = #{latesttagid},
+            </if>
+            <if test="issticky != null">
+                isSticky = #{issticky},
+            </if>
+            <if test="unreadnum != null">
+                unreadNum = #{unreadnum},
+            </if>
+            <if test="createdtime != null">
+                createdTime = #{createdtime},
+            </if>
+            <if test="updatedtime != null">
+                updatedTime = #{updatedtime},
+            </if>
+            <if test="topic != null">
+                topic = #{topic},
+            </if>
+            <if test="isdelete != null">
+                isDelete = #{isdelete},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteByIdReal">
+        delete from zhgh_new_test.socket_chat_conversation where id = #{id}
+    </delete>
+
+    <!--通过主键逻辑删除-->
+    <update id="deleteById">
+        update zhgh_new_test.socket_chat_conversation set isDelete=1 where id = #{id} and isDelete=0
+    </update>
+
+    <!--根据ids查询对话-->
+    <select id="queryConversationByIds" resultMap="SocketChatConversationMap">
+        select
+        id, senderId, receiverId, messageNum, latestMessageUserId, latestMessageTime, latestMessageContent, latestMessageType, module, latestTagId, isSticky, unreadNum, createdTime, updatedTime, topic, isDelete
+        from zhgh_new_test.socket_chat_conversation
+        where id IN
+        <foreach item="item" index="index" collection="ids"
+                 open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </select>
+
+    <!--通过发送者和接受者查询聊天记录-->
+    <select id="queryConversationByUserId" resultMap="SocketChatConversationMap">
+    SELECT
+       *
+    FROM
+	  socket_chat_conversation
+    WHERE
+        (senderId = #{userId} OR receiverId = #{userId}) AND isDelete = 0
+    ORDER BY
+	  createdTime desc
+    </select>
+
+
+    <!--通过发送者和接受者查询对话-->
+    <select id="queryChatConversation" resultMap="SocketChatConversationMap">
+    SELECT
+       *
+    FROM
+	  socket_chat_conversation
+    WHERE
+        ( senderId = #{senderId} AND receiverId = #{receiverId} )
+        OR ( senderId = #{receiverId} AND receiverId = #{senderId} )
+    ORDER BY
+	  createdTime ASC
+    </select>
+</mapper>
+

@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.chairmanOnline.dao.SocketChatRecordDao">
+
+    <resultMap type="com.ruoyi.project.chairmanOnline.entity.SocketChatRecord" id="SocketChatRecordMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="conversationid" column="conversationId" jdbcType="INTEGER"/>
+        <result property="senderid" column="senderId" jdbcType="INTEGER"/>
+        <result property="receiverid" column="receiverId" jdbcType="INTEGER"/>
+        <result property="content" column="content" jdbcType="VARCHAR"/>
+        <result property="isreply" column="isReply" jdbcType="INTEGER"/>
+        <result property="tagid" column="tagId" jdbcType="INTEGER"/>
+        <result property="module" column="module" jdbcType="INTEGER"/>
+        <result property="expired" column="expired" jdbcType="INTEGER"/>
+        <result property="isshow" column="isShow" jdbcType="INTEGER"/>
+        <result property="type" column="type" jdbcType="INTEGER"/>
+        <result property="createdtime" column="createdTime" jdbcType="TIMESTAMP"/>
+        <result property="isdelete" column="isDelete" jdbcType="VARCHAR"/>
+        <result property="topic" column="topic" jdbcType="VARCHAR"/>
+        <result property="isread" column="isRead" jdbcType="VARCHAR"/>
+        <result property="issent" column="isSent" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="SocketChatRecordMap">
+        select
+          id, conversationId, senderId, receiverId, content, isReply, tagId, module, expired, isShow, type, createdTime, isDelete, topic, isRead, isSent
+        from zhgh_new_test.socket_chat_record
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="SocketChatRecordMap">
+        select
+          id, conversationId, senderId, receiverId, content, isReply, tagId, module, expired, isShow, type, createdTime, isDelete, topic, isRead, isSent
+        from zhgh_new_test.socket_chat_record
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="SocketChatRecordMap">
+        select
+        id, conversationId, senderId, receiverId, content, isReply, tagId, module, expired, isShow, type, createdTime,
+        isDelete, topic, isRead, isSent
+        from zhgh_new_test.socket_chat_record
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="conversationid != null">
+                and conversationId = #{conversationid}
+            </if>
+            <if test="senderid != null">
+                and senderId = #{senderid}
+            </if>
+            <if test="receiverid != null">
+                and receiverId = #{receiverid}
+            </if>
+            <if test="content != null and content != ''">
+                and content = #{content}
+            </if>
+            <if test="isreply != null">
+                and isReply = #{isreply}
+            </if>
+            <if test="tagid != null">
+                and tagId = #{tagid}
+            </if>
+            <if test="module != null">
+                and module = #{module}
+            </if>
+            <if test="expired != null">
+                and expired = #{expired}
+            </if>
+            <if test="isshow != null">
+                and isShow = #{isshow}
+            </if>
+            <if test="type != null">
+                and type = #{type}
+            </if>
+            <if test="createdtime != null">
+                and createdTime = #{createdtime}
+            </if>
+            <if test="isdelete != null">
+                and isDelete = #{isdelete}
+            </if>
+            <if test="topic != null">
+                and topic = #{topic}
+            </if>
+            <if test="isread != null">
+                and isRead = #{isread}
+            </if>
+            <if test="issent != null">
+                and isSent = #{issent}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into zhgh_new_test.socket_chat_record(conversationId, senderId, receiverId, content, isReply, tagId, module, expired, isShow, type, createdTime, isDelete, topic, isRead, isSent)
+        values (#{conversationid}, #{senderid}, #{receiverid}, #{content}, #{isreply}, #{tagid}, #{module}, #{expired}, #{isshow}, #{type}, #{createdtime}, #{isdelete}, #{topic}, #{isread}, #{issent})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into zhgh_new_test.socket_chat_record(conversationId, senderId, receiverId, content, isReply, tagId,
+        module, expired, isShow, type, createdTime, isDelete, topic, isRead, isSent)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.conversationid}, #{entity.senderid}, #{entity.receiverid}, #{entity.content}, #{entity.isreply},
+            #{entity.tagid}, #{entity.module}, #{entity.expired}, #{entity.isshow}, #{entity.type},
+            #{entity.createdtime}, #{entity.isdelete}, #{entity.topic}, #{entity.isread}, #{entity.issent})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into zhgh_new_test.socket_chat_record(conversationId, senderId, receiverId, content, isReply, tagId,
+        module, expired, isShow, type, createdTime, isDelete, topic, isRead, isSent)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.conversationid}, #{entity.senderid}, #{entity.receiverid}, #{entity.content}, #{entity.isreply},
+            #{entity.tagid}, #{entity.module}, #{entity.expired}, #{entity.isshow}, #{entity.type},
+            #{entity.createdtime}, #{entity.isdelete}, #{entity.topic}, #{entity.isread}, #{entity.issent})
+        </foreach>
+        on duplicate key update
+        conversationId = values(conversationId) , senderId = values(senderId) , receiverId = values(receiverId) ,
+        content = values(content) , isReply = values(isReply) , tagId = values(tagId) , module = values(module) ,
+        expired = values(expired) , isShow = values(isShow) , type = values(type) , createdTime = values(createdTime) ,
+        isDelete = values(isDelete) , topic = values(topic) , isRead = values(isRead) , isSent = values(isSent)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update zhgh_new_test.socket_chat_record
+        <set>
+            <if test="conversationid != null">
+                conversationId = #{conversationid},
+            </if>
+            <if test="senderid != null">
+                senderId = #{senderid},
+            </if>
+            <if test="receiverid != null">
+                receiverId = #{receiverid},
+            </if>
+            <if test="content != null and content != ''">
+                content = #{content},
+            </if>
+            <if test="isreply != null">
+                isReply = #{isreply},
+            </if>
+            <if test="tagid != null">
+                tagId = #{tagid},
+            </if>
+            <if test="module != null">
+                module = #{module},
+            </if>
+            <if test="expired != null">
+                expired = #{expired},
+            </if>
+            <if test="isshow != null">
+                isShow = #{isshow},
+            </if>
+            <if test="type != null">
+                type = #{type},
+            </if>
+            <if test="createdtime != null">
+                createdTime = #{createdtime},
+            </if>
+            <if test="isdelete != null">
+                isDelete = #{isdelete},
+            </if>
+            <if test="topic != null">
+                topic = #{topic},
+            </if>
+            <if test="isread != null">
+                isRead = #{isread},
+            </if>
+            <if test="issent != null">
+                isSent = #{issent},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from zhgh_new_test.socket_chat_record where id = #{id}
+    </delete>
+
+    <!--通过发送者和接受者查询聊天记录-->
+    <select id="queryChatRecord" resultMap="SocketChatRecordMap">
+    SELECT
+       *
+    FROM
+	  socket_chat_record
+    WHERE
+        ( senderId = #{senderId} AND receiverId = #{receiverId} )
+        OR ( senderId = #{receiverId} AND receiverId = #{senderId} )
+        AND isDelete = 0
+    ORDER BY
+	  createdTime ASC
+    </select>
+
+</mapper>
+
