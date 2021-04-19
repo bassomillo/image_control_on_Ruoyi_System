@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.project.common.FastdfsClientUtil;
 import com.ruoyi.project.democratic.entity.DO.FileUrlNameDO;
@@ -15,11 +14,10 @@ import com.ruoyi.project.democratic.entity.UploadFiles;
 import com.ruoyi.project.democratic.entity.VO.SuggestBackVO;
 import com.ruoyi.project.democratic.mapper.SuggestMapper;
 import com.ruoyi.project.democratic.mapper.UploadFilesMapper;
-import com.ruoyi.project.democratic.service.SuggestService;
+import com.ruoyi.project.democratic.service.ISuggestService;
 import com.ruoyi.project.democratic.tool.ToolUtils;
 import com.ruoyi.project.tool.ExcelTool;
 import com.ruoyi.project.tool.Str;
-import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +41,7 @@ import java.util.List;
  * @since 2021-03-29
  */
 @Service
-public class SuggestServiceImpl extends ServiceImpl<SuggestMapper, SuggestBox> implements SuggestService {
+public class SuggestServiceImpl extends ServiceImpl<SuggestMapper, SuggestBox> implements ISuggestService {
 
     @Autowired
     private SuggestMapper suggestMapper;

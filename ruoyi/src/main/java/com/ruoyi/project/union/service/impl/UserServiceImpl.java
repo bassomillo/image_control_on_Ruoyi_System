@@ -3,29 +3,30 @@ package com.ruoyi.project.union.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ruoyi.common.utils.IdUtils;
 import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.project.org.entity.Org;
 import com.ruoyi.project.org.mapper.OrgDao;
-import com.ruoyi.project.org.pojo.OrgUserSearchPojo;
+import com.ruoyi.project.org.entity.pojo.OrgUserSearchPojo;
+import com.ruoyi.project.system.domain.SysUserRole;
+import com.ruoyi.project.system.mapper.SysRoleMapper;
+import com.ruoyi.project.system.mapper.SysUserRoleMapper;
 import com.ruoyi.project.union.mapper.UserProfileDao;
 import com.ruoyi.project.union.entity.User;
 import com.ruoyi.project.union.mapper.UserDao;
 import com.ruoyi.project.union.entity.UserProfile;
 import com.ruoyi.project.union.entity.vo.UserVo;
-import com.ruoyi.project.union.pojo.DisableUserPojo;
-import com.ruoyi.project.union.pojo.UserSearchPojo;
+import com.ruoyi.project.union.entity.vo.AccountSearchVo;
+import com.ruoyi.project.union.entity.pojo.DisableUserPojo;
+import com.ruoyi.project.union.entity.vo.UserSearchPojo;
 import com.ruoyi.project.union.service.IUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * <p>
@@ -47,6 +48,12 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
     @Autowired
     private OrgDao orgDao;
 
+    @Autowired
+    private SysRoleMapper sysRoleMapper;
+
+    @Autowired
+    private SysUserRoleMapper sysUserRoleMapper;
+
     @Override
     public AjaxResult searchUser(UserSearchPojo userSearchPojo) {
         Map<String, Object> map = new HashMap<>();
@@ -62,11 +69,14 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
         List<UserVo> userVos = new ArrayList<>();
         for(User u : user.getRecords()) {
             UserVo uv = new UserVo();
+            uv.setId(u.getId());
             uv.setNickname(u.getNickname());
+            uv.setOrganization(combinOrg(u.getOrgId()));
+            uv.setLocked(u.getLocked());
+
             UserProfile up = userProfileDao.selectById(u.getId());
             uv.setTruename(up.getTruename());
             uv.setGender(up.getGender().equals("male") ? "男" : "女");
-            uv.setOrganization(null);
             uv.setMobile(up.getMobile());
 
             userVos.add(uv);
@@ -83,12 +93,60 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
     }
 
     @Override
+    public AjaxResult searchAccount(AccountSearchVo accountSearchVo) {
+        Map<String, Object> map = new HashMap<>();
+        List<UserVo> userVoList = userDao.searchAccount(accountSearchVo);
+        userVoList.forEach(item -> {
+            item.setOrganization(combinOrg(item.getOrgId()));
+            item.setRole(sysRoleMapper.selectRolePermissionByUserId((long) item.getId()));
+        });
+
+        map.put("userVoList", userVoList);
+
+        Set<SysUserRole> userRoles = new HashSet<>(sysUserRoleMapper.selectList(new QueryWrapper<SysUserRole>().ne(SysUserRole.ROLE_ID, 1)));
+        map.put("total", userRoles.size());
+
+        return AjaxResult.success(map);
+    }
+
+    private String combinOrg(Integer orgId) {
+        List<String> orgList = new ArrayList<>();
+        combinParentOrg(orgId, orgList);
+        Collections.reverse(orgList); // 反转顺序
+        StringBuilder org = new StringBuilder();
+        for(int i = 0; i < orgList.size(); i++) {
+            if(0 == i) {
+                org.append(orgList.get(i));
+            } else {
+                org.append("/").append(orgList.get(i));
+            }
+        }
+
+        return String.valueOf(org);
+    }
+
+    private void combinParentOrg(Integer orgId, List<String> orgList) {
+        Org org = orgDao.selectById(orgId);
+        orgList.add(org.getName());
+        if(1 != org.getId()) {
+            combinParentOrg(org.getParentId(), orgList);
+        }
+    }
+
+    @Override
+    public boolean isExistMobile(String mobile) {
+        List<UserProfile> userProfile = userProfileDao.selectList(new QueryWrapper<UserProfile>().eq(UserProfile.MOBILE, mobile));
+        return 0 != userProfile.size();
+    }
+
+    @Override
     @Transactional
     public void createUser(UserProfile userProfile) {
         // 先对user表相关数据进行新增，主键id同时作为user_profile的id
         User user = new User();
-        user.setCreatedTime((int) System.currentTimeMillis() / 1000);
-        user.setUpdatedTime((int) System.currentTimeMillis() / 1000);
+        user.setNickname("user" + IdUtils.randomUUID());
+        user.setCreatedTime((int) (System.currentTimeMillis() / 1000));
+        user.setUpdatedTime((int) (System.currentTimeMillis() / 1000));
         user.setOrgId(userProfile.getOrgId());
         Org org = orgDao.selectById(userProfile.getOrgId());
         user.setOrgCode(org != null ? org.getOrgCode() : "");
@@ -117,7 +175,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
     public void updateUser(UserProfile userProfile) {
         User user = new User();
         user.setId(userProfile.getId());
-        user.setUpdatedTime((int) System.currentTimeMillis() / 1000);
+        user.setUpdatedTime((int) (System.currentTimeMillis() / 1000));
         if(null != userProfile.getOrgId()) {
             user.setOrgId(userProfile.getOrgId());
             Org org = orgDao.selectById(userProfile.getOrgId());
@@ -129,9 +187,13 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
     }
 
     @Override
-    @Transactional
     public AjaxResult searchUserById(Integer userId) {
-        return AjaxResult.success(userProfileDao.selectById(userId));
+        UserProfile userProfile = userProfileDao.selectById(userId);
+        User user = userDao.selectById(userId);
+        userProfile.setOrganization(combinOrg(user.getOrgId()));
+        userProfile.setOrgId(user.getOrgId());
+        userProfile.setId(userId);
+        return AjaxResult.success(userProfile);
     }
 
     @Override

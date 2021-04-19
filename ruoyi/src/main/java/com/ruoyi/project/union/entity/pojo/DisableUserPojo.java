@@ -1,4 +1,4 @@
-package com.ruoyi.project.union.pojo;
+package com.ruoyi.project.union.entity.pojo;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

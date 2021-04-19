@@ -1,6 +1,5 @@
-package com.ruoyi.project.union.pojo;
+package com.ruoyi.project.union.entity.vo;
 
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -17,10 +16,10 @@ import java.time.LocalDate;
 @Data
 public class UserSearchPojo {
 
-    @ApiModelProperty(value = "第几页")
+    @ApiModelProperty(value = "第几页", example = "1")
     private Integer current;
 
-    @ApiModelProperty(value = "每页数据量")
+    @ApiModelProperty(value = "每页数据量", example = "10")
     private Integer size;
 
     @ApiModelProperty(value = "用户名 User", example = "超级管理员")

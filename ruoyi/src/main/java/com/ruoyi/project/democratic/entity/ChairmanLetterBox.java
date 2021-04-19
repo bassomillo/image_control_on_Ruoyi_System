@@ -133,7 +133,7 @@ public class ChairmanLetterBox extends Model<ChairmanLetterBox> {
      */
     @TableField("realReply")
     @ApiModelProperty(hidden = true)
-    private String realReply;
+    private Integer realReply;
 
     @TableField(exist = false)
     @ApiModelProperty(value = "上传的附件id，如有上传附件必填")

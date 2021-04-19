@@ -7,7 +7,6 @@ import com.ruoyi.project.system.domain.SysMenu;
 import com.ruoyi.project.system.service.ISysMenuService;
 import com.ruoyi.project.union.entity.User;
 import com.ruoyi.project.union.entity.UserProfile;
-import com.ruoyi.project.union.pojo.UserSearchPojo;
 import com.ruoyi.project.union.service.IUserProfileService;
 import com.ruoyi.project.union.service.IUserService;
 import io.swagger.annotations.Api;

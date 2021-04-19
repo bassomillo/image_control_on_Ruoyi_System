@@ -4,8 +4,8 @@ package com.ruoyi.project.org.controller;
 import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.project.org.entity.Org;
 import com.ruoyi.project.org.entity.OrgCommissioner;
-import com.ruoyi.project.org.pojo.OrgRoleSearchPojo;
-import com.ruoyi.project.org.pojo.OrgUserSearchPojo;
+import com.ruoyi.project.org.entity.pojo.OrgRoleSearchPojo;
+import com.ruoyi.project.org.entity.pojo.OrgUserSearchPojo;
 import com.ruoyi.project.org.service.IOrgCommissionerService;
 import com.ruoyi.project.org.service.IOrgService;
 import com.ruoyi.project.tool.ExcelTool;
@@ -55,10 +55,16 @@ public class OrgController {
         return AjaxResult.success(orgService.searchOrgTree());
     }
 
+    @ApiOperation(value = "test", httpMethod = "GET")
+    @GetMapping("/test")
+    public AjaxResult test(@RequestParam("orgId") Integer orgId) {
+        return AjaxResult.success(orgService.searchOrgMem(orgId));
+    }
+
     @ApiOperation(value = "新增子机构", httpMethod = "POST")
     @PostMapping("/createOrg")
     public AjaxResult createOrg(@RequestBody Org org) {
-        if(orgService.isRepeat(org))
+        if(orgService.isRepeat(org, org.getParentId()))
             return AjaxResult.error("当前机构下存在同名机构，机构名<" + org.getName() + ">不可用");
         orgService.createOrg(org);
         return AjaxResult.success();
@@ -75,6 +81,13 @@ public class OrgController {
     @PostMapping("/updateOrg")
     public AjaxResult updateOrg(@RequestBody Org org) {
         return orgService.updateOrg(org);
+    }
+
+    @ApiOperation(value = "查询机构详细信息", httpMethod = "GET")
+    @ApiImplicitParam(name = "orgId", value = "机构id", paramType = "query", dataType = "Integer")
+    @GetMapping("/searchOrgById")
+    public AjaxResult searchOrgById(@RequestParam("orgId") Integer orgId) {
+        return AjaxResult.success(orgService.searchOrgById(orgId));
     }
 
     @ApiOperation(value = "机构迁移", httpMethod = "POST")

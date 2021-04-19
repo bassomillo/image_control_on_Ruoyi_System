@@ -1,9 +1,12 @@
 package com.ruoyi.project.union.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import java.time.LocalDate;
 import com.baomidou.mybatisplus.annotation.TableField;
 import java.io.Serializable;
+import java.util.List;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -25,10 +28,8 @@ public class UserProfile extends Model<UserProfile> {
 
     private static final long serialVersionUID=1L;
 
-    /**
-     * 用户ID
-     */
     @ApiModelProperty(value = "用户id，编辑用户时必填")
+    @TableId(value = "id", type = IdType.INPUT)
     private Integer id;
 
     @ApiModelProperty(value = "MSS账号")
@@ -51,27 +52,19 @@ public class UserProfile extends Model<UserProfile> {
      */
     private String iam;
 
-    /**
-     * 城市
-     */
+    @ApiModelProperty(value = "城市")
     private String city;
 
     @ApiModelProperty(value = "手机号码，必填")
     private String mobile;
 
-    /**
-     * QQ
-     */
+    @ApiModelProperty(value = "QQ")
     private String qq;
 
-    /**
-     * 签名
-     */
+    @ApiModelProperty(value = "签名")
     private String signature;
 
-    /**
-     * 自我介绍
-     */
+    @ApiModelProperty(value = "自我介绍")
     private String about;
 
     /**
@@ -101,9 +94,7 @@ public class UserProfile extends Model<UserProfile> {
      */
     private String weibo;
 
-    /**
-     * 微信
-     */
+    @ApiModelProperty(value = "微信")
     private String weixin;
 
     /**
@@ -144,6 +135,7 @@ public class UserProfile extends Model<UserProfile> {
      * 岗位层级
      */
     @TableField("postLevel")
+    @ApiModelProperty(value = "专业模块")
     private String postLevel;
 
     @TableField("highestEducation")
@@ -241,8 +233,12 @@ public class UserProfile extends Model<UserProfile> {
 
     /******************************************************************************************************************/
     @TableField(exist = false)
-    @ApiModelProperty(value = "所属机构，归类user表，必填")
+    @ApiModelProperty(value = "所属机构id，归类user表，必填")
     private Integer orgId;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "所属机构")
+    private String organization;
 
 
     public static final String ID = "id";

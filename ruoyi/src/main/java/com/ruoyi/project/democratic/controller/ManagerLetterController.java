@@ -4,7 +4,7 @@ package com.ruoyi.project.democratic.controller;
 import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.project.democratic.entity.DO.ReplyLetterDO;
 import com.ruoyi.project.democratic.entity.ManagerLetterBox;
-import com.ruoyi.project.democratic.service.ManagerLetterService;
+import com.ruoyi.project.democratic.service.IManagerLetterService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -13,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import org.springframework.stereotype.Controller;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -36,7 +35,7 @@ import java.util.List;
 public class ManagerLetterController {
 
     @Autowired
-    private ManagerLetterService managerLetterService;
+    private IManagerLetterService IManagerLetterService;
 
     @ApiOperation(value = "首页-获取写信对象id")
     @ApiImplicitParams({
@@ -45,14 +44,14 @@ public class ManagerLetterController {
     @PostMapping("/getLetterMan")
     public AjaxResult getLetterMan(@RequestParam("userId") Integer userId){
 
-        return managerLetterService.getLetterMan(userId);
+        return IManagerLetterService.getLetterMan(userId);
     }
 
     @ApiOperation(value = "首页-发送信件")
     @PostMapping("/insertManagerLetter")
     public AjaxResult insertManagerLetter(@RequestBody ManagerLetterBox letterBox){
 
-        return managerLetterService.insertManagerLetter(letterBox);
+        return IManagerLetterService.insertManagerLetter(letterBox);
     }
 
     @ApiOperation(value = "首页-查询回复记录列表")
@@ -66,7 +65,7 @@ public class ManagerLetterController {
                                         @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
                                         @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize){
 
-        return managerLetterService.getTopManagerList(userId, pageNum, pageSize);
+        return IManagerLetterService.getTopManagerList(userId, pageNum, pageSize);
     }
 
     @ApiOperation(value = "首页/后台-根据id查找单个记录详情")
@@ -76,7 +75,7 @@ public class ManagerLetterController {
     @PostMapping("/getManagerDetailById")
     public AjaxResult getManagerDetailById(@RequestParam("id") Integer id){
 
-        return managerLetterService.getManagerDetailById(id);
+        return IManagerLetterService.getManagerDetailById(id);
     }
 
     @ApiOperation(value = "首页-评价回复")
@@ -90,7 +89,7 @@ public class ManagerLetterController {
                                @RequestParam("evaluateContent") String evaluateContent,
                                @RequestParam("requireId") Integer requireId){
 
-        return managerLetterService.evaluate(evaluate, evaluateContent, requireId);
+        return IManagerLetterService.evaluate(evaluate, evaluateContent, requireId);
     }
 
     @ApiOperation(value = "后台-条件查询信箱列表")
@@ -108,21 +107,21 @@ public class ManagerLetterController {
                                         @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
                                         @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize){
 
-        return managerLetterService.getBackLetterList(content, year, userId, pageNum, pageSize);
+        return IManagerLetterService.getBackLetterList(content, year, userId, pageNum, pageSize);
     }
 
     @ApiOperation(value = "后台-批量删除信件")
     @PostMapping("/deleteLetter")
     public AjaxResult deleteLetter(@RequestBody List<Integer> idList){
 
-        return managerLetterService.deleteLetter(idList);
+        return IManagerLetterService.deleteLetter(idList);
     }
 
     @ApiOperation(value = "后台-批量回复")
     @PostMapping("/replyLetter")
     public AjaxResult replyLetter(@RequestBody ReplyLetterDO replyLetter){
 
-        return managerLetterService.replyLetter(replyLetter);
+        return IManagerLetterService.replyLetter(replyLetter);
     }
 
     @ApiOperation(value = "首页-上传文件")
@@ -130,21 +129,21 @@ public class ManagerLetterController {
     public AjaxResult uploadFile(MultipartFile file,
                                  @RequestParam("userId") Integer userId){
 
-        return managerLetterService.uploadFile(file, userId);
+        return IManagerLetterService.uploadFile(file, userId);
     }
 
     @ApiOperation(value = "首页-删除文件")
     @PostMapping("/deleteFile")
     public AjaxResult deleteFile(@RequestParam("id") Integer id){
 
-        return managerLetterService.deleteFile(id);
+        return IManagerLetterService.deleteFile(id);
     }
 
     @ApiOperation(value = "首页/后台-下载文件")
     @PostMapping("/downloadFile")
     public AjaxResult downloadFile(@RequestParam("id") Integer id,
                                    HttpServletResponse response){
-        return managerLetterService.downloadFile(id, response);
+        return IManagerLetterService.downloadFile(id, response);
     }
 
     @ApiOperation(value = "后台-批量导出")
@@ -159,7 +158,7 @@ public class ManagerLetterController {
                              @RequestParam("userId") Integer userId,
                              HttpServletResponse response,
                              HttpServletRequest request){
-        return managerLetterService.export(content, year, userId, response, request);
+        return IManagerLetterService.export(content, year, userId, response, request);
     }
 
 }

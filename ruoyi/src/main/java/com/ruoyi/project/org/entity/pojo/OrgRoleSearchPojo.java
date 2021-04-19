@@ -1,4 +1,4 @@
-package com.ruoyi.project.org.pojo;
+package com.ruoyi.project.org.entity.pojo;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -14,10 +14,10 @@ import lombok.Data;
 @Data
 public class OrgRoleSearchPojo {
 
-    @ApiModelProperty(value = "第几页")
+    @ApiModelProperty(value = "第几页", example = "1")
     private Integer current;
 
-    @ApiModelProperty(value = "每页数据量")
+    @ApiModelProperty(value = "每页数据量", example = "10")
     private Integer size;
 
     @ApiModelProperty(value = "机构id")

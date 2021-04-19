@@ -15,7 +15,7 @@ import com.ruoyi.project.democratic.entity.UploadFiles;
 import com.ruoyi.project.democratic.entity.VO.ManagerLetterBackVO;
 import com.ruoyi.project.democratic.mapper.ManagerLetterMapper;
 import com.ruoyi.project.democratic.mapper.UploadFilesMapper;
-import com.ruoyi.project.democratic.service.ManagerLetterService;
+import com.ruoyi.project.democratic.service.IManagerLetterService;
 import com.ruoyi.project.democratic.tool.ToolUtils;
 import com.ruoyi.project.org.entity.Org;
 import com.ruoyi.project.org.entity.OrgCommissioner;
@@ -53,7 +53,7 @@ import java.util.Map;
  * @since 2021-04-02
  */
 @Service
-public class ManagerLetterServiceImpl extends ServiceImpl<ManagerLetterMapper, ManagerLetterBox> implements ManagerLetterService {
+public class ManagerLetterServiceImpl extends ServiceImpl<ManagerLetterMapper, ManagerLetterBox> implements IManagerLetterService {
 
     @Autowired
     private ManagerLetterMapper managerLetterMapper;
@@ -88,11 +88,21 @@ public class ManagerLetterServiceImpl extends ServiceImpl<ManagerLetterMapper, M
             Integer province = m1.get("省总经理").size()==0 ? null : m1.get("省总经理").get(0);
             Integer city = m1.get("市总经理").size()==0 ? null : m1.get("市总经理").get(0);
 
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("province", province);
-            jsonObject.put("city", city);
+            List<JSONObject> list = new ArrayList<>();
+            if (province != null) {
+                JSONObject jsonObject1 = new JSONObject();
+                jsonObject1.put("position", "省总经理");
+                jsonObject1.put("positionId", province);
+                list.add(jsonObject1);
+            }
+            if (city != null) {
+                JSONObject jsonObject2 = new JSONObject();
+                jsonObject2.put("position", "市总经理");
+                jsonObject2.put("positionId", city);
+                list.add(jsonObject2);
+            }
 
-            return AjaxResult.success("获取成功", jsonObject);
+            return AjaxResult.success("获取成功", list);
         }catch (Exception e){
             e.printStackTrace();
             return AjaxResult.error("获取失败，请联系管理员", e.getMessage());
@@ -307,6 +317,7 @@ public class ManagerLetterServiceImpl extends ServiceImpl<ManagerLetterMapper, M
                 box.setToId(letter.getFromId());
                 box.setCreateDate(new Date());
                 box.setRealReply(replyLetter.getUserId());
+                box.setObject(letter.getObject());
                 replyList.add(box);
             }
             saveBatch(replyList);
