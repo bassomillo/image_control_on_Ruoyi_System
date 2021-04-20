@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -126,6 +127,7 @@ public class ChairmanLetterBox extends Model<ChairmanLetterBox> {
      */
     @TableField("createDate")
     @ApiModelProperty(value = "创建时间，不必填")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createDate;
 
     /**

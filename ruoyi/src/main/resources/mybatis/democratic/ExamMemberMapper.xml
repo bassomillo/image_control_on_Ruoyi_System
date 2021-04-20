@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.democratic.mapper.ExamMemberMapper">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, userId, tel, examId
+    </sql>
+
+    <select id="selectMemberInfo" resultType="com.ruoyi.project.democratic.entity.VO.MemberInfoVO">
+        select u.id, up.truename, up.employmentForm, up.mobile
+        from user u
+        inner join user_profile up on (
+            up.id = u.id
+            <if test="name != null and name != ''">
+                and up.truename like concat('%', #{name}, '%') escape '/'
+            </if>
+            <if test="employmentForm != null and employmentForm != ''">
+                and up.employmentForm like concat('%', #{employmentForm}, '%') escape '/'
+            </if>
+            <if test="mobile != null and mobile != ''">
+                and up.mobile like concat('%', #{mobile}, '%') escape '/'
+            </if>
+        )
+        <where>
+            u.locked = 0
+            <if test="idList.size() != 0">
+                and u.id in
+                <foreach collection="idList" item="id" index="index" separator="," open="(" close=")">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+        order by u.id desc
+    </select>
+
+</mapper>
