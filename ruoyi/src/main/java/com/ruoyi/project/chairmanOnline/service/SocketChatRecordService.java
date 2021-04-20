@@ -1,5 +1,6 @@
 package com.ruoyi.project.chairmanOnline.service;
 
+import com.ruoyi.project.chairmanOnline.entity.QO.SocketChatRecordQO;
 import com.ruoyi.project.chairmanOnline.entity.SocketChatRecord;
 
 import java.util.List;
@@ -54,6 +55,15 @@ public interface SocketChatRecordService {
     boolean deleteById(Integer id);
 
 
+    /**
+     * 查询聊天记录
+     *
+     *@Author
+     *@description
+     *@param
+     *
+     **/
+
     List<SocketChatRecord> queryChatRecord(Integer senderId, Integer receiverId);
 
     /**
@@ -72,5 +82,13 @@ public interface SocketChatRecordService {
      */
 
     int insertOrUpdateRecord(SocketChatRecord socketChatRecord);
+
+    /**
+     * 自定义条件搜索聊天记录
+     *
+     * @param
+     * @return
+     */
+    List<SocketChatRecord> selectChatRecordsByCondition(SocketChatRecordQO socketChatRecordQO);
 
 }

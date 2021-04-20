@@ -1,5 +1,7 @@
 package com.ruoyi.project.chairmanOnline.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
@@ -57,28 +59,34 @@ public class SocketChatRecord implements Serializable {
     /**
      * 聊天记录类型：1:'document',2:'video',3:'audio',4:'image',5:'other',6:'flash',7:'text'
      */
+    @ApiModelProperty(example = " 聊天记录类型：1:'document',2:'video',3:'audio',4:'image',5:'other',6:'flash',7:'text'")
     private Integer type;
     /**
      * 创建时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createdtime;
     /**
      * 是否删除
      */
-    private Object isdelete;
+    private Integer isdelete;
     /**
      * 所属话题
      */
-    private Object topic;
+    private Integer topic;
     /**
      * 是否已读
      */
-    private Object isread;
+    private Integer isread;
     /**
      * 是否发送到对方客户端
      */
-    private Object issent;
+    private Integer issent;
 
+
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
 
     public Integer getId() {
         return id;
@@ -176,36 +184,35 @@ public class SocketChatRecord implements Serializable {
         this.createdtime = createdtime;
     }
 
-    public Object getIsdelete() {
+    public Integer getIsdelete() {
         return isdelete;
     }
 
-    public void setIsdelete(Object isdelete) {
+    public void setIsdelete(Integer isdelete) {
         this.isdelete = isdelete;
     }
 
-    public Object getTopic() {
+    public Integer getTopic() {
         return topic;
     }
 
-    public void setTopic(Object topic) {
+    public void setTopic(Integer topic) {
         this.topic = topic;
     }
 
-    public Object getIsread() {
+    public Integer getIsread() {
         return isread;
     }
 
-    public void setIsread(Object isread) {
+    public void setIsread(Integer isread) {
         this.isread = isread;
     }
 
-    public Object getIssent() {
+    public Integer getIssent() {
         return issent;
     }
 
-    public void setIssent(Object issent) {
+    public void setIssent(Integer issent) {
         this.issent = issent;
     }
-
 }

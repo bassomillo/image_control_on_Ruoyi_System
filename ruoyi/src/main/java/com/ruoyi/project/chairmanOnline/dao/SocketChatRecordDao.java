@@ -1,5 +1,6 @@
 package com.ruoyi.project.chairmanOnline.dao;
 
+import com.ruoyi.project.chairmanOnline.entity.QO.SocketChatRecordQO;
 import com.ruoyi.project.chairmanOnline.entity.SocketChatRecord;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -90,6 +91,13 @@ public interface SocketChatRecordDao {
      */
     List<SocketChatRecord> queryChatRecord(@Param("senderId")Integer senderId,@Param("receiverId")Integer receiverId);
 
+    /**
+     * 自定义条件查询聊天记录
+     *
+     * @param
+     * @return 对象列表
+     */
 
+    List<SocketChatRecord> selectChatRecordsByCondition(SocketChatRecordQO socketChatRecordQO);
 }
 
