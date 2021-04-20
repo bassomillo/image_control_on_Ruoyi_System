@@ -29,33 +29,32 @@ public class SocketChatRecordController {
     private SocketChatRecordService socketChatRecordService;
 
 
-
-    @ApiOperation("根据会话id查询对话的聊天记录，总经理、咨询师可用")
+    @ApiOperation("总经理、咨询师查询聊天记录,按时间降序")
     @PostMapping("selectChatRecords")
     public AjaxResult selectChatRecords(Integer conversionId,
                                         @RequestParam(required = false, defaultValue = "1") int pageNum,
                                         @RequestParam(required = false, defaultValue = "10") int pageSize) {
         SocketChatRecord socketChatRecordQM = new SocketChatRecord();
         socketChatRecordQM.setConversationid(conversionId);
-        return AjaxResult.success(this.socketChatRecordService.queryAll(socketChatRecordQM,pageNum,pageSize));
+        return AjaxResult.success(this.socketChatRecordService.queryAll(socketChatRecordQM, pageNum, pageSize));
     }
 
-    @ApiOperation("用户查询对话聊天记录")
+    @ApiOperation("普通用户查询聊天记录,按时间降序")
     @PostMapping("selectChatRecordsWithChairmanId")
-    public AjaxResult selectChatRecordsWithChairmanId(Integer userId, int chairmanIdOrcounselorId,
+    public AjaxResult selectChatRecordsWithChairmanId(@RequestParam Integer userId, @RequestParam(name = "总经理或者咨询师id") int chairmanIdOrcounselorId,
                                                       @RequestParam(required = false, defaultValue = "1") int pageNum,
                                                       @RequestParam(required = false, defaultValue = "10") int pageSize) {
         int chairmanId = 111111;
-        return AjaxResult.success(this.socketChatRecordService.queryChatRecord(userId, chairmanIdOrcounselorId,pageNum,pageSize));
+        return AjaxResult.success(this.socketChatRecordService.queryChatRecord(userId, chairmanIdOrcounselorId, pageNum, pageSize));
     }
 
 
-    @ApiOperation("聊天记录搜索")
+    @ApiOperation("聊天记录搜索,按时间降序")
     @PostMapping("selectChatRecordsByCondition")
     public AjaxResult selectChatRecordsByCondition(@RequestBody SocketChatRecordQO socketChatRecordQO,
                                                    @RequestParam(required = false, defaultValue = "1") int pageNum,
                                                    @RequestParam(required = false, defaultValue = "10") int pageSize) {
-        return AjaxResult.success(this.socketChatRecordService.selectChatRecordsByCondition(socketChatRecordQO,pageNum,pageSize));
+        return AjaxResult.success(this.socketChatRecordService.selectChatRecordsByCondition(socketChatRecordQO, pageNum, pageSize));
     }
 
 }

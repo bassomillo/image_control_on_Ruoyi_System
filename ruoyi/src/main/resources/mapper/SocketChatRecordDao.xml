@@ -197,7 +197,7 @@
         OR ( senderId = #{receiverId} AND receiverId = #{senderId} )
         AND isDelete = 0
     ORDER BY
-	  createdTime ASC
+	  createdTime desc
     </select>
 
 
