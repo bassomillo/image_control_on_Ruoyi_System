@@ -1,6 +1,7 @@
 package com.ruoyi.project.chairmanOnline.service.impl;
 
 import com.ruoyi.project.chairmanOnline.dao.SocketChatRecordDao;
+import com.ruoyi.project.chairmanOnline.entity.QO.SocketChatRecordQO;
 import com.ruoyi.project.chairmanOnline.entity.SocketChatRecord;
 import com.ruoyi.project.chairmanOnline.service.SocketChatRecordService;
 import org.springframework.stereotype.Service;
@@ -92,10 +93,10 @@ public class SocketChatRecordServiceImpl implements SocketChatRecordService {
     }
 
     /**
-     * 通过主键删除数据
+     * 查询未发送信息
      *
-     * @param userid 用户id  ， socketChatRecordQM 查询条件
-     * @return 是否成功
+     * @param
+     * @return
      */
 
     @Override
@@ -109,7 +110,7 @@ public class SocketChatRecordServiceImpl implements SocketChatRecordService {
     /**
      * 聊天记录插入或者更新
      *
-     * @param userid 用户id  ， socketChatRecordQM 查询条件
+     * @param socketChatRecord 消息
      * @return 是否成功
      */
 
@@ -119,5 +120,11 @@ public class SocketChatRecordServiceImpl implements SocketChatRecordService {
         socketChatRecords.add(socketChatRecord);
         return  socketChatRecordDao.insertOrUpdateBatch(socketChatRecords);
     }
+
+    @Override
+    public List<SocketChatRecord> selectChatRecordsByCondition(SocketChatRecordQO socketChatRecordQO) {
+        return socketChatRecordDao.selectChatRecordsByCondition(socketChatRecordQO);
+    }
+
 
 }

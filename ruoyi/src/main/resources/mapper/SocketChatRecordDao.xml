@@ -92,7 +92,7 @@
             <if test="issent != null">
                 and isSent = #{issent}
             </if>
-        </where>
+        </where> order by createdTime desc
     </select>
 
     <!--新增所有列-->
@@ -200,5 +200,36 @@
 	  createdTime ASC
     </select>
 
+
+    <!--自定义条件，聊天记录搜索-->
+    <select id="selectChatRecordsByCondition" resultMap="SocketChatRecordMap">
+        select
+        id, conversationId, senderId, receiverId, content, isReply, tagId, module, expired, isShow, type, createdTime,
+        isDelete, topic, isRead, isSent
+        from zhgh_new_test.socket_chat_record
+        <where>
+            <if test="conversationid != null">
+                and conversationId = #{conversationid}
+            </if>
+            <if test="senderid != null">
+                and senderId = #{senderid}
+            </if>
+            <if test="receiverid != null">
+                and receiverId = #{receiverid}
+            </if>
+            <if test="content != null and content != ''">
+                and content like concat('%',#{content,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="topic != null">
+                and topic = #{topic}
+            </if>
+            <if test="starttime != null">
+                and createdTime <![CDATA[>=]]> #{starttime}
+            </if>
+            <if test="endtime != null">
+                and createdTime <![CDATA[<=]]> #{endtime}
+            </if>
+        </where> order by createdTime desc
+    </select>
 </mapper>
 

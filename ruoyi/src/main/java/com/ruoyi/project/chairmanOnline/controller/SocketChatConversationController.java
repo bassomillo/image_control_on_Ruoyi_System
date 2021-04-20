@@ -1,5 +1,6 @@
 package com.ruoyi.project.chairmanOnline.controller;
 
+import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.project.chairmanOnline.dao.SocketChatConversationDao;
 import com.ruoyi.project.chairmanOnline.entity.SocketChatConversation;
 import com.ruoyi.project.chairmanOnline.service.SocketChatConversationService;
@@ -29,16 +30,16 @@ public class SocketChatConversationController {
 
 
     @ApiOperation("获取当前用户的所有对话")
-    @GetMapping("selectConversation")
-    public List<SocketChatConversation> queryConversation(Integer userId) {
-        return this.socketChatConversationService.queryConversation(userId);
+    @PostMapping("selectConversation")
+    public AjaxResult queryConversation(Integer userId) {
+        return AjaxResult.success(this.socketChatConversationService.queryConversation(userId));
     }
 
 
     @ApiOperation("删除对话")
-    @GetMapping("deleteConversation")
-    public Boolean deleteConversation(Integer conversationid) {
-        return this.socketChatConversationService.deleteById(conversationid);
+    @PostMapping("deleteConversation")
+    public AjaxResult deleteConversation(Integer conversationid) {
+        return AjaxResult.success(this.socketChatConversationService.deleteById(conversationid));
     }
 
 }
