@@ -57,7 +57,7 @@ public interface SocketChatConversationService {
 
     int insertOrUpdate(SocketChatConversation socketChatConversation);
 
-    List<SocketChatConversation> queryConversation(int userId);
+    List<SocketChatConversation> queryConversation(int userId,int pageNum,int pageSize);
 
     int createConversation(SocketChatRecord socketChatRecord);
 

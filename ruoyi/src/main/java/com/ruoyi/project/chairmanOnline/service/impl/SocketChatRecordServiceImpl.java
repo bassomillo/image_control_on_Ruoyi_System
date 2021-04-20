@@ -1,5 +1,6 @@
 package com.ruoyi.project.chairmanOnline.service.impl;
 
+import com.github.pagehelper.PageHelper;
 import com.ruoyi.project.chairmanOnline.dao.SocketChatRecordDao;
 import com.ruoyi.project.chairmanOnline.entity.QO.SocketChatRecordQO;
 import com.ruoyi.project.chairmanOnline.entity.SocketChatRecord;
@@ -40,8 +41,9 @@ public class SocketChatRecordServiceImpl implements SocketChatRecordService {
      * @return 对象列表
      */
     @Override
-    public List<SocketChatRecord> queryAllByLimit(int offset, int limit) {
-        return this.socketChatRecordDao.queryAllByLimit(offset, limit);
+    public List<SocketChatRecord> queryAll(SocketChatRecord socketChatRecord,int pageNum, int pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        return this.socketChatRecordDao.queryAll(socketChatRecord);
     }
 
     /**
@@ -83,13 +85,14 @@ public class SocketChatRecordServiceImpl implements SocketChatRecordService {
     /**
      * 查询聊天记录
      *
-     * @param id 主键
+     * @param
      * @return 是否成功
      */
 
     @Override
-    public List<SocketChatRecord> queryChatRecord(Integer fromId, Integer toId) {
-        return this.socketChatRecordDao.queryChatRecord(fromId,toId);
+    public List<SocketChatRecord> queryChatRecord(Integer senderId, Integer recriverId,int pageNum,int pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        return this.socketChatRecordDao.queryChatRecord(senderId,recriverId);
     }
 
     /**
@@ -122,7 +125,8 @@ public class SocketChatRecordServiceImpl implements SocketChatRecordService {
     }
 
     @Override
-    public List<SocketChatRecord> selectChatRecordsByCondition(SocketChatRecordQO socketChatRecordQO) {
+    public List<SocketChatRecord> selectChatRecordsByCondition(SocketChatRecordQO socketChatRecordQO,int pageNum,int pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
         return socketChatRecordDao.selectChatRecordsByCondition(socketChatRecordQO);
     }
 

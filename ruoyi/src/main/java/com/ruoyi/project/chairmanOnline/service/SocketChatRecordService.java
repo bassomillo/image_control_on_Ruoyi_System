@@ -22,13 +22,11 @@ public interface SocketChatRecordService {
     SocketChatRecord queryById(Integer id);
 
     /**
-     * 查询多条数据
+     * 条件查询
      *
-     * @param offset 查询起始位置
-     * @param limit  查询条数
      * @return 对象列表
      */
-    List<SocketChatRecord> queryAllByLimit(int offset, int limit);
+    List<SocketChatRecord> queryAll(SocketChatRecord socketChatRecord,int pageNum, int pageSize);
 
     /**
      * 新增数据
@@ -64,7 +62,7 @@ public interface SocketChatRecordService {
      *
      **/
 
-    List<SocketChatRecord> queryChatRecord(Integer senderId, Integer receiverId);
+    List<SocketChatRecord> queryChatRecord(Integer senderId, Integer receiverId,int pageNum,int pageSize);
 
     /**
      * 查询未读信息
@@ -89,6 +87,6 @@ public interface SocketChatRecordService {
      * @param
      * @return
      */
-    List<SocketChatRecord> selectChatRecordsByCondition(SocketChatRecordQO socketChatRecordQO);
+    List<SocketChatRecord> selectChatRecordsByCondition(SocketChatRecordQO socketChatRecordQO,int pageNum,int pageSize);
 
 }

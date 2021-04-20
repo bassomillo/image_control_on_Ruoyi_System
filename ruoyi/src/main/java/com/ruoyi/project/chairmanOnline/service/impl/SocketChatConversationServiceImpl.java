@@ -1,5 +1,6 @@
 package com.ruoyi.project.chairmanOnline.service.impl;
 
+import com.github.pagehelper.PageHelper;
 import com.ruoyi.project.chairmanOnline.dao.SocketChatConversationDao;
 import com.ruoyi.project.chairmanOnline.entity.SocketChatConversation;
 import com.ruoyi.project.chairmanOnline.entity.SocketChatRecord;
@@ -111,7 +112,8 @@ public class SocketChatConversationServiceImpl implements SocketChatConversation
      * @description 查询用户所有对话
      **/
     @Override
-    public List<SocketChatConversation> queryConversation(int userId) {
+    public List<SocketChatConversation> queryConversation(int userId,int pageNum,int pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
         return SocketChatConversationDao.queryConversationByUserId(userId);
 
     }

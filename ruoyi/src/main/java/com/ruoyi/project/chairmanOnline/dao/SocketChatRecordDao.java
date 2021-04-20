@@ -99,5 +99,6 @@ public interface SocketChatRecordDao {
      */
 
     List<SocketChatRecord> selectChatRecordsByCondition(SocketChatRecordQO socketChatRecordQO);
+
 }
 
