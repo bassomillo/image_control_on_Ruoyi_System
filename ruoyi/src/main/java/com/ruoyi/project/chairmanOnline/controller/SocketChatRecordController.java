@@ -1,5 +1,6 @@
 package com.ruoyi.project.chairmanOnline.controller;
 
+import com.ruoyi.common.utils.file.FileUploadUtils;
 import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.project.chairmanOnline.dao.SocketChatRecordDao;
 import com.ruoyi.project.chairmanOnline.entity.QO.SocketChatRecordQO;
@@ -8,8 +9,10 @@ import com.ruoyi.project.chairmanOnline.service.SocketChatRecordService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -55,6 +58,12 @@ public class SocketChatRecordController {
                                                    @RequestParam(required = false, defaultValue = "1") int pageNum,
                                                    @RequestParam(required = false, defaultValue = "10") int pageSize) {
         return AjaxResult.success(this.socketChatRecordService.selectChatRecordsByCondition(socketChatRecordQO, pageNum, pageSize));
+    }
+
+    @ApiOperation("文件上传")
+    @PostMapping("upload")
+    public AjaxResult upload(MultipartFile file) throws IOException {
+        return AjaxResult.success(FileUploadUtils.upload(file));
     }
 
 }

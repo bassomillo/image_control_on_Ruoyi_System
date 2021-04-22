@@ -1,7 +1,6 @@
-package com.ruoyi.project.chairmanOnline.controller;
+package com.ruoyi.project.chairmanOnline.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.ruoyi.project.chairmanOnline.entity.SocketChatConversation;
 import com.ruoyi.project.chairmanOnline.entity.SocketChatRecord;
 import com.ruoyi.project.chairmanOnline.entity.VO.WebSocketSystemMessageVO;
 import com.ruoyi.project.chairmanOnline.service.SocketChatConversationService;
