@@ -54,6 +54,13 @@ public class ExamOption extends Model<ExamOption> {
     private String imgUrl;
 
     /**
+     * 选项图片id
+     */
+    @TableField("imgId")
+    @ApiModelProperty(value = "选项图片id")
+    private Integer imgId;
+
+    /**
      * 答案，0否，1是
      */
     @TableField("isAnswer")
@@ -68,6 +75,8 @@ public class ExamOption extends Model<ExamOption> {
     public static final String CONTENT = "content";
 
     public static final String IMGURL = "imgUrl";
+
+    public static final String IMGID = "imgId";
 
     public static final String ISANSWER = "isAnswer";
 

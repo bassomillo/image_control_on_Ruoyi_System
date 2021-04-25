@@ -44,7 +44,7 @@ public class Exam extends Model<Exam> {
     /**
      * 描述
      */
-    @ApiModelProperty(value = "描述")
+    @ApiModelProperty(value = "描述，传输时记得转义引号，否则接收不到")
     private String description;
 
     /**
@@ -53,6 +53,13 @@ public class Exam extends Model<Exam> {
     @TableField("coverUrl")
     @ApiModelProperty(value = "封面地址")
     private String coverUrl;
+
+    /**
+     * 封面id
+     */
+    @TableField("coverId")
+    @ApiModelProperty(value = "封面id，有封面上传时必填")
+    private Integer coverId;
 
     /**
      * 置顶1，0不置顶
@@ -145,7 +152,6 @@ public class Exam extends Model<Exam> {
     @ApiModelProperty(value = "是否展示（用作判断是否被删除），1是，0否")
     private Integer isShow;
 
-
     public static final String ID = "id";
 
     public static final String TITLE = "title";
@@ -153,6 +159,8 @@ public class Exam extends Model<Exam> {
     public static final String DESCRIPTION = "description";
 
     public static final String COVERURL = "coverUrl";
+
+    public static final String COVERID = "coverId";
 
     public static final String STICKY = "sticky";
 
