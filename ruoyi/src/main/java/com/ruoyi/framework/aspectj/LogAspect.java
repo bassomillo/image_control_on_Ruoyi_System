@@ -4,6 +4,9 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.ruoyi.project.union.entity.User;
+import com.ruoyi.project.union.service.LoginTokenService;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -82,7 +85,8 @@ public class LogAspect
             }
 
             // 获取当前的用户
-            LoginUser loginUser = SpringUtils.getBean(TokenService.class).getLoginUser(ServletUtils.getRequest());
+//            LoginUser loginUser = SpringUtils.getBean(TokenService.class).getLoginUser(ServletUtils.getRequest());
+            User loginUser = SpringUtils.getBean(LoginTokenService.class).getLoginUser(ServletUtils.getRequest());
 
             // *========数据库日志=========*//
             SysOperLog operLog = new SysOperLog();
@@ -96,7 +100,7 @@ public class LogAspect
             operLog.setOperUrl(ServletUtils.getRequest().getRequestURI());
             if (loginUser != null)
             {
-                operLog.setOperName(loginUser.getUsername());
+                operLog.setOperName(loginUser.getNickname());
             }
 
             if (e != null)

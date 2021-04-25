@@ -4,7 +4,9 @@ import cn.hutool.core.util.EscapeUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ruoyi.common.utils.ServletUtils;
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.common.utils.spring.SpringUtils;
 import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.project.auth.entity.Role;
 import com.ruoyi.project.auth.mapper.RoleDao;
@@ -22,7 +24,9 @@ import com.ruoyi.project.system.mapper.SysRoleMenuMapper;
 import com.ruoyi.project.system.mapper.SysUserRoleMapper;
 import com.ruoyi.project.system.service.impl.SysMenuServiceImpl;
 import com.ruoyi.project.tool.Str;
+import com.ruoyi.project.union.entity.User;
 import com.ruoyi.project.union.mapper.UserDao;
+import com.ruoyi.project.union.service.LoginTokenService;
 import org.phprpc.util.AssocArray;
 import org.phprpc.util.Cast;
 import org.phprpc.util.PHPSerializer;
@@ -113,13 +117,13 @@ public class RoleServiceImpl extends ServiceImpl<RoleDao, Role> implements IRole
     public AjaxResult createRole(RoleCreatePojo roleCreatePojo) {
 //        long currentTime = System.currentTimeMillis() / 1000;
 
+        User loginUser = SpringUtils.getBean(LoginTokenService.class).getLoginUser(ServletUtils.getRequest());
+        roleCreatePojo.getSysRole().setCreateBy(loginUser.getNickname());
         // 处理各类不能为空的字段
         if(null == roleCreatePojo.getSysRole().getRoleSort())
             roleCreatePojo.getSysRole().setRoleSort("1");
         if(null == roleCreatePojo.getSysRole().getStatus())
             roleCreatePojo.getSysRole().setStatus("0");
-        if(null == roleCreatePojo.getSysRole().getCreateBy())
-            roleCreatePojo.getSysRole().setCreateBy("系统管理员");
         if(null == roleCreatePojo.getSysRole().getCreateTime())
             roleCreatePojo.getSysRole().setCreateTime(Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()));
         if(null == roleCreatePojo.getSysRole().getRemark())

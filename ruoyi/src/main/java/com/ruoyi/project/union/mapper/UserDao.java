@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ruoyi.project.union.entity.vo.AccountSearchVo;
 import com.ruoyi.project.union.entity.vo.UserSearchPojo;
 import com.ruoyi.project.union.entity.vo.UserVo;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -21,6 +22,8 @@ import java.util.List;
  */
 @Repository
 public interface UserDao extends BaseMapper<User> {
+
+    User getLoginUser(@Param("username") String username);
 
     List<Integer> searchUser(UserSearchPojo userSearchPojo);
 

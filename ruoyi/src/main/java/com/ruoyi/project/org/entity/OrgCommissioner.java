@@ -33,14 +33,14 @@ public class OrgCommissioner extends Model<OrgCommissioner> {
     private Integer id;
 
     @TableField("orgId")
-    @ApiModelProperty(value = "组织机构id")
+    @ApiModelProperty(value = "组织机构id，必填")
     private Integer orgId;
 
     @TableField("userId")
-    @ApiModelProperty(value = "用户id（机构委员）")
+    @ApiModelProperty(value = "用户id（机构委员），必填")
     private Integer userId;
 
-    @ApiModelProperty(value = "机构职位")
+    @ApiModelProperty(value = "机构职位，必填")
     private String position;
 
     @TableField("createdTime")

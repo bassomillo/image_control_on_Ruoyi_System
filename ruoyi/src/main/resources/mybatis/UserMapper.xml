@@ -7,6 +7,12 @@
         id, verifiedMobile, password, salt, payPassword, payPasswordSalt, locale, uri, nickname, title, tags, type, point, coin, smallAvatar, mediumAvatar, largeAvatar, emailVerified, setup, roles, promoted, promotedSeq, promotedTime, locked, lockDeadline, consecutivePasswordErrorTimes, lastPasswordFailTime, loginTime, loginIp, loginSessionId, approvalTime, approvalStatus, newMessageNum, newNotificationNum, createdIp, createdTime, updatedTime, inviteCode, orgId, orgCode, registeredWay, bindStatus, confirmTime, email, signatureImg
     </sql>
 
+    <select id="getLoginUser" resultType="com.ruoyi.project.union.entity.User">
+        SELECT * FROM user u
+        left join user_profile up on u.id = up.id
+        where u.nickname = #{username} or up.mobile = #{username} or up.email = #{username}
+    </select>
+
     <select id="searchUser" parameterType="com.ruoyi.project.union.entity.vo.UserSearchPojo" resultType="java.lang.Integer">
         select u.id
         from user as u
@@ -72,7 +78,11 @@
     <select id="searchOrgUser" parameterType="com.ruoyi.project.org.entity.pojo.OrgUserSearchPojo" resultType="com.ruoyi.project.org.entity.pojo.UserShowPojo">
         select u.id as id, u.nickname as nickname, up.truename as truename, u.email as email, up.mobile as mobile, u.smallAvatar from user u
         left join user_profile up on u.id = up.id
-        where CONCAT_WS(u.nickname, up.truename, u.email, up.mobile) like concat('%', #{msg}, '%') limit #{current}, #{size}
+        where 1 = 1
+        <if test="msg != null">
+            and CONCAT_WS(u.nickname, up.truename, u.email, up.mobile) like concat('%', #{msg}, '%')
+        </if>
+        limit #{current}, #{size}
     </select>
 
     <select id="searchAccount" parameterType="com.ruoyi.project.union.entity.vo.AccountSearchVo" resultType="com.ruoyi.project.union.entity.vo.UserVo">
@@ -82,10 +92,10 @@
         up.truename as truename,
         up.mobile as mobile,
         u.orgId as orgId
-        from user as u
+        from sys_user_role as sur
+        left join user as u on u.id = sur.user_id
         left join user_profile as up on u.id = up.id
-        left join sys_user_role as sur on u.id = sur.user_id
-        where 1 = 1
+        where sur.role_id != 1
         <if test="orgId != null and orgId != ''">
             and u.orgId = #{orgId}
         </if>
