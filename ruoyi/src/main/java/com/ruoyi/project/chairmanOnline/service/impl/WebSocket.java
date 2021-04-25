@@ -162,6 +162,13 @@ public class WebSocket {
         //创建对话，对话发生时记录信息,对话如果已存在则更新
         int conversationId = socketChatConversationService.createConversation(socketChatRecord);
 
+        if(socketChatRecord.getIssent() == 0){
+            //每条聊天信息都记录到数据库。补推时聊天记录已存在则为更新。写入数据库,可能有并发问题
+            logger.info("将首次收到的聊天记录写入数据库");
+            socketChatRecord.setConversationid(conversationId);
+            socketChatRecordService.insertOrUpdateRecord(socketChatRecord);
+        }
+
         for (WebSocket item : clients.values()) {
 
             if (item.userId.equals(socketChatRecord.getReceiverid())) {
@@ -170,14 +177,11 @@ public class WebSocket {
                 //成功发送到对方客户端，更改
                 socketChatRecord.setIssent(1);
                 socketChatRecord.setCreatedtime(new Date());
+                socketChatRecordService.update(socketChatRecord);
 //                break;
             }
         }
 
-        //每条聊天信息都记录到数据库。补推时聊天记录已存在则为更新。写入数据库,可能有并发问题
-        logger.info("将聊天记录写入数据库");
-        socketChatRecord.setConversationid(conversationId);
-        socketChatRecordService.insertOrUpdateRecord(socketChatRecord);
     }
 
     public void sendMessageAll(WebSocketSystemMessageVO webSocketSystemMessageVO) throws IOException {

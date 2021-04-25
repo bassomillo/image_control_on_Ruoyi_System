@@ -142,6 +142,8 @@ public class SocketChatConversationServiceImpl implements SocketChatConversation
             //会话已存在刷新一下isDelete为0
             SocketChatConversation conversation = socketChatConversations.get(0);
             conversation.setIsdelete(0);
+            //会话内容加1
+            conversation.setMessagenum(conversation.getMessagenum()+1);
             this.update(conversation);
             return socketChatConversations.get(0).getId();
         }
