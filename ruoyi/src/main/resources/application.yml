@@ -87,7 +87,7 @@ token:
 
 # MyBatis配置
 mybatis-plus:
-  mapper-locations: classpath*:mybatis/**/*Mapper.xml
+  mapper-locations: classpath*:mybatis/**/*Mapper.xml,classpath*:mapper/*Dao.xml
   #实体扫描，多个package用逗号或者分号分隔
   typeAliasesPackage: com.ruoyi.project
   # 用于自定义的代码生成

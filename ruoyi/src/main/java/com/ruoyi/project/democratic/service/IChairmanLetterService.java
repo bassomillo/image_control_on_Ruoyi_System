@@ -2,8 +2,8 @@ package com.ruoyi.project.democratic.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ruoyi.framework.web.domain.AjaxResult;
+import com.ruoyi.project.democratic.entity.ChairmanLetterBox;
 import com.ruoyi.project.democratic.entity.DO.ReplyLetterDO;
-import com.ruoyi.project.democratic.entity.ManagerLetterBox;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,48 +12,48 @@ import java.util.List;
 
 /**
  * <p>
- * 总经理信箱 服务类
+ * 主席信箱表 服务类
  * </p>
  *
  * @author cxr
- * @since 2021-04-02
+ * @since 2021-04-12
  */
-public interface ManagerLetterService extends IService<ManagerLetterBox> {
+public interface IChairmanLetterService extends IService<ChairmanLetterBox> {
 
     /**
-     * 首页-获取总经理信息
+     * 获取写信对象id
      * @param userId
      * @return
      */
     AjaxResult getLetterMan(Integer userId);
 
     /**
-     * 首页-发送信件
+     * 发送信件
      * @param letterBox
      * @return
      */
-    AjaxResult insertManagerLetter(ManagerLetterBox letterBox);
+    AjaxResult insertChairmanLetter(ChairmanLetterBox letterBox);
 
     /**
-     * 首页-查询回复记录列表
+     * 查询首页信件列表
      * @param userId
      * @param pageNum
      * @param pageSize
      * @return
      */
-    AjaxResult getTopManagerList(Integer userId,
-                                 Integer pageNum,
-                                 Integer pageSize);
+    AjaxResult getTopChairmanList(Integer userId,
+                                  Integer pageNum,
+                                  Integer pageSize);
 
     /**
-     * 根据单个记录id查详情
+     * 查询记录详情
      * @param id
      * @return
      */
-    AjaxResult getManagerDetailById(Integer id);
+    AjaxResult getChairmanDetailById(Integer id);
 
     /**
-     * 评价回复
+     * 首页回复评价
      * @param evaluate
      * @param evaluateContent
      * @param requireId
@@ -64,7 +64,7 @@ public interface ManagerLetterService extends IService<ManagerLetterBox> {
                         Integer requireId);
 
     /**
-     * 后台-条件查询
+     * 后台条件查询列表
      * @param content
      * @param year
      * @param userId
@@ -79,7 +79,7 @@ public interface ManagerLetterService extends IService<ManagerLetterBox> {
                                  Integer pageSize);
 
     /**
-     * 后台批量删除信件
+     * 后台批量删除
      * @param idList
      * @return
      */

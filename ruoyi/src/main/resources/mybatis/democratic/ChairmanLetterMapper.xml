@@ -39,4 +39,39 @@
         order by clb.createDate desc
     </select>
 
+    <select id="getExportData" resultType="com.ruoyi.project.democratic.entity.DO.ManageExportDO">
+        select clb.id as letterId, up1.truename as fromName, u1.orgId, clb.createDate as date, up2.truename as toName,
+            clb.receiver as object, clb.content
+        from chairman_letter_box clb
+            left join user u1 on (u1.id = clb.fromId)
+            left join user_profile up1 on (up1.id = u1.id)
+            left join org o on (
+                o.id = u1.orgId
+                <if test="isAdmin == 2">
+                    <if test="intList.size() == 0">
+                        and o.id is null
+                    </if>
+                    <if test="intList.size() != 0">
+                        and
+                        <foreach collection="intList" index="index" item="i" separator="or" open="(" close=")">
+                            o.orgCode like concat('%', #{i}, '%')
+                        </foreach>
+                    </if>
+                </if>
+            )
+            left join user u2 on (u2.id = clb.toId)
+            left join user_profile up2 on (up2.id = u2.id)
+        <where>
+            clb.isShow = 1
+            and clb.parentId = 0
+            <if test="content != null and content != ''">
+                and clb.content like concat('%', #{content}, '%') escape '/'
+            </if>
+            <if test="year != null">
+                and left(clb.createDate, 4) = #{year}
+            </if>
+        </where>
+        order by clb.createDate desc
+    </select>
+
 </mapper>

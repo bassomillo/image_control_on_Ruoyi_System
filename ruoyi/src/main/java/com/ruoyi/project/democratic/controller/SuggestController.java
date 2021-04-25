@@ -2,7 +2,7 @@ package com.ruoyi.project.democratic.controller;
 
 import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.project.democratic.entity.SuggestBox;
-import com.ruoyi.project.democratic.service.SuggestService;
+import com.ruoyi.project.democratic.service.ISuggestService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -32,13 +32,13 @@ import java.util.List;
 public class SuggestController {
 
     @Autowired
-    private SuggestService suggestService;
+    private ISuggestService ISuggestService;
 
     @ApiOperation(value = "首页-提供建议", httpMethod = "POST")
     @PostMapping("/insertSuggest")
     public AjaxResult insertSuggest(@RequestBody SuggestBox suggest){
 
-        return suggestService.insertSuggest(suggest);
+        return ISuggestService.insertSuggest(suggest);
     }
 
     @ApiOperation(value = "首页-查找回复记录列表")
@@ -52,7 +52,7 @@ public class SuggestController {
                                         @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
                                         @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize){
 
-        return suggestService.getTopSuggestList(userId, pageNum, pageSize);
+        return ISuggestService.getTopSuggestList(userId, pageNum, pageSize);
     }
 
     @ApiOperation(value = "首页/后台-根据id查找单个记录详情")
@@ -62,7 +62,7 @@ public class SuggestController {
     @PostMapping("/getSuggestDetailById")
     public AjaxResult getSuggestDetailById(@RequestParam("id") Integer id){
 
-        return suggestService.getSuggestDetailById(id);
+        return ISuggestService.getSuggestDetailById(id);
     }
 
     @ApiOperation(value = "后台-条件查询建言列表")
@@ -78,14 +78,14 @@ public class SuggestController {
                                          @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
                                          @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize){
 
-        return suggestService.getBackSuggestList(content, year, pageNum, pageSize);
+        return ISuggestService.getBackSuggestList(content, year, pageNum, pageSize);
     }
 
     @ApiOperation(value = "后台-批量删除建言")
     @PostMapping("/deleteSuggest")
     public AjaxResult deleteSuggest(@RequestBody List<Integer> idList){
 
-        return suggestService.deleteSuggest(idList);
+        return ISuggestService.deleteSuggest(idList);
     }
 
     @ApiOperation(value = "后台-回复")
@@ -99,7 +99,7 @@ public class SuggestController {
                                    @RequestParam("suggestId") Integer suggestId,
                                    @RequestParam("userId") Integer userId){
 
-        return suggestService.replySuggest(content, suggestId, userId);
+        return ISuggestService.replySuggest(content, suggestId, userId);
     }
 
     @ApiOperation(value = "首页-上传文件")
@@ -107,21 +107,21 @@ public class SuggestController {
     public AjaxResult uploadSuggestFile(MultipartFile file,
                                         @RequestParam("userId") Integer userId){
 
-        return suggestService.uploadSuggestFile(file, userId);
+        return ISuggestService.uploadSuggestFile(file, userId);
     }
 
     @ApiOperation(value = "首页-删除文件")
     @PostMapping("/deleteFile")
     public AjaxResult deleteFile(@RequestParam("id") Integer id){
 
-        return suggestService.deleteFile(id);
+        return ISuggestService.deleteFile(id);
     }
 
     @ApiOperation(value = "首页/后台-下载文件")
     @PostMapping("/downloadFile")
     public AjaxResult downloadFile(@RequestParam("id") Integer id,
                              HttpServletResponse response){
-        return suggestService.downloadFile(id, response);
+        return ISuggestService.downloadFile(id, response);
     }
 
     @ApiOperation(value = "后台-批量导出")
@@ -134,6 +134,6 @@ public class SuggestController {
                        @RequestParam(value = "year", required = false) Integer year,
                        HttpServletResponse response,
                        HttpServletRequest request){
-        return suggestService.export(content, year, response, request);
+        return ISuggestService.export(content, year, response, request);
     }
 }
