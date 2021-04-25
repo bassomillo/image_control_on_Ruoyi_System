@@ -60,6 +60,13 @@ public class ExamQuestion extends Model<ExamQuestion> {
     @ApiModelProperty(value = "题目图片地址")
     private String imgUrl;
 
+    /**
+     * 题目图片id
+     */
+    @TableField("imgId")
+    @ApiModelProperty(value = "题目图片id")
+    private Integer imgId;
+
     @TableField(exist = false)
     @ApiModelProperty(value = "选项列表")
     private List<ExamOption> optionList;
@@ -74,6 +81,8 @@ public class ExamQuestion extends Model<ExamQuestion> {
     public static final String CONTENT = "content";
 
     public static final String IMGURL = "imgUrl";
+
+    public static final String IMGID = "imgId";
 
     @Override
     protected Serializable pkVal() {

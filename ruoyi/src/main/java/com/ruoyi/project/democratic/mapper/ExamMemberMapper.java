@@ -29,4 +29,24 @@ public interface ExamMemberMapper extends BaseMapper<ExamMember> {
                                         @Param("name") String name,
                                         @Param("employmentForm") String employmentForm,
                                         @Param("mobile") String mobile);
+
+    /**
+     * 根据手机号查找用户
+     * @param mobile
+     * @return
+     */
+    MemberInfoVO selectUserByMobile(@Param("mobile") String mobile);
+
+    /**
+     * 条件查询参考人员列表
+     * @param examId
+     * @param name
+     * @param employmentForm
+     * @param mobile
+     * @return
+     */
+    List<MemberInfoVO> selectExamMemberList(@Param("examId") Integer examId,
+                                            @Param("name") String name,
+                                            @Param("employmentForm") String employmentForm,
+                                            @Param("mobile") String mobile);
 }
