@@ -28,11 +28,14 @@ public class SocketChatConversationController {
     private SocketChatConversationService socketChatConversationService;
 
 
-
-    @ApiOperation("获取当前用户的所有对话")
+    @ApiOperation("获取当前用户的所有对话,按时间降序")
     @PostMapping("selectConversation")
-    public AjaxResult queryConversation(Integer userId) {
-        return AjaxResult.success(this.socketChatConversationService.queryConversation(userId));
+    public AjaxResult queryConversation(
+            Integer userId,
+            @RequestParam(required = false, defaultValue = "1") int pageNum,
+            @RequestParam(required = false, defaultValue = "10") int pageSize) {
+        return AjaxResult.success(this.socketChatConversationService.queryConversation(userId,pageNum,pageSize));
+
     }
 
 

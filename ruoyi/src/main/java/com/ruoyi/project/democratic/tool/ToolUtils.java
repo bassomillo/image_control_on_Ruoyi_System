@@ -197,6 +197,9 @@ public class ToolUtils {
     public List<Integer> getOrgTreeInt(Integer orgId){
         Org org = orgDao.selectOne(new QueryWrapper<Org>().
                 eq(Org.ID, orgId));
+        if (org == null){
+            return new ArrayList<>();
+        }
         String orgCode = org.getOrgCode().replace(".", ",");
         orgCode = orgCode.substring(0, orgCode.length()-1);
         String[] orgArray = orgCode.split(",");

@@ -1,5 +1,6 @@
 package com.ruoyi.project.chairmanOnline.service.impl;
 
+import com.github.pagehelper.PageHelper;
 import com.ruoyi.project.chairmanOnline.dao.SocketChatConversationDao;
 import com.ruoyi.project.chairmanOnline.entity.SocketChatConversation;
 import com.ruoyi.project.chairmanOnline.entity.SocketChatRecord;
@@ -111,7 +112,8 @@ public class SocketChatConversationServiceImpl implements SocketChatConversation
      * @description 查询用户所有对话
      **/
     @Override
-    public List<SocketChatConversation> queryConversation(int userId) {
+    public List<SocketChatConversation> queryConversation(int userId,int pageNum,int pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
         return SocketChatConversationDao.queryConversationByUserId(userId);
 
     }
@@ -140,6 +142,8 @@ public class SocketChatConversationServiceImpl implements SocketChatConversation
             //会话已存在刷新一下isDelete为0
             SocketChatConversation conversation = socketChatConversations.get(0);
             conversation.setIsdelete(0);
+            //会话内容加1
+            conversation.setMessagenum(conversation.getMessagenum()+1);
             this.update(conversation);
             return socketChatConversations.get(0).getId();
         }

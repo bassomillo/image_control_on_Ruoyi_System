@@ -25,7 +25,9 @@ import com.ruoyi.project.org.mapper.OrgDao;
 import com.ruoyi.project.system.domain.SysRole;
 import com.ruoyi.project.tool.ExcelTool;
 import com.ruoyi.project.tool.Str;
+import com.ruoyi.project.union.entity.User;
 import com.ruoyi.project.union.entity.UserProfile;
+import com.ruoyi.project.union.mapper.UserDao;
 import com.ruoyi.project.union.mapper.UserProfileDao;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -66,6 +68,8 @@ public class ChairmanLetterServiceImpl extends ServiceImpl<ChairmanLetterMapper,
     private OrgDao orgDao;
     @Autowired
     private UserProfileDao userProfileDao;
+    @Autowired
+    private UserDao userDao;
 
     @Resource
     private ToolUtils toolUtils;
@@ -80,7 +84,10 @@ public class ChairmanLetterServiceImpl extends ServiceImpl<ChairmanLetterMapper,
     @Override
     public AjaxResult getLetterMan(Integer userId) {
         try {
-            Map<String, List<Integer>> map = toolUtils.getChairmanId(userId);
+            //查询总经理id
+            User user = userDao.selectOne(new QueryWrapper<User>().
+                    eq(User.ID, userId));
+            Map<String, List<Integer>> map = toolUtils.getChairmanId(user.getOrgId());
             List<Integer> provinceList = map.get("省主席");
             List<Integer> cityList = map.get("市主席");
             Integer province = provinceList.size()==0 ? null : provinceList.get(0);
@@ -245,10 +252,18 @@ public class ChairmanLetterServiceImpl extends ServiceImpl<ChairmanLetterMapper,
 
             PageHelper.startPage(pageNum, pageSize);
             List<ChairmanLetterBackVO> backList = chairmanLetterMapper.selectLetterList(content, year, intList, isAdmin);
-            //生成所属组织架构名
             for (ChairmanLetterBackVO letter : backList){
+                //生成所属组织架构名
                 String orgName = toolUtils.getOrgName(letter.getOrgId());
                 letter.setOrgName(orgName);
+                //查询附图
+                List<UploadFiles> files = uploadFilesMapper.selectList(new QueryWrapper<UploadFiles>().
+                        eq(UploadFiles.TARGETTYPE, "chairman").
+                        eq(UploadFiles.TARGETID, letter.getId()).
+                        eq(UploadFiles.STATUS, "ok"));
+                if (files != null && files.size() != 0) {
+                    letter.setImgUrl(files.get(0).getUri());
+                }
             }
             PageInfo pageInfo = new PageInfo<>(backList);
 

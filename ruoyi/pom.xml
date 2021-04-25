@@ -321,8 +321,8 @@
 <!--            <version>6.0.0</version>-->
 <!--        </dependency>-->
 
+		<!-- websocket -->
 		<dependency>
-			<!-- websocket -->
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-websocket</artifactId>
 		</dependency>
