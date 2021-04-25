@@ -18,17 +18,17 @@ import java.util.*;
 
 public class MysqlGenerator {
 
-	private static final String PACKAGE_NAME = "com.rouyi.project.union";//包名
-	private static final String OUT_PATH = "E:\\mpdemo";//输出文件的路径
-	private static final String AUTHOR = "zjy";//代码生成者
+	private static final String PACKAGE_NAME = "com.ruoyi.project.unionhelp";//包名
+	private static final String OUT_PATH = "D:\\zhgh-help";//输出文件的路径
+	private static final String AUTHOR = "crl";//代码生成者
 	/**
 	 * JDBC相关配置
 	 */
 	//private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
 	private static final String DRIVER = "com.mysql.jdbc.Driver";
-	private static final String URL = "jdbc:mysql://10.206.142.81:3306/zhgh_210?useUnicode=true&useSSL=false&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai";
+	private static final String URL = "jdbc:mysql://localhost:3306/gonghui?useUnicode=true&useSSL=false&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai";
 	private static final String USER_NAME = "root";
-	private static final String PASSWORD = "Railgun#3";
+	private static final String PASSWORD = "A968064BCd!?";
 
 	/**
 	 * 模块名称
@@ -105,7 +105,7 @@ public class MysqlGenerator {
 								// .setTablePrefix(new String[]{"unionpay_"})//
 								// 此处可以修改为您的表前缀
 								.setNaming(NamingStrategy.underline_to_camel)// 表名生成策略
-								// .setInclude(new String[] {"user"}) // 需要生成的表
+								.setInclude(new String[] {"user_profile"}) // 需要生成的表
 								// .setExclude(new String[]{"test"}) // 排除生成的表
 								// 自定义实体，公共字段
 								// .setSuperEntityColumns(new
