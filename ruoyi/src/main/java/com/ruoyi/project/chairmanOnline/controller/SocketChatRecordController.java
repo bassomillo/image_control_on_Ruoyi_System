@@ -6,13 +6,16 @@ import com.ruoyi.project.chairmanOnline.dao.SocketChatRecordDao;
 import com.ruoyi.project.chairmanOnline.entity.QO.SocketChatRecordQO;
 import com.ruoyi.project.chairmanOnline.entity.SocketChatRecord;
 import com.ruoyi.project.chairmanOnline.service.SocketChatRecordService;
+import com.ruoyi.project.common.FastdfsClientUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -60,10 +63,22 @@ public class SocketChatRecordController {
         return AjaxResult.success(this.socketChatRecordService.selectChatRecordsByCondition(socketChatRecordQO, pageNum, pageSize));
     }
 
-    @ApiOperation("文件上传")
+
+    @Resource
+    FastdfsClientUtil fastDfsUtil;
+
+    @ApiOperation("fastDFS文件上传")
     @PostMapping("upload")
     public AjaxResult upload(MultipartFile file) throws IOException {
-        return AjaxResult.success(FileUploadUtils.upload(file));
+
+        fastDfsUtil.uploadFile(file);
+        return AjaxResult.success(fastDfsUtil.uploadFile(file));
+    }
+
+    @ApiOperation("fastDFS文件下载")
+    @PostMapping("download")
+    public void download(HttpServletResponse response,String fileUrl) throws IOException {
+         fastDfsUtil.downLoadFile(response ,fileUrl,"file"+String.valueOf(System.currentTimeMillis()));
     }
 
 }
