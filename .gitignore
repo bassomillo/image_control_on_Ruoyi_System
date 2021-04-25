@@ -1,6 +1,6 @@
 .idea
 logs
-#ruoyi.iml
+ruoyi.iml
 
 # Compiled class file
 *.class
