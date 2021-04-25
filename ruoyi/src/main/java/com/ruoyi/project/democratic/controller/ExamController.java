@@ -3,14 +3,25 @@ package com.ruoyi.project.democratic.controller;
 
 import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.project.democratic.entity.Exam;
+import com.ruoyi.project.democratic.entity.ExamQuestion;
 import com.ruoyi.project.democratic.entity.VO.ExamBaseVO;
 import com.ruoyi.project.democratic.service.IExamService;
+import com.ruoyi.project.tool.ExcelTool;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.InputStream;
+import java.util.List;
 
 /**
  * <p>
@@ -126,5 +137,74 @@ public class ExamController {
         return examService.updateBaseData(examBase);
     }
 
+    @ApiOperation(value = "后台-编辑标题、封面")
+    @PostMapping("/updateExam")
+    public AjaxResult updateExam(@RequestBody Exam exam){
+
+        return examService.updateExam(exam);
+    }
+
+    @ApiOperation(value = "后台-添加题目")
+    @PostMapping("/insertQuestion")
+    public AjaxResult insertQuestion(@RequestBody ExamQuestion question){
+
+        return examService.insertQuestion(question);
+    }
+
+    @ApiOperation(value = "后台-编辑题目")
+    @PostMapping("/updateQuestion")
+    public AjaxResult updateQuestion(@RequestBody ExamQuestion question){
+
+        return examService.updateQuestion(question);
+    }
+
+    @ApiOperation(value = "后台-删除题目/选项")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "questionId", value = "题目id，删题目时传"),
+            @ApiImplicitParam(name = "optionId", value = "选项id，删选项时传")
+    })
+    @PostMapping("/deleteQuestionOrOption")
+    public AjaxResult deleteQuestionOrOption(@RequestParam(value = "questionId", required = false) Integer questionId,
+                                             @RequestParam(value = "optionId", required = false) Integer optionId){
+
+        return examService.deleteQuestionOrOption(questionId, optionId);
+    }
+
+    @ApiOperation(value = "后台-校验导入")
+    @PostMapping("/checkImportQuestion")
+    public AjaxResult checkImportQuestion(MultipartFile file,
+                                          @RequestParam("examId") Integer examId,
+                                          HttpServletRequest request){
+
+        return examService.checkImportQuestion(file, examId, request);
+    }
+
+    @ApiOperation(value = "后台-批量导题")
+    @PostMapping("/importQuestion")
+    public AjaxResult importQuestion(@RequestBody List<ExamQuestion> questionList){
+
+        return examService.importQuestion(questionList);
+    }
+
+    @ApiOperation(value = "后台-下载导题模板")
+    @PostMapping("/downloadQuestionModel")
+    public AjaxResult downloadQuestionModel(HttpServletResponse response){
+        try {
+            Workbook workbook = null;
+            String path = "/static/excel/exam_import_example.xls";
+            String name = "exam_import_example";
+
+            ClassPathResource classPathResource = new ClassPathResource(path);
+            InputStream inputStream = classPathResource.getInputStream();
+            workbook = WorkbookFactory.create(inputStream);
+            inputStream.close();
+
+            ExcelTool.export(workbook, name + ".xls", response);
+        }catch (Exception e){
+            e.printStackTrace();
+            return AjaxResult.error("导出异常，请联系管理员", e.getMessage());
+        }
+        return null;
+    }
 }
 

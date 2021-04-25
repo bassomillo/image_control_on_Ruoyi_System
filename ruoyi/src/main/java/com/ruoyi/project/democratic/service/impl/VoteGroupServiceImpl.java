@@ -81,6 +81,7 @@ public class VoteGroupServiceImpl extends ServiceImpl<VoteGroupMapper, VoteGroup
                     eq(VoteGroup.CREATEUSERID, userId));
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             for (VoteGroup group : groupList){
+                //转换时间戳
                 long time = group.getCreatedTime().longValue();
                 String date = sdf.format(new Date(time * 1000L));
                 group.setCreateDate(date);

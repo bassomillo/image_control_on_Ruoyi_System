@@ -7,16 +7,16 @@ import java.util.List;
 
 @Data
 public class GetMemberVO {
-    @ApiModelProperty(value = "选中的组织树id列表，只放父节点的id")
+    @ApiModelProperty(value = "选中的组织树id列表，只放父节点的id，必传")
     private List<Integer> idList;
 
-    @ApiModelProperty(value = "考试id")
+    @ApiModelProperty(value = "考试id，必传")
     private Integer examId;
 
-    @ApiModelProperty(value = "页码，默认1")
+    @ApiModelProperty(value = "页码，默认1，条件搜索时必传")
     private Integer pageNum = 1;
 
-    @ApiModelProperty(value = "页面大小，默认10")
+    @ApiModelProperty(value = "页面大小，默认10，条件搜索时必传")
     private Integer pageSize = 10;
 
     @ApiModelProperty(value = "真实姓名")
@@ -27,4 +27,7 @@ public class GetMemberVO {
 
     @ApiModelProperty(value = "手机号码")
     private String mobile;
+
+    @ApiModelProperty(value = "分组id，添加到分组时必传")
+    private Integer groupId;
 }
