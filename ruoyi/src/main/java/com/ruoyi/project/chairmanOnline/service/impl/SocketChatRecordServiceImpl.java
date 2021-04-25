@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -54,6 +55,7 @@ public class SocketChatRecordServiceImpl implements SocketChatRecordService {
      */
     @Override
     public SocketChatRecord insert(SocketChatRecord socketChatRecord) {
+        socketChatRecord.setCreatedtime(new Date());
         this.socketChatRecordDao.insert(socketChatRecord);
         return socketChatRecord;
     }
