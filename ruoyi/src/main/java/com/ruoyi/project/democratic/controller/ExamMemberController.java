@@ -79,7 +79,7 @@ public class ExamMemberController {
     }
 
     @ApiOperation(value = "组织树-下载人员导入模板")
-    @PostMapping("/downloadMemberModel")
+    @GetMapping("/downloadMemberModel")
     public AjaxResult downloadMemberModel(HttpServletResponse response){
         try {
             Workbook workbook = null;
