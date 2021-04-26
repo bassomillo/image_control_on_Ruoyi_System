@@ -232,7 +232,7 @@
         ( senderId = #{senderId} AND receiverId = #{receiverId} )
         OR ( senderId = #{receiverId} AND receiverId = #{senderId} )
     ORDER BY
-	 updateTime desc
+	 updatedTime desc
     </select>
 </mapper>
 
