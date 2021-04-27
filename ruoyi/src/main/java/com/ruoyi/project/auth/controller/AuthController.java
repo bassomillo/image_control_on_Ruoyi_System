@@ -1,6 +1,8 @@
 package com.ruoyi.project.auth.controller;
 
 
+import com.ruoyi.framework.aspectj.lang.annotation.Log;
+import com.ruoyi.framework.aspectj.lang.enums.BusinessType;
 import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.project.auth.entity.Role;
 import com.ruoyi.project.auth.pojo.RoleCreatePojo;
@@ -22,7 +24,7 @@ import java.util.List;
 
 /**
  * <p>
- * 权限表 前端控制器
+ * 角色/权限表 前端控制器
  * </p>
  *
  * @author zjy
@@ -30,7 +32,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/auth")
-@Api(tags = "系统管理 - 角色权限相关   zjy")
+@Api(tags = "系统管理 - 角色管理   zjy")
 @Slf4j
 public class AuthController {
 
@@ -40,6 +42,7 @@ public class AuthController {
     @Autowired
     private ISysMenuService sysMenuService;
 
+    /******************************************************************************************************************/
     @ApiOperation(value = "根据用户id获取菜单列表（userId=0时查询所有菜单列表）", httpMethod = "GET")
     @ApiImplicitParam(name = "userId", value = "用户id", paramType = "query", dataType = "Long")
     @GetMapping("/searchMenu")
@@ -55,6 +58,7 @@ public class AuthController {
     }
 
     @ApiOperation(value = "新建角色", httpMethod = "POST")
+    @Log(title = "新建角色", businessType = BusinessType.INSERT)
     @PostMapping("/createRole")
     public AjaxResult createRole(@RequestBody RoleCreatePojo roleCreatePojo) {
         return roleService.createRole(roleCreatePojo);
@@ -62,12 +66,14 @@ public class AuthController {
 
     @ApiOperation(value = "删除角色", httpMethod = "POST")
     @ApiImplicitParam(name = "RoleId", value = "角色id", paramType = "body", dataType = "Integer")
+    @Log(title = "删除角色", businessType = BusinessType.DELETE)
     @PostMapping("/delRole")
     public AjaxResult delRole(@RequestParam("roleId") Long roleId) {
         return roleService.del(roleId);
     }
 
     @ApiOperation(value = "更新角色", httpMethod = "POST")
+    @Log(title = "更新角色", businessType = BusinessType.UPDATE)
     @PostMapping("/updateRole")
     public AjaxResult updateRole(@RequestBody SysRole sysRoles) {
         return roleService.updateRole(sysRoles);

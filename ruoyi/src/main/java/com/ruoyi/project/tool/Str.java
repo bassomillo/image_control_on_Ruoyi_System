@@ -8,6 +8,8 @@ import java.util.List;
 
 public class Str {
 
+	public final static String INITIAL_PASSWORD = "oX*t3&xR";
+
 	// 不存在的id
 	public final static String NOT_EXIT_ID = "!@#$%^";
 
@@ -42,15 +44,12 @@ public class Str {
 		return name;
 	}
 
-	public static List<Integer> getOrgIds(String orgCodes) {
-		String[] orgs = orgCodes.split("\\.");
-		List<Integer> orgIds = new ArrayList<>();
-		for(int i = 0; i < orgs.length; i++) {
-			orgIds.add(Integer.valueOf(orgs[i]));
-		}
-		return orgIds;
-	}
-
+	/**
+	 * 获取A机构下所有子机构的id
+	 * @param orgId A机构id
+	 * @param orgCodes A机构orgCode
+	 * @return 子机构List
+	 */
 	public static List<Integer> getOrgChildIds(Integer orgId, String orgCodes) {
 		String[] orgs = orgCodes.split("\\.");
 		List<Integer> orgIds = new ArrayList<>();
@@ -62,6 +61,24 @@ public class Str {
 				orgIds.add(Integer.valueOf(orgs[i]));
 		}
 		return orgIds;
+	}
+
+	/**
+	 * 获取A机构的机构等级
+	 * @param orgId A机构id
+	 * @param orgCodes A机构orgCode
+	 * @return 子机构List
+	 */
+	public static Integer getOrgLevel(Integer orgId, String orgCodes) {
+		String[] orgs = orgCodes.split("\\.");
+		List<Integer> orgIds = new ArrayList<>();
+		Integer level = 0;
+		for(int i = 0; i < orgs.length; i++) {
+			level++;
+			if(Integer.valueOf(orgs[i]).equals(orgId))
+				break;
+		}
+		return level;
 	}
 
     private Str() {}

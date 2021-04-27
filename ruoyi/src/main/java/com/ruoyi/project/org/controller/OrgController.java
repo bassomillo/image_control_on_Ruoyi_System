@@ -1,6 +1,9 @@
 package com.ruoyi.project.org.controller;
 
 
+import com.alibaba.fastjson.JSON;
+import com.ruoyi.framework.aspectj.lang.annotation.Log;
+import com.ruoyi.framework.aspectj.lang.enums.BusinessType;
 import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.project.org.entity.Org;
 import com.ruoyi.project.org.entity.OrgCommissioner;
@@ -9,6 +12,7 @@ import com.ruoyi.project.org.entity.pojo.OrgUserSearchPojo;
 import com.ruoyi.project.org.service.IOrgCommissionerService;
 import com.ruoyi.project.org.service.IOrgService;
 import com.ruoyi.project.tool.ExcelTool;
+import com.ruoyi.project.tool.RSAUtil;
 import com.ruoyi.project.union.service.IUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -55,16 +59,11 @@ public class OrgController {
         return AjaxResult.success(orgService.searchOrgTree());
     }
 
-    @ApiOperation(value = "test", httpMethod = "GET")
-    @GetMapping("/test")
-    public AjaxResult test(@RequestParam("orgId") Integer orgId) {
-        return AjaxResult.success(orgService.searchOrgMem(orgId));
-    }
-
     @ApiOperation(value = "新增子机构", httpMethod = "POST")
+    @Log(title = "新增子机构", businessType = BusinessType.INSERT)
     @PostMapping("/createOrg")
     public AjaxResult createOrg(@RequestBody Org org) {
-        if(orgService.isRepeat(org, org.getParentId()))
+        if(orgService.isRepeat(org.getName(), org.getParentId()))
             return AjaxResult.error("当前机构下存在同名机构，机构名<" + org.getName() + ">不可用");
         orgService.createOrg(org);
         return AjaxResult.success();
@@ -72,12 +71,14 @@ public class OrgController {
 
     @ApiOperation(value = "删除机构", httpMethod = "POST")
     @ApiImplicitParam(name = "orgId", value = "机构id", paramType = "query", dataType = "Integer")
+    @Log(title = "删除机构", businessType = BusinessType.DELETE)
     @PostMapping("/delOrgById")
     public AjaxResult delOrgById(@RequestParam("orgId") Integer orgId) {
         return orgService.delOrgById(orgId);
     }
 
     @ApiOperation(value = "编辑机构", httpMethod = "POST")
+    @Log(title = "编辑机构", businessType = BusinessType.UPDATE)
     @PostMapping("/updateOrg")
     public AjaxResult updateOrg(@RequestBody Org org) {
         return orgService.updateOrg(org);
@@ -95,6 +96,7 @@ public class OrgController {
         @ApiImplicitParam(name = "orgId", value = "被迁移的机构id", paramType = "query", dataType = "Integer"),
         @ApiImplicitParam(name = "parentId", value = "迁移目标父机构id", paramType = "query", dataType = "Integer")
     })
+    @Log(title = "机构迁移", businessType = BusinessType.UPDATE)
     @PostMapping("/removeOrg")
     public AjaxResult removeOrg(@RequestParam("orgId") Integer orgId, @RequestParam("parentId") Integer parentId) {
         return orgService.removeOrg(orgId, parentId);
@@ -108,13 +110,15 @@ public class OrgController {
     }
 
     @ApiOperation(value = "删除指定机构下某个角色", httpMethod = "POST")
-    @ApiImplicitParam(name = "id", value = "数据库唯一标识id", paramType = "query", dataType = "Integer")
+    @ApiImplicitParam(name = "id", value = "orgCom数据库唯一标识id", paramType = "query", dataType = "Integer")
+    @Log(title = "删除机构角色", businessType = BusinessType.DELETE)
     @PostMapping("/delOrgRoleById")
     public AjaxResult delOrgRoleById(@RequestParam("id") Integer id) {
         return orgCommissionerService.delOrgRoleById(id);
     }
 
-    @ApiOperation(value = "角色分配", httpMethod = "POST")
+    @ApiOperation(value = "机构角色分配", httpMethod = "POST")
+    @Log(title = "机构角色分配", businessType = BusinessType.INSERT)
     @PostMapping("/createOrgCommissioner")
     public AjaxResult createOrgCommissioner(@RequestBody OrgCommissioner orgCommissioner) {
         return orgCommissionerService.createOrgCommissioner(orgCommissioner);
@@ -128,6 +132,7 @@ public class OrgController {
 
     @ApiOperation(value = "角色导入", httpMethod = "POST")
     @ApiImplicitParam(name = "file", value = "excel文件", paramType = "query", dataType = "file")
+    @Log(title = "机构角色导入", businessType = BusinessType.IMPORT)
     @PostMapping("/orgRoleImport")
     public AjaxResult orgRoleImport(@RequestParam(value = "file") MultipartFile file, HttpServletRequest req) {
         return orgCommissionerService.orgRoleImport(file);
@@ -162,6 +167,7 @@ public class OrgController {
 
     @ApiOperation(value = "机构导入", httpMethod = "POST")
     @ApiImplicitParam(name = "file", value = "excel文件", paramType = "query", dataType = "file")
+    @Log(title = "机构导入", businessType = BusinessType.IMPORT)
     @PostMapping("/orgImport")
     public AjaxResult orgImport(@RequestParam(value = "file") MultipartFile file, HttpServletRequest req) {
         return orgCommissionerService.orgImport(file);

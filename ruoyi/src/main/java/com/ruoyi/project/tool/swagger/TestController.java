@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.ruoyi.framework.redis.RedisCache;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,6 +33,9 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping("/test/user")
 public class TestController extends BaseController
 {
+    @Autowired
+    private RedisCache redisCache;
+
     private final static Map<Integer, UserEntity> users = new LinkedHashMap<Integer, UserEntity>();
     {
         users.put(1, new UserEntity(1, "admin", "admin123", "15888888888"));
@@ -49,6 +55,7 @@ public class TestController extends BaseController
     @GetMapping("/{userId}")
     public AjaxResult getUser(@PathVariable Integer userId)
     {
+        redisCache.setCacheObject("test", "wwwwwwwwwwwwwww");
         if (!users.isEmpty() && users.containsKey(userId))
         {
             return AjaxResult.success(users.get(userId));

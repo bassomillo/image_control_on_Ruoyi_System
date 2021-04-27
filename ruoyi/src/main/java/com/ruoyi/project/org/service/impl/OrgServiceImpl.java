@@ -1,6 +1,8 @@
 package com.ruoyi.project.org.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.ruoyi.common.utils.ServletUtils;
+import com.ruoyi.common.utils.spring.SpringUtils;
 import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.project.org.entity.Org;
 import com.ruoyi.project.org.entity.OrgCommissioner;
@@ -14,6 +16,7 @@ import com.ruoyi.project.tool.ExcelTool;
 import com.ruoyi.project.tool.Str;
 import com.ruoyi.project.union.entity.User;
 import com.ruoyi.project.union.mapper.UserDao;
+import com.ruoyi.project.union.service.LoginTokenService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -56,6 +59,8 @@ public class OrgServiceImpl extends ServiceImpl<OrgDao, Org> implements IOrgServ
     @Override
     @Transactional
     public void createOrg(Org org) {
+        User operUser = SpringUtils.getBean(LoginTokenService.class).getLoginUser(ServletUtils.getRequest());
+        org.setCreatedUserId(operUser.getId());
         if(null == org.getCreatedTime())
             org.setCreatedTime(System.currentTimeMillis() / 1000);
         if(null == org.getUpdatedTime())
@@ -96,7 +101,7 @@ public class OrgServiceImpl extends ServiceImpl<OrgDao, Org> implements IOrgServ
 
     @Override
     public AjaxResult updateOrg(Org org) {
-        if(isRepeat(org, org.getParentId()))
+        if(isRepeat(org.getName(), org.getParentId()))
             return AjaxResult.error("当前机构下存在同名机构，机构名<" + org.getName() + ">不可用");
 
         org.setUpdatedTime(System.currentTimeMillis() / 1000);
@@ -109,9 +114,18 @@ public class OrgServiceImpl extends ServiceImpl<OrgDao, Org> implements IOrgServ
     public Org searchOrgById(Integer orgId) {
         // 查询该机构下的会员人数
         Org org = orgDao.selectById(orgId);
-        List<Integer> orgIds = Str.getOrgIds(org.getOrgCode());
+        List<Integer> orgIds = Str.getOrgChildIds(orgId, org.getOrgCode());
         List<User> users = userDao.selectList(new QueryWrapper<User>().in(0 != orgIds.size(), User.ORGID, orgIds));
         org.setUserTotal(users.size());
+        // 赋值机构隶属
+        if(1 == orgId) {
+            org.setParentOrg("-");
+        } else {
+            Org parentOrg = orgDao.selectById(org.getParentId());
+            org.setParentOrg(parentOrg.getName());
+        }
+        // 赋值机构级别
+        org.setLevel(Str.getOrgLevel(orgId, org.getOrgCode()));
 
         // 查询该机构下的委员（角色）情况
         List<RoleShowPojo> roles = orgCommissionerDao.searchOrgRoleById(orgId);
@@ -124,7 +138,7 @@ public class OrgServiceImpl extends ServiceImpl<OrgDao, Org> implements IOrgServ
     public AjaxResult removeOrg(Integer orgId, Integer parentId) {
         Org org = orgDao.selectById(orgId);
         Org orgParent = orgDao.selectById(parentId);
-        if(isRepeat(org, parentId))
+        if(isRepeat(org.getName(), parentId))
             return AjaxResult.error("目标机构下存在同名机构，机构名<" + org.getName() + ">不可用");
 
         String orgCode = orgParent.getOrgCode() + org.getId() + ".";
@@ -154,8 +168,8 @@ public class OrgServiceImpl extends ServiceImpl<OrgDao, Org> implements IOrgServ
      * 同名机构校检
      */
     @Override
-    public boolean isRepeat(Org org, Integer parentId) {
-        List<Org> repeatOrg = orgDao.selectList(new QueryWrapper<Org>().eq(Org.NAME, org.getName()).eq(Org.PARENTID, parentId));
+    public boolean isRepeat(String orgName, Integer parentId) {
+        List<Org> repeatOrg = orgDao.selectList(new QueryWrapper<Org>().eq(Org.NAME, orgName).eq(Org.PARENTID, parentId));
         return repeatOrg.size() > 0;
     }
     /******************************************************************************************************************/

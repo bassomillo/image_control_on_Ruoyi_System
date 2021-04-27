@@ -28,8 +28,19 @@ public interface IOrgService extends IService<Org> {
 
     AjaxResult removeOrg(Integer orgId, Integer parentId);
 
-    boolean isRepeat(Org org, Integer parentId);
+    /**
+     * 校检A部门下是否存在B名称部门
+     * @param orgName B名称
+     * @param parentId A部门orgId
+     * @return true-存在/false-不存在
+     */
+    boolean isRepeat(String orgName, Integer parentId);
 
     /******************************************************************************************************************/
+    /**
+     * 获取指定机构下所有用户id
+     * @param orgId 机构id
+     * @return 用户ids
+     */
     List<Integer> searchOrgMem(Integer orgId);
 }

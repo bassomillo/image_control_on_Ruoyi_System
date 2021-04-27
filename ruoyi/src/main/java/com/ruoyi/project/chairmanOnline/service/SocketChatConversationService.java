@@ -54,11 +54,27 @@ public interface SocketChatConversationService {
      */
     boolean deleteById(Integer id);
 
-
-    int insertOrUpdate(SocketChatConversation socketChatConversation);
-
+    /**
+     *查询对话
+     *@Author
+     *@description
+     *@param
+     *
+     **/
     List<SocketChatConversation> queryConversation(int userId,int pageNum,int pageSize);
 
     int createConversation(SocketChatRecord socketChatRecord);
+
+
+    void conversationStatistics(int id);
+
+    /**
+     *已读数据统计
+     *@Author
+     *@description
+     *@param
+     *
+     **/
+    void setConversationUnreadnum(int id,int num);
 
 }

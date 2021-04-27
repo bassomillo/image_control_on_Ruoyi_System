@@ -4,8 +4,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import javax.servlet.http.HttpServletResponse;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.utils.IdUtils;
@@ -20,6 +24,7 @@ import com.ruoyi.framework.web.domain.AjaxResult;
  * @author ruoyi
  */
 @RestController
+@Api(tags = "登录验证码")
 public class CaptchaController
 {
     @Autowired
@@ -28,6 +33,7 @@ public class CaptchaController
     /**
      * 生成验证码
      */
+    @ApiOperation(value = "前端获取验证码", httpMethod = "GET")
     @GetMapping("/captchaImage")
     public AjaxResult getCode(HttpServletResponse response) throws IOException
     {
@@ -37,7 +43,7 @@ public class CaptchaController
         String uuid = IdUtils.simpleUUID();
         String verifyKey = Constants.CAPTCHA_CODE_KEY + uuid;
 
-        redisCache.setCacheObject(verifyKey, verifyCode, Constants.CAPTCHA_EXPIRATION, TimeUnit.MINUTES);
+        redisCache.setCacheObject(verifyKey, verifyCode, 12 * 60 * 60, TimeUnit.MINUTES);
         // 生成图片
         int w = 111, h = 36;
         ByteArrayOutputStream stream = new ByteArrayOutputStream();

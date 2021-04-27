@@ -144,7 +144,7 @@ public class OrgCommissionerServiceImpl extends ServiceImpl<OrgCommissionerDao, 
             int rowStart = 2;
             int rowEnd = sheet.getPhysicalNumberOfRows();
             ExcelTool.excelCheck(sheet, errorMsg, rowStart, rowEnd);
-            if(0 == errorMsg.size())
+            if(0 != errorMsg.size())
                 return AjaxResult.success(errorMsg);
             int dataNum = rowEnd - rowStart;
             for(int rowNum = rowStart; rowNum < rowEnd; rowNum++) { // 遍历行
@@ -275,7 +275,7 @@ public class OrgCommissionerServiceImpl extends ServiceImpl<OrgCommissionerDao, 
             int rowStart = 2;
             int rowEnd = sheet.getPhysicalNumberOfRows();
             ExcelTool.excelCheck(sheet, errorMsg, rowStart, rowEnd);
-            if(0 == errorMsg.size())
+            if(0 != errorMsg.size())
                 return AjaxResult.success(errorMsg);
             int dataNum = rowEnd - rowStart;
             for(int rowNum = rowStart; rowNum < rowEnd; rowNum++) { // 遍历

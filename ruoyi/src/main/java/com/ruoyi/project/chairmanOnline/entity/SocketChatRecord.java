@@ -85,6 +85,13 @@ public class SocketChatRecord implements Serializable {
     private Integer issent;
 
 
+    /**
+     * token字符串
+     */
+    @Transient
+    private String token;
+
+
     public static long getSerialVersionUID() {
         return serialVersionUID;
     }
