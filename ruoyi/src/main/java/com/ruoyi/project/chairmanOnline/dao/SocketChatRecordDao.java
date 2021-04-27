@@ -1,5 +1,6 @@
 package com.ruoyi.project.chairmanOnline.dao;
 
+import com.ruoyi.project.chairmanOnline.entity.DTO.SocketChatRecordDTO;
 import com.ruoyi.project.chairmanOnline.entity.QO.SocketChatRecordQO;
 import com.ruoyi.project.chairmanOnline.entity.SocketChatRecord;
 import org.apache.ibatis.annotations.Mapper;
@@ -100,5 +101,14 @@ public interface SocketChatRecordDao {
 
     List<SocketChatRecord> selectChatRecordsByCondition(SocketChatRecordQO socketChatRecordQO);
 
+
+    /**
+     * 查询用户的未读信息条数
+     *
+     * @param userId
+     * @return 对象列表
+     */
+
+    List<SocketChatRecordDTO> selectUnreadRecordsByUserId(@Param("userId") int userId);
 }
 
