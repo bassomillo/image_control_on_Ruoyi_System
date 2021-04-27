@@ -10,6 +10,7 @@ import com.ruoyi.project.democratic.entity.VO.ExamBaseVO;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -175,6 +176,36 @@ public interface IExamService extends IService<Exam> {
      * @return
      */
     AjaxResult analyseExam(Integer examId);
+
+    /**
+     * 后台导出答题数据
+     * @param examId
+     * @param userId
+     * @return
+     */
+    AjaxResult exportPaperData(Integer examId,
+                               Integer userId,
+                               HttpServletResponse response);
+
+    /**
+     * 后台发布情况
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    AjaxResult getPublishList(String startTime,
+                              String endTime);
+
+    /**
+     * 后台导出发布情况
+     * @param startTime
+     * @param endTime
+     * @param response
+     * @return
+     */
+    AjaxResult exportPublishList(String startTime,
+                                 String endTime,
+                                 HttpServletResponse response);
 
     /**
      * 首页-查询列表

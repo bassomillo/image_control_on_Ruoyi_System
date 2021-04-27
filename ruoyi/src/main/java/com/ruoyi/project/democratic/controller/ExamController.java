@@ -239,6 +239,36 @@ public class ExamController {
         return examService.analyseExam(examId);
     }
 
+    @ApiOperation(value = "后台-导出答题数据")
+    @GetMapping("/exportPaperData")
+    public AjaxResult exportPaperData(@RequestParam("examId") Integer examId,
+                                      @RequestParam("userId") Integer userId,
+                                      HttpServletResponse response){
+
+        return examService.exportPaperData(examId, userId, response);
+    }
+
+    @ApiOperation(value = "后台-发布情况")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "startTime", value = "开始时间，格式yyyy-MM-dd HH:mm:ss"),
+            @ApiImplicitParam(name = "endTime", value = "结束时间，格式yyyy-MM-dd HH:mm:ss")
+    })
+    @PostMapping("/getPublishList")
+    public AjaxResult getPublishList(@RequestParam(value = "startTime", required = false) String startTime,
+                                     @RequestParam(value = "endTime", required = false) String endTime){
+
+        return examService.getPublishList(startTime, endTime);
+    }
+
+    @ApiOperation(value = "后台-导出发布情况")
+    @GetMapping("exportPublishList")
+    public AjaxResult exportPublishList(@RequestParam(value = "startTime", required = false) String startTime,
+                                        @RequestParam(value = "endTime", required = false) String endTime,
+                                        HttpServletResponse response){
+
+        return examService.exportPublishList(startTime, endTime, response);
+    }
+
     /***********************首页***************************/
     @ApiOperation(value = "首页-查询考试列表")
     @ApiImplicitParams({
