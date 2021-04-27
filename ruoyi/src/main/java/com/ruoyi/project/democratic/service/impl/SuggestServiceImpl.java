@@ -350,7 +350,7 @@ public class SuggestServiceImpl extends ServiceImpl<SuggestMapper, SuggestBox> i
 
             Date date = new Date();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            String name = "建言献策" + sdf.format(date) + ".xlsx";
+            String name = "建言献策" + sdf.format(date) + ".xls";
 
             //导出
             Workbook wb = getWorkbook(exportList, request);

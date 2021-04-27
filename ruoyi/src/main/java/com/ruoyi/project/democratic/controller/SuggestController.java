@@ -118,7 +118,7 @@ public class SuggestController {
     }
 
     @ApiOperation(value = "首页/后台-下载文件")
-    @PostMapping("/downloadFile")
+    @GetMapping("/downloadFile")
     public AjaxResult downloadFile(@RequestParam("id") Integer id,
                              HttpServletResponse response){
         return ISuggestService.downloadFile(id, response);
@@ -129,11 +129,11 @@ public class SuggestController {
             @ApiImplicitParam(name = "content", value = "搜索内容"),
             @ApiImplicitParam(name = "year", value = "年份")
     })
-    @PostMapping("/export")
+    @GetMapping("/export")
     public AjaxResult export(@RequestParam(value = "content", required = false) String content,
-                       @RequestParam(value = "year", required = false) Integer year,
-                       HttpServletResponse response,
-                       HttpServletRequest request){
+                             @RequestParam(value = "year", required = false) Integer year,
+                             HttpServletResponse response,
+                             HttpServletRequest request){
         return ISuggestService.export(content, year, response, request);
     }
 }

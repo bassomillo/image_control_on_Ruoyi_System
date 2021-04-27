@@ -1,13 +1,16 @@
 package com.ruoyi.project.democratic.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.framework.web.domain.AjaxResult;
+import com.ruoyi.project.common.FastdfsClientUtil;
 import com.ruoyi.project.democratic.entity.*;
 import com.ruoyi.project.democratic.entity.VO.ExamBaseVO;
+import com.ruoyi.project.democratic.entity.VO.ExamSaveVO;
 import com.ruoyi.project.democratic.mapper.*;
 import com.ruoyi.project.democratic.service.IExamOptionService;
 import com.ruoyi.project.democratic.service.IExamQuestionService;
@@ -24,10 +27,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.HtmlUtils;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -49,12 +55,21 @@ public class ExamServiceImpl extends ServiceImpl<ExamMapper, Exam> implements IE
     @Autowired
     private ExamQuestionTypeMapper examQuestionTypeMapper;
     @Autowired
+    private ExamMemberMapper examMemberMapper;
+    @Autowired
     private UploadFilesMapper uploadFilesMapper;
+    @Autowired
+    private ExamPaperMapper examPaperMapper;
+    @Autowired
+    private ExamSaveMapper examSaveMapper;
 
     @Autowired
     private IExamQuestionService examQuestionService;
     @Autowired
     private IExamOptionService examOptionService;
+
+    @Resource
+    private FastdfsClientUtil fastdfsClientUtil;
 
     /**
      * 新增考试/创建考试
@@ -703,5 +718,400 @@ public class ExamServiceImpl extends ServiceImpl<ExamMapper, Exam> implements IE
             return AjaxResult.error("导入失败，请联系管理员", e.getMessage());
         }
         return AjaxResult.success("导入成功");
+    }
+
+    /**
+     * 上传文件
+     * @param file
+     * @param userId
+     * @return
+     */
+    @Override
+    public AjaxResult upload(MultipartFile file, Integer userId) {
+        try {
+            //上传至服务器
+//            String url = fastdfsClientUtil.uploadFile(file);
+            String url = null;
+
+            //保存文件信息至数据库
+            Integer size = (int) file.getSize();
+            UploadFiles uploadFiles = new UploadFiles();
+            uploadFiles.setFileSize(size);
+            String name = file.getOriginalFilename();
+            uploadFiles.setFilename(name);
+            uploadFiles.setUri(url);
+            uploadFiles.setExt(name.substring(name.indexOf(".") + 1));
+            uploadFiles.setCreatedUserId(userId);
+            uploadFiles.setUpdatedUserId(userId);
+            long t = System.currentTimeMillis() / 1000;
+            Integer time = Integer.valueOf(Long.toString(t));
+            uploadFiles.setCreatedTime(time);
+            uploadFiles.setUpdatedTime(time);
+            uploadFilesMapper.insert(uploadFiles);
+
+            return AjaxResult.success("上传成功", uploadFiles);
+        }catch (Exception e){
+            e.printStackTrace();
+            return AjaxResult.error("上传失败，请联系管理员", e.getMessage());
+        }
+    }
+
+    /**
+     * 删除文件
+     * @param fileId
+     * @param type
+     * @param id
+     * @return
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public AjaxResult deleteFile(Integer fileId, String type, Integer id) {
+        try {
+            //删文件
+            UploadFiles uploadFile = uploadFilesMapper.selectOne(new QueryWrapper<UploadFiles>().
+                    eq(UploadFiles.ID, fileId));
+            //暂时用uri，后续完善路径
+//            boolean flag = fastdfsClientUtil.deleteFile(uploadFile.getUri());
+//            if (! flag){
+//                return AjaxResult.error("删除失败，请联系管理员");
+//            }
+            uploadFilesMapper.delete(new QueryWrapper<UploadFiles>().
+                    eq(UploadFiles.ID, fileId));
+
+            //改字段
+            if ("exam".equals(type)){
+                Exam exam = examMapper.selectOne(new QueryWrapper<Exam>().
+                        eq(Exam.ID, id));
+                exam.setCoverId(null);
+                exam.setCoverUrl(null);
+                updateById(exam);
+            }else if ("examQuestion".equals(type)){
+                ExamQuestion examQuestion = examQuestionMapper.selectOne(new QueryWrapper<ExamQuestion>().
+                        eq(ExamQuestion.ID, id));
+                examQuestion.setImgId(null);
+                examQuestion.setImgUrl(null);
+                examQuestionMapper.updateById(examQuestion);
+            }else if ("examOption".equals(type)){
+                ExamOption examOption = examOptionMapper.selectOne(new QueryWrapper<ExamOption>().
+                        eq(ExamOption.ID, id));
+                examOption.setImgId(null);
+                examOption.setImgUrl(null);
+                examOptionMapper.updateById(examOption);
+            }
+
+            return AjaxResult.success("删除成功");
+        }catch (Exception e){
+            e.printStackTrace();
+            return AjaxResult.error("删除失败，请联系管理员", e.getMessage());
+        }
+    }
+
+    /**
+     * 后台统计结果
+     * @param examId
+     * @return
+     */
+    @Override
+    public AjaxResult analyseExam(Integer examId) {
+        try {
+
+            return AjaxResult.success("统计成功");
+        }catch (Exception e){
+            e.printStackTrace();
+            return AjaxResult.error("统计失败，请联系管理员", e.getMessage());
+        }
+    }
+
+    /**
+     * 首页查询列表
+     * @param userId
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    @Override
+    public AjaxResult getTopExamList(Integer userId, Integer pageNum, Integer pageSize) {
+        try {
+            List<ExamMember> memberList = examMemberMapper.selectList(new QueryWrapper<ExamMember>().
+                    eq(ExamMember.USERID, userId));
+
+            List<Exam> examList = new ArrayList<>();
+            long total = 0;
+            if (memberList != null && memberList.size() > 0) {
+                List<Integer> examIdList = memberList.stream().map(ExamMember::getExamId).collect(Collectors.toList());
+
+                PageHelper.startPage(pageNum, pageSize);
+                examList = examMapper.selectList(new QueryWrapper<Exam>().
+                        eq(Exam.ISSHOW, 1).
+                        in(Exam.ID, examIdList).
+                        ne(Exam.STATUS, "unpublished").
+                        orderByAsc(Exam.STATUS).
+                        orderByDesc(Exam.CREATEDATE));
+                PageInfo pageInfo = new PageInfo<>(examList);
+                total = pageInfo.getTotal();
+                examList = pageInfo.getList();
+            }
+
+            for (Exam exam : examList){
+                //获取作答记录
+                List<ExamPaper> paperList = examPaperMapper.selectList(new QueryWrapper<ExamPaper>().
+                        eq(ExamPaper.EXAMID, exam.getId()).
+                        eq(ExamPaper.USERID, userId).
+                        eq(ExamPaper.SUBMITFLAG, 1));
+                //是否已作答
+                boolean isExam = false;
+                if (paperList != null && paperList.size() > 0){
+                    isExam = true;
+                }
+                //获取最晚作答时间
+                Date endTime = exam.getEntranceEndDate();
+                //是否已超时
+                boolean isLate = endTime.before(new Date());
+
+                if (isExam){
+                    exam.setNewStatus("已提交");
+                }else if (isLate){
+                    exam.setNewStatus("已结束");
+                }else {
+                    exam.setNewStatus("未作答");
+                }
+            }
+
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("total", total);
+            jsonObject.put("list", examList);
+
+            return AjaxResult.success("查询成功", jsonObject);
+        }catch (Exception e){
+            e.printStackTrace();
+            return AjaxResult.error("查询失败，请联系管理员", e.getMessage());
+        }
+    }
+
+    /**
+     * 首页保存答题记录
+     * @param examSave
+     * @return
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public AjaxResult saveExamPaper(ExamSave examSave) {
+        try {
+            String content = JSONArray.toJSONString(examSave.getSaveList());
+
+            //是否已经有记录保存
+            ExamSave examSave0 = examSaveMapper.selectOne(new QueryWrapper<ExamSave>().
+                    eq(ExamSave.EXAMID, examSave.getExamId()).
+                    eq(ExamSave.USERID, examSave.getUserId()));
+            if (examSave0 == null){
+                examSave.setSubmitContent(content);
+                examSaveMapper.insert(examSave);
+            }else {
+                examSave0.setSubmitContent(content);
+                examSave0.setRemainTime(examSave.getRemainTime());
+                examSaveMapper.updateById(examSave0);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            return AjaxResult.error("保存失败，请联系管理员", e.getMessage());
+        }
+        return AjaxResult.success("保存成功");
+    }
+
+    /**
+     * 首页根据id查详情
+     * @param examId
+     * @param userId
+     * @return
+     */
+    @Override
+    public AjaxResult getTopDetail(Integer examId, Integer userId) {
+        try {
+            //查试卷信息
+            Exam exam = examMapper.selectOne(new QueryWrapper<Exam>().
+                    eq(Exam.ID, examId));
+            //查找题目
+            List<ExamQuestion> questionList = examQuestionMapper.selectList(new QueryWrapper<ExamQuestion>().
+                    eq(ExamQuestion.EXAMID, examId));
+            for (ExamQuestion question : questionList){
+                //查找选项
+                List<ExamOption> optionList = examOptionMapper.selectList(new QueryWrapper<ExamOption>().
+                        eq(ExamOption.EXAMQUESTIONID, question.getId()));
+                question.setOptionList(optionList);
+            }
+            //查询保存答题
+            ExamSave examSave = examSaveMapper.selectOne(new QueryWrapper<ExamSave>().
+                    eq(ExamSave.EXAMID, examId).
+                    eq(ExamSave.USERID, userId));
+            if (examSave != null) {
+                List<ExamSaveVO> saveList = JSONObject.parseArray(examSave.getSubmitContent(), ExamSaveVO.class);
+                examSave.setSaveList(saveList);
+            }
+            //查询考试答题信息
+            List<ExamPaper> paperList = examPaperMapper.selectList(new QueryWrapper<ExamPaper>().
+                    eq(ExamPaper.EXAMID, examId).
+                    eq(ExamPaper.USERID, userId));
+
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("exam", exam);
+            jsonObject.put("question", questionList);
+            jsonObject.put("save", examSave);
+            jsonObject.put("paper", paperList);
+
+            return AjaxResult.success("查询成功", jsonObject);
+        }catch (Exception e){
+            e.printStackTrace();
+            return AjaxResult.error("查询失败，请联系管理员", e.getMessage());
+        }
+    }
+
+    /**
+     * 交卷
+     * @param paperList
+     * @return
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public AjaxResult submitExam(List<ExamPaper> paperList) {
+        try {
+            //查题型对应的分数
+            List<ExamQuestionType> typeList = examQuestionTypeMapper.selectList(new QueryWrapper<ExamQuestionType>().
+                    eq(ExamQuestionType.EXAMID, paperList.get(0).getExamId()));
+            int single = 0;
+            int judge = 0;
+            int multiple = 0;
+            int completion = 0;
+            for (ExamQuestionType type : typeList){
+                if ("single".equals(type.getType())){
+                    single = type.getScore();
+                }
+                if ("judge".equals(type.getType())){
+                    judge = type.getScore();
+                }
+                if ("multiple".equals(type.getType())){
+                    multiple = type.getScore();
+                }
+                if ("completion".equals(type.getType())){
+                    completion = type.getScore();
+                }
+            }
+
+            //判断这是第几次交卷
+            List<ExamPaper> examPaper = examPaperMapper.selectList(new QueryWrapper<ExamPaper>().
+                    eq(ExamPaper.EXAMID, paperList.get(0).getExamId()).
+                    eq(ExamPaper.USERID, paperList.get(0).getUserId()).
+                    eq(ExamPaper.EXAMQUESTIONID, paperList.get(0).getExamQuestionId()));
+            Exam exam = examMapper.selectOne(new QueryWrapper<Exam>().
+                    eq(Exam.ID, paperList.get(0).getExamId()));
+            int submitNum = examPaper == null ? 0 : examPaper.size();
+            if (submitNum >= exam.getMaxSubmit()){
+                return AjaxResult.error("已没有提交次数，请勿重复提交");
+            }else {
+                submitNum ++;
+            }
+            //处理试卷答题，计算得分
+            double score = 0;
+            for (ExamPaper paper : paperList){
+                paper.setSubmitDate(new Date());
+                paper.setSubmitFlag(submitNum);
+
+                if ("single".equals(paper.getType()) || "judge".equals(paper.getType())){
+                    //单选/判断
+                    if (paper.getSubmitContent() == null || "".equals(paper.getSubmitContent())){
+                        paper.setScore(new BigDecimal(0));
+                    }else {
+                        Integer content = Integer.parseInt(paper.getSubmitContent());
+                        ExamOption option = examOptionMapper.selectOne(new QueryWrapper<ExamOption>().
+                                eq(ExamOption.ID, content));
+                        if (option.getIsAnswer() == 1){
+                            //答对了
+                            if ("single".equals(paper.getType())) {
+                                paper.setScore(new BigDecimal(single));
+                                score += single;
+                            }else {
+                                paper.setScore(new BigDecimal(judge));
+                                score += judge;
+                            }
+                        }else {
+                            //答错了
+                            paper.setScore(new BigDecimal(0));
+                        }
+                    }
+                }else if ("multiple".equals(paper.getType())){
+                    //多选
+                    if (paper.getSubmitContent() == null || "".equals(paper.getSubmitContent())){
+                        paper.setScore(new BigDecimal(0));
+                    }else {
+                        //有填答案
+                        String[] ids = paper.getSubmitContent().split(" ");
+                        List<ExamOption> optionList = examOptionMapper.selectList(new QueryWrapper<ExamOption>().
+                                eq(ExamOption.EXAMQUESTIONID, paper.getExamQuestionId()).
+                                eq(ExamOption.ISANSWER, 1));
+                        if (ids.length != optionList.size()){
+                            paper.setScore(new BigDecimal(0));
+                        }else {
+                            List<ExamOption> optionList1 = examOptionMapper.selectList(new QueryWrapper<ExamOption>().
+                                    in(ExamOption.ID, ids));
+                            boolean existError = false;
+                            for (ExamOption option : optionList1) {
+                                if (option.getIsAnswer() == 0) {
+                                    existError = true;
+                                    break;
+                                }
+                            }
+                            if (existError) {
+                                paper.setScore(new BigDecimal(0));
+                            } else {
+                                paper.setScore(new BigDecimal(multiple));
+                                score += multiple;
+                            }
+                        }
+                    }
+                }else if ("completion".equals(paper.getType())){
+                    //填空
+                    if (paper.getSubmitContent() == null || "".equals(paper.getSubmitContent())){
+                        paper.setScore(new BigDecimal(0));
+                    }else {
+                        //有填答案
+                        String[] answers = paper.getSubmitContent().split(" ");
+                        List<ExamOption> optionList = examOptionMapper.selectList(new QueryWrapper<ExamOption>().
+                                eq(ExamOption.EXAMQUESTIONID, paper.getExamQuestionId()).
+                                orderByAsc(ExamOption.ID));
+                        if (answers.length != optionList.size()){
+                            paper.setScore(new BigDecimal(0));
+                        }else {
+                            boolean existError = false;
+                            for (int i=0; i<answers.length; i++){
+                                if (!answers[i].equals(optionList.get(i).getContent())){
+                                    existError = true;
+                                    break;
+                                }
+                            }
+                            if (existError){
+                                paper.setScore(new BigDecimal(0));
+                            }else {
+                                paper.setScore(new BigDecimal(completion));
+                                score += completion;
+                            }
+                        }
+                    }
+                }
+
+                examPaperMapper.insert(paper);
+            }
+
+            //删除保存的答题信息
+            examSaveMapper.delete(new QueryWrapper<ExamSave>().
+                    eq(ExamSave.USERID, paperList.get(0).getUserId()).
+                    eq(ExamSave.EXAMID, paperList.get(0).getExamId()));
+
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("score", score);
+
+            return AjaxResult.success("提交成功", jsonObject);
+        }catch (Exception e){
+            e.printStackTrace();
+            return AjaxResult.error("提交失败，请联系管理员", e.getMessage());
+        }
     }
 }

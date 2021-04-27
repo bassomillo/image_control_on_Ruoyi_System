@@ -3,6 +3,7 @@ package com.ruoyi.project.chairmanOnline.entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.data.annotation.Transient;
 
 import java.util.Date;
 import java.io.Serializable;

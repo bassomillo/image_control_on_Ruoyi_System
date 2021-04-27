@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.unionhelp.mapper.UserProfileDao1">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, mss, truename, idcard, gender, iam, city, mobile, qq, signature, about, company, job, school, class, weibo, weixin, isQQPublic, isWeixinPublic, isWeiboPublic, site, partPost, hardship, workerRepresentative, postLevel, highestEducation, postName, degree, politicalAffiliation, professional, modelWorkers, email, department, nation, concurMember, unionJob, unionGroup, partyGroup, accountAddress, address, hobbies, honoraryTitle, sympathyRecord, projectProgress, employmentForm, joinWorkDate, birthday, isDerafa, isTemp
+    </sql>
+
+    <select id="findAllPage" resultType="com.ruoyi.project.unionhelp.vo.Userinfo">
+        select u1.id,u1.mss,u1.truename,u1.mobile,u2.email,u2.smallAvatar
+        from user_profile as u1
+        inner join user as u2 on (u2.id = u1.id)
+        where 1=1
+        <if test="searchContent != null and searchContent != ''">
+            and (u1.mss like concat('%',#{searchContent},'%')
+            or u1.truename like concat('%',#{searchContent},'%') escape '/'
+            or u1.mobile like concat('%',#{searchContent},'%')
+            or u2.email like concat('%',#{searchContent},'%') escape '/'
+            or u2.smallAvatar like concat('%',#{searchContent},'%') escape '/')
+        </if>
+            limit #{pageSize} OFFSET #{index}
+    </select>
+
+</mapper>
+

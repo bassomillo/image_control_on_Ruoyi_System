@@ -1,7 +1,7 @@
-package com.ruoyi.project.chairmanOnline.controller;
+package com.ruoyi.project.chairmanOnline.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.ruoyi.project.chairmanOnline.entity.SocketChatConversation;
+import com.ruoyi.project.chairmanOnline.config.GetHttpSessionConfigurator;
 import com.ruoyi.project.chairmanOnline.entity.SocketChatRecord;
 import com.ruoyi.project.chairmanOnline.entity.VO.WebSocketSystemMessageVO;
 import com.ruoyi.project.chairmanOnline.service.SocketChatConversationService;
@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.websocket.*;
+import javax.websocket.server.HandshakeRequest;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @param
@@ -28,7 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
  **/
 
 @Component
-@ServerEndpoint(value = "/connectWebSocket/{userId}")
+@ServerEndpoint(value = "/connectWebSocket/{userId}",configurator= GetHttpSessionConfigurator.class )
 public class WebSocket {
 
 
@@ -50,7 +52,7 @@ public class WebSocket {
     /**
      * 在线人数
      */
-    public static int onlineNumber = 0;
+    public static AtomicInteger onlineNumber = new AtomicInteger(0);;
     /**
      * 以用户的姓名为key，WebSocket为对象保存起来
      */
@@ -70,12 +72,16 @@ public class WebSocket {
      * @param session
      */
     @OnOpen
-    public void onOpen(@PathParam("userId") Integer userId, Session session) {
-        onlineNumber++;
+    public void onOpen(@PathParam("userId") Integer userId, Session session,EndpointConfig conf) {
+
+        HandshakeRequest req = (HandshakeRequest) conf.getUserProperties().get("sessionKey");
+        System.out.println(conf.getUserProperties().get("weideheaders"));
+
+        onlineNumber.incrementAndGet();
         logger.info("现在来连接的客户id：" + session.getId() + "用户名：" + userId);
         this.userId = userId;
         this.session = session;
-        //  logger.info("有新连接加入！ 当前在线人数" + onlineNumber);
+
         try {
 
             clients.put(userId, this);
@@ -113,7 +119,7 @@ public class WebSocket {
      */
     @OnClose
     public void onClose() {
-        onlineNumber--;
+        onlineNumber.decrementAndGet();
         //webSockets.remove(this);
         clients.remove(userId);
         Set<Integer> set = clients.keySet();
@@ -156,6 +162,13 @@ public class WebSocket {
         //创建对话，对话发生时记录信息,对话如果已存在则更新
         int conversationId = socketChatConversationService.createConversation(socketChatRecord);
 
+        if(socketChatRecord.getIssent() == 0){
+            //每条聊天信息都记录到数据库。补推时聊天记录已存在则为更新。写入数据库,可能有并发问题
+            logger.info("将首次收到的聊天记录写入数据库");
+            socketChatRecord.setConversationid(conversationId);
+            socketChatRecordService.insertOrUpdateRecord(socketChatRecord);
+        }
+
         for (WebSocket item : clients.values()) {
 
             if (item.userId.equals(socketChatRecord.getReceiverid())) {
@@ -164,14 +177,11 @@ public class WebSocket {
                 //成功发送到对方客户端，更改
                 socketChatRecord.setIssent(1);
                 socketChatRecord.setCreatedtime(new Date());
+                socketChatRecordService.update(socketChatRecord);
 //                break;
             }
         }
 
-        //每条聊天信息都记录到数据库。补推时聊天记录已存在则为更新。写入数据库,可能有并发问题
-        logger.info("将聊天记录写入数据库");
-        socketChatRecord.setConversationid(conversationId);
-        socketChatRecordService.insertOrUpdateRecord(socketChatRecord);
     }
 
     public void sendMessageAll(WebSocketSystemMessageVO webSocketSystemMessageVO) throws IOException {
@@ -181,7 +191,7 @@ public class WebSocket {
     }
 
     public static synchronized int getOnlineCount() {
-        return onlineNumber;
+        return onlineNumber.get();
     }
 
 }
