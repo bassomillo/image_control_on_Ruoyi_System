@@ -115,6 +115,8 @@ public class LoginController {
         User user = loginTokenService.getLoginUser(request);
         if(user == null)
             return AjaxResult.error(MessageUtils.message("user.token.expire"));
+        User u = userService.getById(user.getId());
+        user.setPassword(u.getPassword());
         map.put("user", user);
 
         // 获取对应用户信息

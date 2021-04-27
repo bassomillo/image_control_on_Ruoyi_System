@@ -85,29 +85,20 @@
         limit #{current}, #{size}
     </select>
 
-    <select id="searchAccount" parameterType="com.ruoyi.project.union.entity.vo.AccountSearchVo" resultType="com.ruoyi.project.union.entity.vo.UserVo">
-        select
+    <select id="searchAccount" resultType="com.ruoyi.project.union.entity.vo.UserVo">
+        select DISTINCT
         u.id as id,
         u.nickname as nickname,
         up.truename as truename,
         up.mobile as mobile,
         u.orgId as orgId
-        from sys_user_role as sur
-        left join user as u on u.id = sur.user_id
+        from user as u
+        left join sys_user_role as sur on u.id = sur.user_id
         left join user_profile as up on u.id = up.id
-        where sur.role_id != 1
-        <if test="orgId != null and orgId != ''">
-            and u.orgId = #{orgId}
-        </if>
-        <if test="nickname != null and nickname !=''">
-            and u.nickname like concat('%', #{nickname}, '%')
-        </if>
-        <if test="truename != null and truename != ''">
-            and up.truename like concat('%', #{truename}, '%')
-        </if>
-        <if test="roleId != null and roleId != ''">
-            and sur.role_id = #{role_id}
-        </if>
+        where u.id in
+        <foreach collection="userIds" item="userId" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
         limit #{current}, #{size}
     </select>
 </mapper>

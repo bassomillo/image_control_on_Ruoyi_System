@@ -11,6 +11,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * <p>
@@ -29,5 +30,5 @@ public interface UserDao extends BaseMapper<User> {
 
     List<UserShowPojo> searchOrgUser(OrgUserSearchPojo orgUserSearchPojo);
 
-    List<UserVo> searchAccount(AccountSearchVo accountSearchVo);
+    List<UserVo> searchAccount(@Param("userIds") Set<Long> userIds, @Param("current") Integer current, @Param("size") Integer size);
 }

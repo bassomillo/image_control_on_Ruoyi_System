@@ -9,6 +9,7 @@ import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.project.org.entity.Org;
 import com.ruoyi.project.org.mapper.OrgDao;
 import com.ruoyi.project.org.entity.pojo.OrgUserSearchPojo;
+import com.ruoyi.project.system.domain.SysRole;
 import com.ruoyi.project.system.domain.SysUserRole;
 import com.ruoyi.project.system.mapper.SysRoleMapper;
 import com.ruoyi.project.system.mapper.SysUserRoleMapper;
@@ -34,6 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.HttpServletRequest;
 import java.time.ZoneOffset;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -109,7 +111,10 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
     public AjaxResult searchAccount(AccountSearchVo accountSearchVo) {
         Map<String, Object> map = new HashMap<>();
         accountSearchVo.setCurrent(accountSearchVo.getCurrent() - 1);
-        List<UserVo> userVoList = userDao.searchAccount(accountSearchVo);
+        // 获取拥有除了 角色为用户（角色id为1） 以外角色的账号
+        List<SysUserRole> userIds = sysUserRoleMapper.selectList(new QueryWrapper<SysUserRole>().ne(SysRole.ROLE_ID, 1));
+        Set<Long> userIdsSet = userIds.stream().map(SysUserRole::getUserId).collect(Collectors.toSet());
+        List<UserVo> userVoList = userDao.searchAccount(userIdsSet, accountSearchVo.getCurrent(), accountSearchVo.getSize());
         userVoList.forEach(item -> {
             item.setOrganization(combinOrg(item.getOrgId()));
             item.setRole(sysRoleMapper.selectRolePermissionByUserId((long) item.getId()));
