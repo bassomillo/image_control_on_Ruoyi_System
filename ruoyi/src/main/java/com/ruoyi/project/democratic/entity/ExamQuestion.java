@@ -71,6 +71,9 @@ public class ExamQuestion extends Model<ExamQuestion> {
     @ApiModelProperty(value = "选项列表")
     private List<ExamOption> optionList;
 
+    @TableField(exist = false)
+    @ApiModelProperty(value = "计数", hidden = true)
+    private Integer count = 0;
 
     public static final String ID = "id";
 

@@ -206,7 +206,7 @@ public class UserProfile extends Model<UserProfile> {
     private String sympathyRecord;
 
     @TableField("projectProgress")
-    @ApiModelProperty(value = "b欸住")
+    @ApiModelProperty(value = "备注")
     private String projectProgress;
 
     @TableField("employmentForm")
@@ -239,6 +239,10 @@ public class UserProfile extends Model<UserProfile> {
     @TableField(exist = false)
     @ApiModelProperty(value = "所属机构")
     private String organization;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "用户名")
+    private String nickname;
 
 
     public static final String ID = "id";

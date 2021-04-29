@@ -16,7 +16,7 @@
     </select>
 
     <select id="searchOrgRoleById" resultType="com.ruoyi.project.org.entity.pojo.RoleShowPojo">
-        select om.position as role, up.truename as truename
+        select om.id as id, om.position as role, up.truename as truename
         from org_commissioner om
         left join user u on om.userId = u.id
         left join user_profile up on u.id = up.id

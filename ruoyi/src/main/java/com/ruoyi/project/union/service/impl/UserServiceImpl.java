@@ -4,29 +4,38 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ruoyi.common.utils.IdUtils;
+import com.ruoyi.framework.security.service.SysLoginService;
 import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.project.org.entity.Org;
 import com.ruoyi.project.org.mapper.OrgDao;
 import com.ruoyi.project.org.entity.pojo.OrgUserSearchPojo;
+import com.ruoyi.project.system.domain.SysRole;
 import com.ruoyi.project.system.domain.SysUserRole;
 import com.ruoyi.project.system.mapper.SysRoleMapper;
 import com.ruoyi.project.system.mapper.SysUserRoleMapper;
+import com.ruoyi.project.tool.MD5Utils;
+import com.ruoyi.project.tool.Str;
+import com.ruoyi.project.union.entity.vo.ResetPasswordVo;
+import com.ruoyi.project.union.entity.vo.UserRoleVo;
 import com.ruoyi.project.union.mapper.UserProfileDao;
 import com.ruoyi.project.union.entity.User;
 import com.ruoyi.project.union.mapper.UserDao;
 import com.ruoyi.project.union.entity.UserProfile;
 import com.ruoyi.project.union.entity.vo.UserVo;
 import com.ruoyi.project.union.entity.vo.AccountSearchVo;
-import com.ruoyi.project.union.entity.pojo.DisableUserPojo;
+import com.ruoyi.project.union.entity.vo.DisableUserVo;
 import com.ruoyi.project.union.entity.vo.UserSearchPojo;
 import com.ruoyi.project.union.service.IUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ruoyi.project.union.service.LoginTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.ZoneOffset;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -38,6 +47,12 @@ import java.util.*;
  */
 @Service
 public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUserService {
+
+    @Autowired
+    private SysLoginService sysLoginService;
+
+    @Autowired
+    private LoginTokenService loginTokenService;
 
     @Autowired
     private UserDao userDao;
@@ -95,7 +110,11 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
     @Override
     public AjaxResult searchAccount(AccountSearchVo accountSearchVo) {
         Map<String, Object> map = new HashMap<>();
-        List<UserVo> userVoList = userDao.searchAccount(accountSearchVo);
+        accountSearchVo.setCurrent(accountSearchVo.getCurrent() - 1);
+        // 获取拥有除了 角色为用户（角色id为1） 以外角色的账号
+        List<SysUserRole> userIds = sysUserRoleMapper.selectList(new QueryWrapper<SysUserRole>().ne(SysRole.ROLE_ID, 1));
+        Set<Long> userIdsSet = userIds.stream().map(SysUserRole::getUserId).collect(Collectors.toSet());
+        List<UserVo> userVoList = userDao.searchAccount(userIdsSet, accountSearchVo.getCurrent(), accountSearchVo.getSize());
         userVoList.forEach(item -> {
             item.setOrganization(combinOrg(item.getOrgId()));
             item.setRole(sysRoleMapper.selectRolePermissionByUserId((long) item.getId()));
@@ -107,6 +126,23 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
         map.put("total", userRoles.size());
 
         return AjaxResult.success(map);
+    }
+
+    @Override
+    @Transactional
+    public void updateUserRole(UserRoleVo userRoleVo) {
+        // 更新用户对应角色列表
+        if(null != userRoleVo.getRoles() && 0 != userRoleVo.getRoles().size()) {
+            // 先删除原有user-role对应数据
+            sysUserRoleMapper.delete(new QueryWrapper<SysUserRole>().eq(SysUserRole.USER_ID, userRoleVo.getUserId()));
+            // 再重新加入所有user-role对应数据
+            for(Long roleId : userRoleVo.getRoles()) {
+                SysUserRole sysUserRole = new SysUserRole();
+                sysUserRole.setUserId(userRoleVo.getUserId());
+                sysUserRole.setRoleId(roleId);
+                sysUserRoleMapper.insert(sysUserRole);
+            }
+        }
     }
 
     private String combinOrg(Integer orgId) {
@@ -135,8 +171,20 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
 
     @Override
     public boolean isExistMobile(String mobile) {
-        List<UserProfile> userProfile = userProfileDao.selectList(new QueryWrapper<UserProfile>().eq(UserProfile.MOBILE, mobile));
+        List<UserProfile> userProfile = userProfileDao.selectList(new QueryWrapper<UserProfile>().eq(mobile != null, UserProfile.MOBILE, mobile));
         return 0 != userProfile.size();
+    }
+
+    @Override
+    public boolean isExistEmail(String email) {
+        List<UserProfile> userProfile = userProfileDao.selectList(new QueryWrapper<UserProfile>().eq(email != null, UserProfile.EMAIL, email));
+        return 0 != userProfile.size();
+    }
+
+    @Override
+    public boolean isExistNickname(String nickname) {
+        List<User> user = userDao.selectList(new QueryWrapper<User>().eq(nickname != null, User.NICKNAME, nickname));
+        return 0 != user.size();
     }
 
     @Override
@@ -145,6 +193,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
         // 先对user表相关数据进行新增，主键id同时作为user_profile的id
         User user = new User();
         user.setNickname("user" + IdUtils.randomUUID());
+        user.setPassword(MD5Utils.calc(Str.INITIAL_PASSWORD));
         user.setCreatedTime((int) (System.currentTimeMillis() / 1000));
         user.setUpdatedTime((int) (System.currentTimeMillis() / 1000));
         user.setOrgId(userProfile.getOrgId());
@@ -158,14 +207,21 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
 
     @Override
     @Transactional
-    public AjaxResult disableUser(DisableUserPojo disableUserPojo) {
-        // 用户与密码进行校检
+    public AjaxResult disableUser(DisableUserVo disableUserVo, HttpServletRequest request) {
+        // 校检操作用户密码
+        if(!checkPassword(disableUserVo.getPublicKey(), disableUserVo.getPassword(), request))
+            return AjaxResult.error("操作用户密码不正确！");
 
         // 对user进行更新
-        User user = userDao.selectById(disableUserPojo.getDisableUserId());
+        User user = userDao.selectById(disableUserVo.getDisableUserId());
         user.setLocked(1);
-        Long lockDeadline = disableUserPojo.getLockDeadline().atStartOfDay(ZoneOffset.ofHours(8)).toInstant().toEpochMilli();
-        user.setLockDeadline(lockDeadline);
+        if(null == disableUserVo.getLockDeadline()) {
+
+        } else {
+            Long lockDeadline = disableUserVo.getLockDeadline().atStartOfDay(ZoneOffset.ofHours(8)).toInstant().toEpochMilli();
+            user.setLockDeadline(lockDeadline / 1000);
+        }
+
         userDao.updateById(user);
         return AjaxResult.success();
     }
@@ -181,6 +237,8 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
             Org org = orgDao.selectById(userProfile.getOrgId());
             user.setOrgCode(org != null ? org.getOrgCode() : "");
         }
+        if(null != userProfile.getNickname())
+            user.setNickname(userProfile.getNickname());
 
         userDao.updateById(user);
         userProfileDao.updateById(userProfile);
@@ -198,11 +256,46 @@ public class UserServiceImpl extends ServiceImpl<UserDao, User> implements IUser
 
     @Override
     public AjaxResult searchOrgUser(OrgUserSearchPojo orgUserSearchPojo) {
+        orgUserSearchPojo.setCurrent(orgUserSearchPojo.getCurrent() - 1);
         return AjaxResult.success(userDao.searchOrgUser(orgUserSearchPojo));
     }
 
     @Override
     public User searchUserByAccount(String account) {
         return userDao.selectOne(new QueryWrapper<User>().eq(User.NICKNAME, account));
+    }
+
+    @Override
+    @Transactional
+    public AjaxResult resetPassword(ResetPasswordVo resetPasswordVo, HttpServletRequest request) {
+        // 校检操作用户密码
+        if(!checkPassword(resetPasswordVo.getPublicKey(), resetPasswordVo.getPassword(), request))
+            return AjaxResult.error("操作用户密码不正确！");
+//        String manageRealPwd = sysLoginService.getRealPwd(resetPasswordVo.getPublicKey(), resetPasswordVo.getPassword());
+//        User loginUser = loginTokenService.getLoginUser(request);
+//        if(!manageRealPwd.equals(loginUser.getPassword())) {
+//            return AjaxResult.error("操作用户密码不正确！");
+//        }
+
+        // 加密密码
+        if(null == resetPasswordVo.getResetPassword()) {
+            resetPasswordVo.setResetPassword(MD5Utils.calc(Str.INITIAL_PASSWORD));
+        } else {
+            resetPasswordVo.setResetPassword(MD5Utils.calc(resetPasswordVo.getResetPassword()));
+        }
+
+        // 重置
+        User user = new User();
+        user.setId(resetPasswordVo.getResetUserId());
+        user.setPassword(resetPasswordVo.getResetPassword());
+        userDao.updateById(user);
+        return AjaxResult.success();
+    }
+
+    /******************************************************************************************************************/
+    public boolean checkPassword(String publicKey, String password, HttpServletRequest request) {
+        String manageRealPwd = sysLoginService.getRealPwd(publicKey, password);
+        User loginUser = loginTokenService.getLoginUser(request);
+        return manageRealPwd.equals(loginUser.getPassword());
     }
 }

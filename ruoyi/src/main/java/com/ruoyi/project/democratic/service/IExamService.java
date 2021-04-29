@@ -3,11 +3,14 @@ package com.ruoyi.project.democratic.service;
 import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.project.democratic.entity.Exam;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.ruoyi.project.democratic.entity.ExamPaper;
 import com.ruoyi.project.democratic.entity.ExamQuestion;
+import com.ruoyi.project.democratic.entity.ExamSave;
 import com.ruoyi.project.democratic.entity.VO.ExamBaseVO;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -146,4 +149,95 @@ public interface IExamService extends IService<Exam> {
      * @return
      */
     AjaxResult importQuestion(List<ExamQuestion> questionList);
+
+    /**
+     * 上传文件
+     * @param file
+     * @param userId
+     * @return
+     */
+    AjaxResult upload(MultipartFile file,
+                      Integer userId);
+
+    /**
+     * 删除文件
+     * @param fileId
+     * @param type
+     * @param id
+     * @return
+     */
+    AjaxResult deleteFile(Integer fileId,
+                          String type,
+                          Integer id);
+
+    /**
+     * 后台统计结果
+     * @param examId
+     * @return
+     */
+    AjaxResult analyseExam(Integer examId);
+
+    /**
+     * 后台导出答题数据
+     * @param examId
+     * @param userId
+     * @return
+     */
+    AjaxResult exportPaperData(Integer examId,
+                               Integer userId,
+                               HttpServletResponse response);
+
+    /**
+     * 后台发布情况
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    AjaxResult getPublishList(String startTime,
+                              String endTime);
+
+    /**
+     * 后台导出发布情况
+     * @param startTime
+     * @param endTime
+     * @param response
+     * @return
+     */
+    AjaxResult exportPublishList(String startTime,
+                                 String endTime,
+                                 HttpServletResponse response);
+
+    /**
+     * 首页-查询列表
+     * @param userId
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    AjaxResult getTopExamList(Integer userId,
+                              Integer pageNum,
+                              Integer pageSize);
+
+    /**
+     * 首页-保存答题记录
+     * @param examSave
+     * @return
+     */
+    AjaxResult saveExamPaper(ExamSave examSave);
+
+    /**
+     * 首页-根据id查询考试详情
+     * @param examId
+     * @param userId
+     * @return
+     */
+    AjaxResult getTopDetail(Integer examId,
+                            Integer userId);
+
+    /**
+     * 首页-交卷
+     * @param paperList
+     * @return
+     */
+    AjaxResult submitExam(List<ExamPaper> paperList);
 }

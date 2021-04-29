@@ -266,7 +266,9 @@ public class User extends Model<User> {
      */
     @TableField("signatureImg")
     private String signatureImg;
-
+    /******************************************************************************************************************/
+    @TableField(exist = false)
+    private String token;
 
     public static final String ID = "id";
 

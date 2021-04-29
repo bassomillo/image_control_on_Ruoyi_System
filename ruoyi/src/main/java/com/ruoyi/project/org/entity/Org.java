@@ -86,7 +86,7 @@ public class Org extends Model<Org> {
     private String managerIds;
 
     @TableField("createdUserId")
-    @ApiModelProperty(value = "创建用户ID，创建时必填")
+    @ApiModelProperty(value = "创建用户ID，创建时从请求头token获取")
     private Integer createdUserId;
 
     /**
@@ -142,10 +142,19 @@ public class Org extends Model<Org> {
     private List<Org> children;
 
     @TableField(exist = false)
+    @ApiModelProperty(value = "机构下会员总数")
     private Integer userTotal;
 
     @TableField(exist = false)
     private List<RoleShowPojo> roles;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "机构隶属")
+    private String parentOrg;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "机构级别")
+    private Integer level;
 
 
     public static final String ID = "id";
