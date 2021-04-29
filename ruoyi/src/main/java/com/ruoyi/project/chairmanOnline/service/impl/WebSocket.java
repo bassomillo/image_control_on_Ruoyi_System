@@ -142,11 +142,12 @@ public class WebSocket {
     @OnMessage
     public void onMessage(String message, Session session) {
         try {
-            logger.info("来自客户端消息：" + message + "客户端的id是：" + session.getId());
-            System.out.println("------------  :" + message);
+            System.out.println("--------收到消息--------------  :" + message);
             SocketChatRecord socketChatRecord = JSON.parseObject(message, SocketChatRecord.class);
+            logger.info("来自客户端消息：" + message + "客户端的id是：" + session.getId(),"token是："+socketChatRecord.getToken());
             System.out.println("开始推送消息给" + socketChatRecord.getReceiverid());
             socketChatRecord.setCreatedtime(new Date());
+            socketChatRecord.setToken("");
             sendMessageTo(socketChatRecord);
         } catch (Exception e) {
             e.printStackTrace();
