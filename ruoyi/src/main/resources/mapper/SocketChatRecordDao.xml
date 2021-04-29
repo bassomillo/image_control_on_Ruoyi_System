@@ -240,6 +240,7 @@
         </where> order by createdTime desc
     </select>
 
+    <!--接受者userid的未读信息-->
     <select id="selectUnreadRecordsByUserId" resultMap="SocketChatRecordDTOMap">
          SELECT
 	      conversationId,
@@ -253,6 +254,14 @@
           GROUP BY
 	      conversationId
     </select>
+
+    <!--消息更新为已读-->
+    <update id="chatRecordsIsRead">
+        UPDATE zhgh_new_test.socket_chat_record
+        SET isRead = 1
+        WHERE
+	    conversationId = #{conversationId} and receiverId = #{userId} and isRead = 0 and isDelete =0
+    </update>
 
 </mapper>
 

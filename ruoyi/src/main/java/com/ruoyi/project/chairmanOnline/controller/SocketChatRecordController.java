@@ -84,12 +84,10 @@ public class SocketChatRecordController {
          fastDfsUtil.downLoadFile(response ,fileUrl,"file"+String.valueOf(System.currentTimeMillis()));
     }
 
-
     @ApiOperation("消息已读")
     @PostMapping("recordIsRead")
-    public AjaxResult recordIsRead(@RequestParam List<Integer> recordIds){
-        return  AjaxResult.success(socketChatRecordService.chatRecordsIsRead(recordIds));
+    public AjaxResult recordIsRead(@RequestParam int userId,@RequestParam int conversationId){
+        return  AjaxResult.success(socketChatRecordService.chatRecordsIsRead(userId,conversationId));
     }
-
 
 }

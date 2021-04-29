@@ -1,9 +1,13 @@
 package com.ruoyi.project.chairmanOnline.service;
 
+import com.ruoyi.framework.web.domain.AjaxResult;
+import com.ruoyi.project.chairmanOnline.entity.QO.SocketChatConversationQO;
 import com.ruoyi.project.chairmanOnline.entity.SocketChatConversation;
 import com.ruoyi.project.chairmanOnline.entity.SocketChatRecord;
+import com.ruoyi.project.chairmanOnline.entity.VO.SocketChatConversationVO;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 聊天会话表(SocketChatConversation)表服务接口
@@ -61,20 +65,14 @@ public interface SocketChatConversationService {
      *@param
      *
      **/
-    List<SocketChatConversation> queryConversation(int userId,int pageNum,int pageSize);
+    AjaxResult queryConversation(int userId, int pageNum, int pageSize, SocketChatConversationQO socketChatConversationQO);
 
     int createConversation(SocketChatRecord socketChatRecord);
 
 
     void conversationStatistics(int id);
 
-    /**
-     *已读数据统计
-     *@Author
-     *@description
-     *@param
-     *
-     **/
-    void setConversationUnreadnum(int id,int num);
+
+    List<SocketChatConversationVO> conversationUnreadRecords(int userId, List<SocketChatConversationVO> socketChatConversations);
 
 }
