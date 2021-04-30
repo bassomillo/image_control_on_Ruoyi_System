@@ -7,7 +7,6 @@ import com.ruoyi.project.chairmanOnline.entity.SocketChatRecord;
 import com.ruoyi.project.chairmanOnline.entity.VO.SocketChatConversationVO;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 聊天会话表(SocketChatConversation)表服务接口
@@ -69,9 +68,7 @@ public interface SocketChatConversationService {
 
     int createConversation(SocketChatRecord socketChatRecord);
 
-
     void conversationStatistics(int id);
-
 
     List<SocketChatConversationVO> conversationUnreadRecords(int userId, List<SocketChatConversationVO> socketChatConversations);
 

@@ -25,10 +25,11 @@ public class TagController {
     @Resource
     private TagService tagService;
 
+
     /**
      * 获取所有聊天话题标签
      *
-     * @param id 主键
+     * @param
      * @return 单条数据
      */
    @PostMapping("selectAllTag")

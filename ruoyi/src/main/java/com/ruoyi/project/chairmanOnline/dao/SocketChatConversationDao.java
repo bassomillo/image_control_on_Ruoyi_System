@@ -1,6 +1,5 @@
 package com.ruoyi.project.chairmanOnline.dao;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ruoyi.project.chairmanOnline.entity.QO.SocketChatConversationQO;
 import com.ruoyi.project.chairmanOnline.entity.SocketChatConversation;
 import com.ruoyi.project.chairmanOnline.entity.VO.SocketChatConversationVO;
@@ -8,7 +7,6 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * 聊天会话表(SocketChatConversation)表数据库访问层
@@ -35,7 +33,6 @@ public interface SocketChatConversationDao {
      * @return 对象列表
      */
     List<SocketChatConversation> queryAllByLimit(@Param("offset") int offset, @Param("limit") int limit);
-
 
     /**
      * 通过实体作为筛选条件查询
@@ -86,17 +83,13 @@ public interface SocketChatConversationDao {
      */
     int deleteById(@Param("id")Integer id);
 
-
     /**
      *
      *@description 用户的所有对话查询，可加条件
      *@param
      *
      **/
-
-
     List<SocketChatConversationVO> queryConversationByUserId(@Param("userId") int userId, @Param("socketChatConversationQO")SocketChatConversationQO socketChatConversationQO);
-
 
     /**
      *
@@ -105,7 +98,6 @@ public interface SocketChatConversationDao {
      *
      **/
     List<SocketChatConversation> queryChatConversation(@Param("senderId") int senderId,@Param("receiverId") int receiverId);
-
 
 }
 
