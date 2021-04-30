@@ -33,8 +33,7 @@ public class SocketChatConversationController {
             @RequestParam(required = false, defaultValue = "1") int pageNum,
             @RequestParam(required = false, defaultValue = "10") int pageSize,
             @RequestBody(required = false) SocketChatConversationQO socketChatConversationQO) {
-        return this.socketChatConversationService.queryConversation(userId,pageNum,pageSize,socketChatConversationQO);
-
+        return this.socketChatConversationService.queryConversation(userId, pageNum, pageSize, socketChatConversationQO);
     }
 
 

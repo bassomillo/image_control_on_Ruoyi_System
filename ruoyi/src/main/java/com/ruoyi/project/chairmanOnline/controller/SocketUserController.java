@@ -18,13 +18,14 @@ import javax.annotation.Resource;
  */
 @RestController
 @RequestMapping("socketuser")
-@Api(tags = "web端-民主管理-总经理在线-hwd")
+@Api(tags = "web端-心理咨询-hwd")
 public class SocketUserController {
     /**
      * 服务对象
      */
     @Resource
     private SocketUserService userService;
+
 
     /**
      * 心理咨询师列表

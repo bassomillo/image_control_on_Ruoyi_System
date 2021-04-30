@@ -33,7 +33,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 @ServerEndpoint(value = "/connectWebSocket/{token}/{userId}", configurator = GetHttpSessionConfigurator.class)
 public class WebSocket {
 
-
     private static SocketChatRecordService socketChatRecordService;
 
     private static SocketChatConversationService socketChatConversationService;
@@ -74,18 +73,14 @@ public class WebSocket {
      */
     @OnOpen
     public void onOpen(@PathParam("userId") Integer userId, Session session, EndpointConfig conf,@PathParam("token") String token) {
-
         HandshakeRequest req = (HandshakeRequest) conf.getUserProperties().get("sessionKey");
         logger.info("header信息：" + conf.getUserProperties().get("weideheaders"));
         logger.info("token:"+token);
-
         onlineNumber.incrementAndGet();
         logger.info("现在来连接的客户id：" + session.getId() + "用户名：" + userId);
         this.userId = userId;
         this.session = session;
-
         try {
-
             clients.put(userId, this);
             logger.info("有连接加入！ 当前在线人数" + clients.size());
             //上线通知
@@ -94,7 +89,6 @@ public class WebSocket {
             webSocketSystemMessageVO.setCurrentOnlineIds(set);
             webSocketSystemMessageVO.setOnlineId(userId);
             sendMessageAll(webSocketSystemMessageVO);
-
             //查看是否有未接收的数据，有的话全部补推
             List<SocketChatRecord> socketChatRecords = socketChatRecordService.queryUnsentRecord(userId);
             if (socketChatRecords.size() > 0) {
@@ -107,11 +101,13 @@ public class WebSocket {
         }
     }
 
+
     @OnError
     public void onError(Session session, Throwable error) {
         logger.info("服务端发生了错误" + error.getMessage());
         error.printStackTrace();
     }
+
 
     /**
      * 连接关闭
@@ -119,8 +115,6 @@ public class WebSocket {
     @OnClose
     public void onClose() {
         onlineNumber.decrementAndGet();
-        //webSockets.remove(this);
-        clients.remove(userId);
         Set<Integer> set = clients.keySet();
         WebSocketSystemMessageVO webSocketSystemMessageVO = new WebSocketSystemMessageVO();
         webSocketSystemMessageVO.setCurrentOnlineIds(set);
@@ -156,24 +150,20 @@ public class WebSocket {
     }
 
 
-    public void sendMessageTo(SocketChatRecord socketChatRecord) throws IOException {
-
+    private void sendMessageTo(SocketChatRecord socketChatRecord) throws IOException {
         //创建对话，对话发生时记录信息,对话如果已存在则更新
         int conversationId = socketChatConversationService.createConversation(socketChatRecord);
         //更新对话中的一些统计数值
         socketChatConversationService.conversationStatistics(conversationId);
-
         //每条聊天信息都记录到数据库。补推时聊天记录已存在则为更新。写入数据库,可能有并发问题
         if (null == socketChatRecord.getId()) {
             logger.info("将首次收到的聊天记录写入数据库");
             socketChatRecord.setConversationid(conversationId);
             socketChatRecordService.insertOrUpdateRecord(socketChatRecord);
         }
-
         for (WebSocket item : clients.values()) {
             if (item.userId.equals(socketChatRecord.getReceiverid())) {
                 item.session.getAsyncRemote().sendText(JSON.toJSON(socketChatRecord).toString());
-
                 //成功发送到对方客户端，更改
                 socketChatRecord.setIssent(1);
                 socketChatRecord.setCreatedtime(new Date());
@@ -182,6 +172,7 @@ public class WebSocket {
             }
         }
     }
+
 
     private void sendMessageAll(WebSocketSystemMessageVO webSocketSystemMessageVO) throws IOException {
         for (WebSocket item : clients.values()) {

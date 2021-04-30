@@ -1,6 +1,5 @@
 package com.ruoyi.project.chairmanOnline.dao;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ruoyi.project.chairmanOnline.entity.Tag;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -32,7 +31,6 @@ public interface TagDao  {
      * @return 对象列表
      */
     List<Tag> queryAllByLimit(@Param("offset") int offset, @Param("limit") int limit);
-
 
     /**
      * 通过实体作为筛选条件查询
