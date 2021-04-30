@@ -63,6 +63,18 @@ public class ExamController {
         return examService.getBackExamList(title, pageNum, pageSize);
     }
 
+    @ApiOperation(value = "后台-置顶/取消置顶")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "examId", value = "考试id", required = true),
+            @ApiImplicitParam(name = "sticky", value = "是否置顶，1置顶，0不置顶", required = true)
+    })
+    @PostMapping("/setTop")
+    public AjaxResult setTop(@RequestParam("examId") Integer examId,
+                             @RequestParam("sticky") Integer sticky){
+
+        return examService.setTop(examId, sticky);
+    }
+
     @ApiOperation(value = "后台-发布")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "examId", value = "考试id", required = true),
@@ -175,10 +187,9 @@ public class ExamController {
     @ApiOperation(value = "后台-校验导入")
     @PostMapping("/checkImportQuestion")
     public AjaxResult checkImportQuestion(MultipartFile file,
-                                          @RequestParam("examId") Integer examId,
-                                          HttpServletRequest request){
+                                          @RequestParam("examId") Integer examId){
 
-        return examService.checkImportQuestion(file, examId, request);
+        return examService.checkImportQuestion(file, examId);
     }
 
     @ApiOperation(value = "后台-批量导题")
@@ -270,18 +281,20 @@ public class ExamController {
     }
 
     /***********************首页***************************/
-    @ApiOperation(value = "首页-查询考试列表")
+    @ApiOperation(value = "首页-条件查询考试列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userId", value = "当前登录者id", required = true),
+            @ApiImplicitParam(name = "title", value = "要搜索的标题内容"),
             @ApiImplicitParam(name = "pageNum", value = "页码，默认1"),
             @ApiImplicitParam(name = "pageSize", value = "页面大小，默认10")
     })
     @PostMapping("/getTopExamList")
     public AjaxResult getTopExamList(@RequestParam("userId") Integer userId,
+                                     @RequestParam(value = "title", required = false) String title,
                                      @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
                                      @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize){
 
-        return examService.getTopExamList(userId, pageNum, pageSize);
+        return examService.getTopExamList(userId, title, pageNum, pageSize);
     }
 
     @ApiOperation(value = "首页-保存答题记录")

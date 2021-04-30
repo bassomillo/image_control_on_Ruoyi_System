@@ -49,4 +49,24 @@
         </where>
     </select>
 
+    <!--查询首页考试列表-->
+    <select id="getTopExamList" resultType="com.ruoyi.project.democratic.entity.Exam">
+        select *
+        from exam
+        <where>
+            isShow = 1
+            and status != "unpublished"
+            <if test="title != null and title != ''">
+                and title like concat('%', #{title}, '%') escape '/'
+            </if>
+            <if test="examIdList.size() != 0">
+                and id in
+                <foreach collection="examIdList" item="id" index="index" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+        order by sticky desc, status asc, createDate desc
+    </select>
+
 </mapper>

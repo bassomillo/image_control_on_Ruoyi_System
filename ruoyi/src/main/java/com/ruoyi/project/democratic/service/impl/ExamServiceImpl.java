@@ -138,6 +138,27 @@ public class ExamServiceImpl extends ServiceImpl<ExamMapper, Exam> implements IE
     }
 
     /**
+     * 后台置顶/取消
+     * @param examId
+     * @param sticky
+     * @return
+     */
+    @Override
+    public AjaxResult setTop(Integer examId, Integer sticky) {
+        try {
+            Exam exam = examMapper.selectOne(new QueryWrapper<Exam>().
+                    eq(Exam.ID, examId));
+            exam.setSticky(sticky);
+            exam.setUpdateDate(new Date());
+            updateById(exam);
+        }catch (Exception e){
+            e.printStackTrace();
+            return AjaxResult.error("设置失败，请联系管理员", e.getMessage());
+        }
+        return AjaxResult.success("设置成功");
+    }
+
+    /**
      * 后台发布考试
      * @param examId
      * @param userId
@@ -447,11 +468,10 @@ public class ExamServiceImpl extends ServiceImpl<ExamMapper, Exam> implements IE
      * 后台校验导入
      * @param file
      * @param examId
-     * @param request
      * @return
      */
     @Override
-    public AjaxResult checkImportQuestion(MultipartFile file, Integer examId, HttpServletRequest request) {
+    public AjaxResult checkImportQuestion(MultipartFile file, Integer examId) {
         try {
             List<String> msg = new ArrayList<>();
 
@@ -474,6 +494,10 @@ public class ExamServiceImpl extends ServiceImpl<ExamMapper, Exam> implements IE
                 String type = ExcelTool.getCellValue(row.getCell(1));
                 String option = ExcelTool.getCellValue(row.getCell(2));
                 String answer = ExcelTool.getCellValue(row.getCell(3));
+                if (StringUtils.isBlank(question) && StringUtils.isBlank(type) &&
+                        StringUtils.isBlank(option) && StringUtils.isBlank(answer)){
+                    continue;
+                }
                 /*********校验格式*********/
                 String errMsg = "";
                 boolean isFirst = true; // 判断是否是此行数据的第一个错误
@@ -1064,8 +1088,9 @@ public class ExamServiceImpl extends ServiceImpl<ExamMapper, Exam> implements IE
      * @return
      */
     @Override
-    public AjaxResult getTopExamList(Integer userId, Integer pageNum, Integer pageSize) {
+    public AjaxResult getTopExamList(Integer userId, String title, Integer pageNum, Integer pageSize) {
         try {
+            title = Str.fuzzyQuery(title);
             List<ExamMember> memberList = examMemberMapper.selectList(new QueryWrapper<ExamMember>().
                     eq(ExamMember.USERID, userId));
 
@@ -1075,12 +1100,14 @@ public class ExamServiceImpl extends ServiceImpl<ExamMapper, Exam> implements IE
                 List<Integer> examIdList = memberList.stream().map(ExamMember::getExamId).collect(Collectors.toList());
 
                 PageHelper.startPage(pageNum, pageSize);
-                examList = examMapper.selectList(new QueryWrapper<Exam>().
-                        eq(Exam.ISSHOW, 1).
-                        in(Exam.ID, examIdList).
-                        ne(Exam.STATUS, "unpublished").
-                        orderByAsc(Exam.STATUS).
-                        orderByDesc(Exam.CREATEDATE));
+//                examList = examMapper.selectList(new QueryWrapper<Exam>().
+//                        eq(Exam.ISSHOW, 1).
+//                        in(Exam.ID, examIdList).
+//                        ne(Exam.STATUS, "unpublished").
+//                        orderByDesc(Exam.STICKY).
+//                        orderByAsc(Exam.STATUS).
+//                        orderByDesc(Exam.CREATEDATE));
+                examList = examMapper.getTopExamList(title, examIdList);
                 PageInfo pageInfo = new PageInfo<>(examList);
                 total = pageInfo.getTotal();
                 examList = pageInfo.getList();

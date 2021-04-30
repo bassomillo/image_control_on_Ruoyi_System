@@ -62,4 +62,11 @@ public interface IVoteGroupService extends IService<VoteGroup> {
      * @return
      */
     AjaxResult addToExam(GroupToExamVO group);
+
+    /**
+     * 加入问卷
+     * @param group
+     * @return
+     */
+    AjaxResult addToQu(GroupToExamVO group);
 }
