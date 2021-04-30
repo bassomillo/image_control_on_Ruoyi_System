@@ -1,6 +1,8 @@
 package com.ruoyi.framework.web.domain;
 
 import java.util.HashMap;
+import java.util.Map;
+
 import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.utils.StringUtils;
 
@@ -79,6 +81,15 @@ public class AjaxResult extends HashMap<String, Object>
     }
 
     /**
+     * 返回成功数据和总条数
+     *
+     * @return 成功消息
+     */
+    public static AjaxResult success(Object data,int total)
+    {
+        return AjaxResult.success("操作成功", data,total);
+    }
+    /**
      * 返回成功消息
      * 
      * @param msg 返回内容
@@ -101,6 +112,21 @@ public class AjaxResult extends HashMap<String, Object>
         return new AjaxResult(HttpStatus.SUCCESS, msg, data);
     }
 
+
+    /**
+     * 返回成功消息并带总数量信息
+     *
+     * @param msg 返回内容
+     * @param data 数据对象
+     * @return 成功消息
+     */
+    public static AjaxResult success(String msg, Object data,int total)
+    {
+        Map<Object, Object> resultMap = new HashMap<>();
+        resultMap.put(DATA_TAG,data);
+        resultMap.put("total",total);
+        return new AjaxResult(HttpStatus.SUCCESS, msg, resultMap);
+    }
     /**
      * 返回错误消息
      * 
@@ -145,4 +171,6 @@ public class AjaxResult extends HashMap<String, Object>
     {
         return new AjaxResult(code, msg, null);
     }
+
+
 }

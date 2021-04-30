@@ -99,7 +99,14 @@ public interface SocketChatRecordService {
      */
     int chatRecordsIsRead(List<Integer> recordIds);
 
+    /**
+     * 已读信息标记更新
+     *
+     * @param userId
+     * @return 对象列表
+     */
+    int chatRecordsIsRead(int userId,int conversationId);
 
-    List<SocketChatConversation> conversationUnreadRecords(int userId, List<SocketChatConversation> socketChatConversations);
+
 
 }

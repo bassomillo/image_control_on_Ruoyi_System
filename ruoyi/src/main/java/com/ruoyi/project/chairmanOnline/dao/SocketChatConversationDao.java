@@ -1,7 +1,9 @@
 package com.ruoyi.project.chairmanOnline.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.ruoyi.project.chairmanOnline.entity.QO.SocketChatConversationQO;
 import com.ruoyi.project.chairmanOnline.entity.SocketChatConversation;
+import com.ruoyi.project.chairmanOnline.entity.VO.SocketChatConversationVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -86,23 +88,19 @@ public interface SocketChatConversationDao {
 
 
     /**
-     * 通过主键删除数据
      *
-     * @param id 主键
-     * @return 影响行数
-     */
-    int deleteByIdreal(Integer id);
+     *@description 用户的所有对话查询，可加条件
+     *@param
+     *
+     **/
 
 
-    List<SocketChatConversation> queryConversationByIds(@Param("ids") Set<Integer> ids);
-
-
-    List<SocketChatConversation> queryConversationByUserId(@Param("userId") int userId);
+    List<SocketChatConversationVO> queryConversationByUserId(@Param("userId") int userId, @Param("socketChatConversationQO")SocketChatConversationQO socketChatConversationQO);
 
 
     /**
      *
-     *@description 根据发送者和接收者查询对话
+     *@description 根据发送者和接收者查询对话,可用来确认两个用户之间是否存在对话
      *@param
      *
      **/

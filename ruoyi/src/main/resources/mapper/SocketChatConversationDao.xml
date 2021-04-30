@@ -21,6 +21,16 @@
         <result property="isdelete" column="isDelete" jdbcType="INTEGER"/>
     </resultMap>
 
+    <resultMap extends="SocketChatConversationMap" id="SocketChatConversationVOMap" type="com.ruoyi.project.chairmanOnline.entity.VO.SocketChatConversationVO">
+        <result column="nickname" jdbcType="VARCHAR" property="nickname"/>
+        <result column="smallAvatar" jdbcType="VARCHAR" property="smallAvatar"/>
+        <result column="mediumAvatar" jdbcType="VARCHAR" property="mediumAvatar"/>
+        <result column="largeAvatar" jdbcType="VARCHAR" property="largeAvatar"/>
+        <result column="orgName" jdbcType="VARCHAR" property="orgName"/>
+        <result column="userId" jdbcType="INTEGER" property="userId"/>
+        <result column="orgId" jdbcType="INTEGER" property="orgId"/>
+    </resultMap>
+
     <!--查询单个-->
     <select id="queryById" resultMap="SocketChatConversationMap">
         select
@@ -209,20 +219,8 @@
         </foreach>
     </select>
 
-    <!--通过发送者和接受者查询聊天记录-->
-    <select id="queryConversationByUserId" resultMap="SocketChatConversationMap">
-    SELECT
-       *
-    FROM
-	  socket_chat_conversation
-    WHERE
-        (senderId = #{userId} OR receiverId = #{userId}) AND isDelete = 0
-    ORDER BY
-	  createdTime desc
-    </select>
 
-
-    <!--通过发送者和接受者查询对话-->
+    <!--通过发送者和接受者查询对话，可用来确认两个用户之间是否存在对话-->
     <select id="queryChatConversation" resultMap="SocketChatConversationMap">
     SELECT
        *
@@ -233,6 +231,92 @@
         OR ( senderId = #{receiverId} AND receiverId = #{senderId} )
     ORDER BY
 	 updatedTime desc
+    </select>
+
+    <!--通过发送者和接受者查询聊天记录  功能不全 -->
+    <!--<select id="queryConversationByUserId" resultMap="SocketChatConversationMap">-->
+    <!--SELECT-->
+       <!--*-->
+    <!--FROM-->
+	  <!--socket_chat_conversation-->
+    <!--WHERE-->
+        <!--(senderId = #{userId} OR receiverId = #{userId}) AND isDelete = 0-->
+    <!--ORDER BY-->
+	  <!--createdTime desc-->
+    <!--</select>-->
+
+    <!--通过发送者和接受者查询聊天记录 three join-->
+    <select id="queryConversationByUserId" resultMap="SocketChatConversationVOMap">
+   SELECT
+	t3.id,
+	t3.senderId,
+	t3.receiverId,
+	t3.messageNum,
+	t3.latestMessageUserId,
+	t3.latestMessageTime,
+	t3.latestMessageContent,
+	t3.latestMessageType,
+	t3.module,
+	t3.latestTagId,
+	t3.isSticky,
+	t3.unreadNum,
+	t3.createdTime,
+	t3.updatedTime,
+	t3.topic,
+	t3.isDelete,
+	t3.userId,
+	t3.nickname,
+	t3.smallAvatar,
+	t3.mediumAvatar,
+	t3.largeAvatar,
+	t3.orgId,
+	org.`name` AS orgName
+FROM
+	(
+	SELECT
+		t2.id,
+		t2.senderId,
+		t2.receiverId,
+		t2.messageNum,
+		t2.latestMessageUserId,
+		t2.latestMessageTime,
+		t2.latestMessageContent,
+		t2.latestMessageType,
+		t2.module,
+		t2.latestTagId,
+		t2.isSticky,
+		t2.unreadNum,
+		t2.createdTime,
+		t2.updatedTime,
+		t2.topic,
+		t2.isDelete,
+		t2.userId,
+		user.nickname,
+		user.smallAvatar,
+		user.mediumAvatar,
+		user.largeAvatar,
+		user.orgId
+	FROM
+		(
+		SELECT
+			*,
+		CASE
+				senderId
+				WHEN #{userId} THEN
+				t1.receiverId ELSE t1.senderId
+			END 'userId'
+FROM
+	( SELECT * FROM socket_chat_conversation WHERE ( senderId = #{userId} OR receiverId = #{userId} ) AND isDelete = 0 ) t1
+	) t2
+	LEFT JOIN user ON t2.userId = user.id
+	) t3
+	LEFT JOIN org ON t3.orgId = org.id
+        <where>
+        <if test="socketChatConversationQO.name != null">
+            t3.nickname LIKE CONCAT('%', #{socketChatConversationQO.name}, '%')
+        </if>
+        </where>
+	ORDER BY t3.updatedTime DESC
     </select>
 </mapper>
 

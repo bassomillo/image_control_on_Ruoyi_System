@@ -110,5 +110,13 @@ public interface SocketChatRecordDao {
      */
 
     List<SocketChatRecordDTO> selectUnreadRecordsByUserId(@Param("userId") int userId);
+
+    /**
+     * 已读信息标记更新
+     *
+     * @param userId
+     * @return 对象列表
+     */
+    int chatRecordsIsRead(@Param("userId")int userId,@Param("conversationId") int conversationId);
 }
 
