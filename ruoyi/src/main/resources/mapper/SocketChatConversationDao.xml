@@ -15,8 +15,8 @@
         <result property="latesttagid" column="latestTagId" jdbcType="INTEGER"/>
         <result property="issticky" column="isSticky" jdbcType="INTEGER"/>
         <result property="unreadnum" column="unreadNum" jdbcType="INTEGER"/>
-        <result property="createdtime" column="createdTime" jdbcType="VARCHAR"/>
-        <result property="updatedtime" column="updatedTime" jdbcType="VARCHAR"/>
+        <result property="createdtime" column="createdTime" jdbcType="TIMESTAMP"/>
+        <result property="updatedtime" column="updatedTime" jdbcType="TIMESTAMP"/>
         <result property="topic" column="topic" jdbcType="INTEGER"/>
         <result property="isdelete" column="isDelete" jdbcType="INTEGER"/>
     </resultMap>

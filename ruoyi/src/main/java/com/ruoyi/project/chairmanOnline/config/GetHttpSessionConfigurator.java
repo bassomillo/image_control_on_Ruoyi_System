@@ -24,7 +24,7 @@ public class GetHttpSessionConfigurator extends Configurator {
 
         sec.getUserProperties().put(HttpSession.class.getName(),httpSession);
 
-        sec.getUserProperties().put("weideheaders",headers);
+        sec.getUserProperties().put("weiderequest",request);
 
     }
 }

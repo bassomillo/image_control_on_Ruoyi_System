@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.chairmanOnline.dao.SocketChatroomRecordDao">
+
+    <resultMap type="com.ruoyi.project.chairmanOnline.entity.SocketChatroomRecord" id="SocketChatroomRecordMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="senderid" column="senderId" jdbcType="INTEGER"/>
+        <result property="content" column="content" jdbcType="VARCHAR"/>
+        <result property="type" column="type" jdbcType="INTEGER"/>
+        <result property="tagid" column="tagId" jdbcType="INTEGER"/>
+        <result property="isshow" column="isShow" jdbcType="INTEGER"/>
+        <result property="createdtime" column="createdTime" jdbcType="VARCHAR"/>
+        <result property="isdelete" column="isDelete" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="SocketChatroomRecordMap">
+        select
+          id, senderId, content, type, tagId, isShow, createdTime, isDelete
+        from zhgh_new_test.socket_chatroom_record
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="SocketChatroomRecordMap">
+        select
+          id, senderId, content, type, tagId, isShow, createdTime, isDelete
+        from zhgh_new_test.socket_chatroom_record
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="SocketChatroomRecordMap">
+        select
+        id, senderId, content, type, tagId, isShow, createdTime, isDelete
+        from zhgh_new_test.socket_chatroom_record
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="senderid != null">
+                and senderId = #{senderid}
+            </if>
+            <if test="content != null and content != ''">
+                and content = #{content}
+            </if>
+            <if test="type != null">
+                and type = #{type}
+            </if>
+            <if test="tagid != null">
+                and tagId = #{tagid}
+            </if>
+            <if test="isshow != null">
+                and isShow = #{isshow}
+            </if>
+            <if test="createdtime != null">
+                and createdTime = #{createdtime}
+            </if>
+            <if test="isdelete != null">
+                and isDelete = #{isdelete}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into zhgh_new_test.socket_chatroom_record(senderId, content, type, tagId, isShow, createdTime, isDelete)
+        values (#{senderid}, #{content}, #{type}, #{tagid}, #{isshow}, #{createdtime}, #{isdelete})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into zhgh_new_test.socket_chatroom_record(senderId, content, type, tagId, isShow, createdTime, isDelete)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.senderid}, #{entity.content}, #{entity.type}, #{entity.tagid}, #{entity.isshow},
+            #{entity.createdtime}, #{entity.isdelete})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into zhgh_new_test.socket_chatroom_record(senderId, content, type, tagId, isShow, createdTime, isDelete)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.senderid}, #{entity.content}, #{entity.type}, #{entity.tagid}, #{entity.isshow},
+            #{entity.createdtime}, #{entity.isdelete})
+        </foreach>
+        on duplicate key update
+        senderId = values(senderId) , content = values(content) , type = values(type) , tagId = values(tagId) , isShow =
+        values(isShow) , createdTime = values(createdTime) , isDelete = values(isDelete)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update zhgh_new_test.socket_chatroom_record
+        <set>
+            <if test="senderid != null">
+                senderId = #{senderid},
+            </if>
+            <if test="content != null and content != ''">
+                content = #{content},
+            </if>
+            <if test="type != null">
+                type = #{type},
+            </if>
+            <if test="tagid != null">
+                tagId = #{tagid},
+            </if>
+            <if test="isshow != null">
+                isShow = #{isshow},
+            </if>
+            <if test="createdtime != null">
+                createdTime = #{createdtime},
+            </if>
+            <if test="isdelete != null">
+                isDelete = #{isdelete},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from zhgh_new_test.socket_chatroom_record where id = #{id}
+    </delete>
+
+    <!--查询-->
+    <select id="queryRecordBytagId" resultMap="SocketChatroomRecordMap">
+        select id, senderId, content, type, tagId, isShow, createdTime, isDelete from zhgh_new_test.socket_chatroom_record
+        where tagId = 1
+    </select>
+</mapper>
+

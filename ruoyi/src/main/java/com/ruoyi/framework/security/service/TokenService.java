@@ -70,6 +70,27 @@ public class TokenService
         return null;
     }
 
+
+    /**
+     * token 获取用户身份信息
+     *
+     * @return 用户信息
+     */
+    public LoginUser getLoginUser(String token)
+    {
+
+        if (StringUtils.isNotEmpty(token))
+        {
+            Claims claims = parseToken(token);
+            // 解析对应的权限以及用户信息
+            String uuid = (String) claims.get(Constants.LOGIN_USER_KEY);
+            String userKey = getTokenKey(uuid);
+            LoginUser user = redisCache.getCacheObject(userKey);
+            return user;
+        }
+        return null;
+    }
+
     /**
      * 设置用户身份信息
      */
@@ -114,7 +135,7 @@ public class TokenService
     /**
      * 验证令牌有效期，相差不足20分钟，自动刷新缓存
      * 
-     * @param token 令牌
+     *
      * @return 令牌
      */
     public void verifyToken(LoginUser loginUser)

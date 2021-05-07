@@ -75,6 +75,22 @@ public class LoginTokenService
     }
 
     /**
+     * 获取用户身份信息
+     *
+     * @return 用户信息
+     */
+    public User getLoginUser(String token)
+    {
+            Claims claims = parseToken(token);
+            // 解析对应的权限以及用户信息
+            String uuid = (String) claims.get(Constants.LOGIN_USER_KEY);
+            String userKey = getTokenKey(uuid);
+            User user = redisCache.getCacheObject(userKey);
+            return user;
+    }
+
+
+    /**
      * 设置用户身份信息
      */
     public void setLoginUser(LoginUser loginUser)
@@ -142,6 +158,8 @@ public class LoginTokenService
 //        user.setExpireTime(user.getLoginTime() + expireTime * MILLIS_MINUTE);
         // 根据uuid将loginUser缓存
         String userKey = getTokenKey(user.getToken());
+
+        System.out.println("###############令牌写入redis###############"+userKey);
         redisCache.setCacheObject(userKey, user, expireTime, TimeUnit.MINUTES);
     }
 
@@ -162,7 +180,7 @@ public class LoginTokenService
     /**
      * 验证令牌有效期，相差不足20分钟，自动刷新缓存
      * 
-     * @param token 令牌
+     * @param
      * @return 令牌
      */
     public void verifyToken(LoginUser loginUser)

@@ -54,7 +54,7 @@ public class SocketChatRecordController {
     public AjaxResult selectChatRecordsWithChairmanId(@RequestParam int userId1, @RequestParam int userId2,
                                                       @RequestParam(required = false, defaultValue = "1") int pageNum,
                                                       @RequestParam(required = false, defaultValue = "10") int pageSize) {
-        int chairmanId = 111111;
+
         return AjaxResult.success(this.socketChatRecordService.queryChatRecord(userId1, userId2, pageNum, pageSize));
     }
 

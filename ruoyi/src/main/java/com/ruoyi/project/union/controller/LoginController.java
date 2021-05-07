@@ -106,6 +106,8 @@ public class LoginController {
         return AjaxResult.success(loginTokenService.createToken(user));
     }
 
+
+
     @ApiOperation(value = "获取登录信息", httpMethod = "GET")
     @Log(title = "用户登录", businessType = BusinessType.OTHER)
     @GetMapping("/getUserInfo")
