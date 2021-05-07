@@ -6,12 +6,15 @@ import com.ruoyi.project.democratic.entity.ExamMember;
 import com.ruoyi.project.democratic.entity.VO.GroupToExamVO;
 import com.ruoyi.project.democratic.entity.VoteGroup;
 import com.ruoyi.project.democratic.entity.VoteGroupMember;
+import com.ruoyi.project.democratic.entity.VoteMember;
 import com.ruoyi.project.democratic.mapper.ExamMemberMapper;
 import com.ruoyi.project.democratic.mapper.VoteGroupMapper;
 import com.ruoyi.project.democratic.mapper.VoteGroupMemberMapper;
+import com.ruoyi.project.democratic.mapper.VoteMemberMapper;
 import com.ruoyi.project.democratic.service.IExamMemberService;
 import com.ruoyi.project.democratic.service.IVoteGroupService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ruoyi.project.democratic.service.IVoteMemberService;
 import com.ruoyi.project.union.entity.UserProfile;
 import com.ruoyi.project.union.mapper.UserProfileDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +47,10 @@ public class VoteGroupServiceImpl extends ServiceImpl<VoteGroupMapper, VoteGroup
     private ExamMemberMapper examMemberMapper;
     @Autowired
     private IExamMemberService examMemberService;
+    @Autowired
+    private VoteMemberMapper voteMemberMapper;
+    @Autowired
+    private IVoteMemberService voteMemberService;
 
     /**
      * 新增分组
@@ -179,7 +186,7 @@ public class VoteGroupServiceImpl extends ServiceImpl<VoteGroupMapper, VoteGroup
                 for (VoteGroupMember groupMember : groupMemberList){
                     //查是否有用户已被加入考试
                     ExamMember examMember = examMemberMapper.selectOne(new QueryWrapper<ExamMember>().
-                            eq(ExamMember.EXAMID, group.getExamId()).
+                            eq(ExamMember.EXAMID, group.getEqvId()).
                             eq(ExamMember.USERID, groupMember.getUserId()));
                     //不存在，放入新增列表中
                     if (examMember == null){
@@ -192,7 +199,51 @@ public class VoteGroupServiceImpl extends ServiceImpl<VoteGroupMapper, VoteGroup
                 List<UserProfile> profileList = userProfileDao.selectList(new QueryWrapper<UserProfile>().
                         in(UserProfile.ID, idList));
 
-                boolean flag = examMemberService.insertExamMember(profileList, group.getExamId());
+                boolean flag = examMemberService.insertExamMember(profileList, group.getEqvId());
+                if (!flag) {
+                    return AjaxResult.error("加入失败，请联系管理员");
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            return AjaxResult.error("加入失败，请联系管理员", e.getMessage());
+        }
+        return AjaxResult.success("加入成功");
+    }
+
+    /**
+     * 加入问卷
+     * @param group
+     * @return
+     */
+    @Override
+    public AjaxResult addToQu(GroupToExamVO group) {
+        try {
+            List<Integer> groupList = group.getGroupIdList();
+            List<Integer> idList = new ArrayList<>();
+
+            for (Integer groupId : groupList){
+                //查询分组下人员
+                List<VoteGroupMember> groupMemberList = voteGroupMemberMapper.selectList(new QueryWrapper<VoteGroupMember>().
+                        eq(VoteGroupMember.GROUPID, groupId));
+                for (VoteGroupMember groupMember : groupMemberList){
+                    //查是否有用户已被加入问卷
+                    VoteMember examMember = voteMemberMapper.selectOne(new QueryWrapper<VoteMember>().
+                            eq(VoteMember.VOTEID, group.getEqvId()).
+                            eq(VoteMember.USERID, groupMember.getUserId()).
+                            eq(VoteMember.TYPE, "questionnaire"));
+                    //不存在，放入新增列表中
+                    if (examMember == null){
+                        idList.add(groupMember.getUserId());
+                    }
+                }
+            }
+            //查这部分新增人员的信息
+            if (idList.size() > 0) {
+                List<UserProfile> profileList = userProfileDao.selectList(new QueryWrapper<UserProfile>().
+                        in(UserProfile.ID, idList));
+
+                boolean flag = voteMemberService.insertQuMember(profileList, group.getEqvId());
                 if (!flag) {
                     return AjaxResult.error("加入失败，请联系管理员");
                 }

@@ -7,11 +7,15 @@ import java.util.List;
 
 @Data
 public class GetMemberVO {
+
+    @ApiModelProperty(value = "类型，exam考试，questionnaire问卷，vote投票，必传")
+    private String type;
+
     @ApiModelProperty(value = "选中的组织树id列表，只放父节点的id，必传")
     private List<Integer> idList;
 
-    @ApiModelProperty(value = "考试id，必传")
-    private Integer examId;
+    @ApiModelProperty(value = "考试/问卷/投票id，必传")
+    private Integer eqvId;
 
     @ApiModelProperty(value = "页码，默认1，条件搜索时必传")
     private Integer pageNum = 1;

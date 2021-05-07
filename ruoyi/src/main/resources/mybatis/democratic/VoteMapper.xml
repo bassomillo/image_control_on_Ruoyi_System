@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.democratic.mapper.VoteMapper">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, title, description, coverUrl, sticky, status, createUserId, createDate, updateUserId, updateDate, startTime, endTime, maxSubmit, type, mark, isSigned, isShow
+    </sql>
+
+    <select id="getQuestionList" resultType="com.ruoyi.project.democratic.entity.Vote">
+        select *
+        from vote
+        <where>
+            isShow = 1
+            and type = "questionnaire"
+            <if test="title != null and title != ''">
+                and title like concat('%', #{title}, '%') escape '/'
+            </if>
+        </where>
+        order by sticky desc, updateDate desc
+    </select>
+
+</mapper>
