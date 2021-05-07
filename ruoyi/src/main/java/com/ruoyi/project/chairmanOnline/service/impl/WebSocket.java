@@ -41,11 +41,6 @@ public class WebSocket {
 
     private static LoginTokenService loginTokenService;
 
-    private static SocketChatroomRecordService socketChatroomRecordService;
-
-
-
-
     @Autowired
     public void setLoginTokenService(LoginTokenService loginTokenService) {
         WebSocket.loginTokenService = loginTokenService;
@@ -61,11 +56,6 @@ public class WebSocket {
         WebSocket.socketChatConversationService = socketChatConversationService;
     }
 
-    @Autowired
-    public void setSocketChatroomRecordService(SocketChatroomRecordService socketChatroomRecordService) {
-        WebSocket.socketChatroomRecordService = socketChatroomRecordService;
-    }
-
     private Logger logger = LoggerFactory.getLogger(this.getClass());
     /**
      * 在线人数
@@ -76,7 +66,6 @@ public class WebSocket {
      * 以用户的姓名为key，WebSocket为对象保存起来
      */
     private static Map<Integer, WebSocket> clients = new ConcurrentHashMap<Integer, WebSocket>();
-
 
     /**
      * 会话

@@ -33,6 +33,8 @@ public class SocketChatConversationController {
             @RequestParam(required = false, defaultValue = "1") int pageNum,
             @RequestParam(required = false, defaultValue = "10") int pageSize,
             @RequestBody(required = false) SocketChatConversationQO socketChatConversationQO) {
+        //如果此用户的角色是秘书，则获取所属总经理的对话记录
+        
         return this.socketChatConversationService.queryConversation(userId, pageNum, pageSize, socketChatConversationQO);
     }
 
