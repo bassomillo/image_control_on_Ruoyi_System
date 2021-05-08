@@ -2,12 +2,16 @@ package com.ruoyi.project.chairmanOnline.controller;
 
 import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.project.chairmanOnline.entity.QO.SocketChatConversationQO;
+import com.ruoyi.project.chairmanOnline.entity.SocketChatOrgCommissioner;
+import com.ruoyi.project.chairmanOnline.entity.VO.SocketChatConversationVO;
 import com.ruoyi.project.chairmanOnline.service.SocketChatConversationService;
+import com.ruoyi.project.chairmanOnline.service.SocketChatOrgComService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * 聊天会话表(SocketChatConversation)表控制层
@@ -25,6 +29,9 @@ public class SocketChatConversationController {
     @Resource
     private SocketChatConversationService socketChatConversationService;
 
+    @Resource
+    private SocketChatOrgComService socketChatOrgComService;
+
 
     @ApiOperation("获取当前用户的所有对话,按时间降序")
     @PostMapping("selectConversation")
@@ -34,8 +41,8 @@ public class SocketChatConversationController {
             @RequestParam(required = false, defaultValue = "10") int pageSize,
             @RequestBody(required = false) SocketChatConversationQO socketChatConversationQO) {
         //如果此用户的角色是秘书，则获取所属总经理的对话记录
-        
-        return this.socketChatConversationService.queryConversation(userId, pageNum, pageSize, socketChatConversationQO);
+         userId = socketChatOrgComService.getCommissionerByUserId(userId);
+        return AjaxResult.success(this.socketChatConversationService.queryConversation(userId, pageNum, pageSize, socketChatConversationQO));
     }
 
 

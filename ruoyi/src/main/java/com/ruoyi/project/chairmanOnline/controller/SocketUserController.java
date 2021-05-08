@@ -3,6 +3,7 @@ package com.ruoyi.project.chairmanOnline.controller;
 import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.project.chairmanOnline.entity.VO.GeneralManagerVO;
 import com.ruoyi.project.chairmanOnline.service.SocketUserService;
+import com.ruoyi.project.democratic.tool.ToolUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * (User)表控制层
@@ -28,6 +31,8 @@ public class SocketUserController {
     @Resource
     private SocketUserService userService;
 
+    @Resource
+    private ToolUtils toolUtils;
 
     /**
      * 心理咨询师列表
@@ -41,26 +46,9 @@ public class SocketUserController {
         return AjaxResult.success(this.userService.selectPsychologicalCounselors());
     }
 
-
-    /**
-     * 省总经理和市总经理
-     *
-     * @param
-     * @return 单条数据
-     */
-    @ApiOperation("用户的省总经理和市总经理")
+    @ApiOperation("通过用户的组织orgid，查询省总经理和市总经理")
     @PostMapping("selectGeneralManager")
-    public AjaxResult selectGeneralManager(int userId) {
-        GeneralManagerVO generalManagerVO = new GeneralManagerVO();
-        GeneralManagerVO generalManagerVO1 = new GeneralManagerVO();
-        generalManagerVO.setId(1);
-        generalManagerVO.setName("省总经理");
-        generalManagerVO1.setId(2);
-        generalManagerVO1.setName("市总经理");
-        ArrayList<GeneralManagerVO> generalManagerVOS = new ArrayList<>(2);
-        generalManagerVOS.add(generalManagerVO);
-        generalManagerVOS.add(generalManagerVO1);
-        return AjaxResult.success(generalManagerVOS);
+    public AjaxResult selectGeneralManager1(int orgId) {
+        return AjaxResult.success(toolUtils.getManagerId(orgId)) ;
     }
-
 }

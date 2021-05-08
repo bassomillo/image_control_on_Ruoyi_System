@@ -2,7 +2,9 @@ package com.ruoyi.project.chairmanOnline.controller;
 
 import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.project.chairmanOnline.entity.QO.SocketChatRecordQO;
+import com.ruoyi.project.chairmanOnline.entity.SocketChatOrgCommissioner;
 import com.ruoyi.project.chairmanOnline.entity.SocketChatRecord;
+import com.ruoyi.project.chairmanOnline.service.SocketChatOrgComService;
 import com.ruoyi.project.chairmanOnline.service.SocketChatRecordService;
 import com.ruoyi.project.common.FastdfsClientUtil;
 import io.swagger.annotations.Api;
@@ -36,6 +38,9 @@ public class SocketChatRecordController {
     @Resource
     FastdfsClientUtil fastDfsUtil;
 
+    @Resource
+    private SocketChatOrgComService socketChatOrgComService;
+
 
     @ApiIgnore
     @ApiOperation("总经理、咨询师查询聊天记录,按时间降序")
@@ -54,7 +59,9 @@ public class SocketChatRecordController {
     public AjaxResult selectChatRecordsWithChairmanId(@RequestParam int userId1, @RequestParam int userId2,
                                                       @RequestParam(required = false, defaultValue = "1") int pageNum,
                                                       @RequestParam(required = false, defaultValue = "10") int pageSize) {
-
+        //如果此用户的角色是秘书，则获取所属总经理id
+        userId1 = socketChatOrgComService.getCommissionerByUserId(userId1);
+        userId2 = socketChatOrgComService.getCommissionerByUserId(userId2);
         return AjaxResult.success(this.socketChatRecordService.queryChatRecord(userId1, userId2, pageNum, pageSize));
     }
 

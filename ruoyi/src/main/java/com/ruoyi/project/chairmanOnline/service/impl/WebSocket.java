@@ -6,6 +6,7 @@ import com.ruoyi.project.chairmanOnline.entity.SocketChatRecord;
 import com.ruoyi.project.chairmanOnline.entity.SocketChatroomRecord;
 import com.ruoyi.project.chairmanOnline.entity.VO.WebSocketSystemMessageVO;
 import com.ruoyi.project.chairmanOnline.service.SocketChatConversationService;
+import com.ruoyi.project.chairmanOnline.service.SocketChatOrgComService;
 import com.ruoyi.project.chairmanOnline.service.SocketChatRecordService;
 import com.ruoyi.project.chairmanOnline.service.SocketChatroomRecordService;
 import com.ruoyi.project.union.service.LoginTokenService;
@@ -14,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
@@ -41,6 +43,9 @@ public class WebSocket {
 
     private static LoginTokenService loginTokenService;
 
+
+    private static SocketChatOrgComService socketChatOrgComService;
+
     @Autowired
     public void setLoginTokenService(LoginTokenService loginTokenService) {
         WebSocket.loginTokenService = loginTokenService;
@@ -54,6 +59,11 @@ public class WebSocket {
     @Autowired
     public void setSocketChatConversationService(SocketChatConversationService socketChatConversationService) {
         WebSocket.socketChatConversationService = socketChatConversationService;
+    }
+
+    @Autowired
+    public void setSocketChatOrgComService(SocketChatOrgComService socketChatOrgComService) {
+        WebSocket.socketChatOrgComService = socketChatOrgComService;
     }
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -90,6 +100,9 @@ public class WebSocket {
             logger.info("token无效" + userId);
         }
 
+        //此用户是秘书的话，将id替换成对用总经理的id
+        userId = socketChatOrgComService.getCommissionerByUserId(userId);
+
         onlineNumber.incrementAndGet();
         logger.info("现在来连接的客户id：" + session.getId() + "用户名：" + userId);
         this.userId = userId;
@@ -107,7 +120,6 @@ public class WebSocket {
         }
 
     }
-
 
 
     @OnError
@@ -143,15 +155,17 @@ public class WebSocket {
      * @param session 会话
      */
     @OnMessage
-    public void onMessage(String message, Session session ){
+    public void onMessage(String message, Session session) {
 
         System.out.println("--------收到消息--------------  :" + message);
         try {
-
             SocketChatRecord socketChatRecord = JSON.parseObject(message, SocketChatRecord.class);
             //判断token的有效性
             logger.info("来自客户端消息：" + message + "客户端的id是：" + session.getId(), "token是：" + socketChatRecord.getToken());
             System.out.println("开始推送消息给" + socketChatRecord.getReceiverid());
+
+            //发送者身份，此处会隐藏掉秘书身份
+            socketChatRecord.setSenderid(userId);
             socketChatRecord.setCreatedtime(new Date());
             socketChatRecord.setToken("");
             sendMessageTo(socketChatRecord);
@@ -159,8 +173,6 @@ public class WebSocket {
             e.printStackTrace();
             logger.info("发生了错误了");
         }
-
-
     }
 
 
@@ -188,17 +200,14 @@ public class WebSocket {
     }
 
 
-
     private void sendMessageSomeUser(SocketChatroomRecord socketChatroomRecord, List<Integer> userIds) {
-        if(userIds.size() > 0){
-            for (int userId : userIds){
-                if (clients.containsKey(userId)){
-                    clients.get(userId).session.getAsyncRemote().sendText(socketChatroomRecord.toString()) ;
+        if (userIds.size() > 0) {
+            for (int userId : userIds) {
+                if (clients.containsKey(userId)) {
+                    clients.get(userId).session.getAsyncRemote().sendText(socketChatroomRecord.toString());
                 }
             }
         }
-
-
     }
 
 
@@ -221,6 +230,7 @@ public class WebSocket {
         webSocketSystemMessageVO.setOnlineId(userId);
         sendMessageAll(webSocketSystemMessageVO);
     }
+
     //用户上线补推消息
     private void supplementRecords(int userId) throws IOException {
 
