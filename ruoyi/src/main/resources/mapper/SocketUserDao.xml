@@ -1,0 +1,440 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.chairmanOnline.dao.SocketUserDao">
+
+    <resultMap type="com.ruoyi.project.chairmanOnline.entity.SocketUser" id="UserMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="verifiedmobile" column="verifiedMobile" jdbcType="VARCHAR"/>
+        <result property="password" column="password" jdbcType="VARCHAR"/>
+        <result property="salt" column="salt" jdbcType="VARCHAR"/>
+        <result property="paypassword" column="payPassword" jdbcType="VARCHAR"/>
+        <result property="paypasswordsalt" column="payPasswordSalt" jdbcType="VARCHAR"/>
+        <result property="locale" column="locale" jdbcType="VARCHAR"/>
+        <result property="uri" column="uri" jdbcType="VARCHAR"/>
+        <result property="nickname" column="nickname" jdbcType="VARCHAR"/>
+        <result property="title" column="title" jdbcType="VARCHAR"/>
+        <result property="tags" column="tags" jdbcType="VARCHAR"/>
+        <result property="type" column="type" jdbcType="VARCHAR"/>
+        <result property="point" column="point" jdbcType="INTEGER"/>
+        <result property="coin" column="coin" jdbcType="INTEGER"/>
+        <result property="smallavatar" column="smallAvatar" jdbcType="VARCHAR"/>
+        <result property="mediumavatar" column="mediumAvatar" jdbcType="VARCHAR"/>
+        <result property="largeavatar" column="largeAvatar" jdbcType="VARCHAR"/>
+        <result property="emailverified" column="emailVerified" jdbcType="INTEGER"/>
+        <result property="setup" column="setup" jdbcType="INTEGER"/>
+        <result property="roles" column="roles" jdbcType="VARCHAR"/>
+        <result property="promoted" column="promoted" jdbcType="INTEGER"/>
+        <result property="promotedseq" column="promotedSeq" jdbcType="INTEGER"/>
+        <result property="promotedtime" column="promotedTime" jdbcType="INTEGER"/>
+        <result property="locked" column="locked" jdbcType="INTEGER"/>
+        <result property="lockdeadline" column="lockDeadline" jdbcType="INTEGER"/>
+        <result property="consecutivepassworderrortimes" column="consecutivePasswordErrorTimes" jdbcType="INTEGER"/>
+        <result property="lastpasswordfailtime" column="lastPasswordFailTime" jdbcType="INTEGER"/>
+        <result property="logintime" column="loginTime" jdbcType="INTEGER"/>
+        <result property="loginip" column="loginIp" jdbcType="VARCHAR"/>
+        <result property="loginsessionid" column="loginSessionId" jdbcType="VARCHAR"/>
+        <result property="approvaltime" column="approvalTime" jdbcType="INTEGER"/>
+        <result property="approvalstatus" column="approvalStatus" jdbcType="VARCHAR"/>
+        <result property="newmessagenum" column="newMessageNum" jdbcType="INTEGER"/>
+        <result property="newnotificationnum" column="newNotificationNum" jdbcType="INTEGER"/>
+        <result property="createdip" column="createdIp" jdbcType="VARCHAR"/>
+        <result property="createdtime" column="createdTime" jdbcType="INTEGER"/>
+        <result property="updatedtime" column="updatedTime" jdbcType="INTEGER"/>
+        <result property="invitecode" column="inviteCode" jdbcType="VARCHAR"/>
+        <result property="orgid" column="orgId" jdbcType="INTEGER"/>
+        <result property="orgcode" column="orgCode" jdbcType="VARCHAR"/>
+        <result property="registeredway" column="registeredWay" jdbcType="VARCHAR"/>
+        <result property="bindstatus" column="bindStatus" jdbcType="INTEGER"/>
+        <result property="confirmtime" column="confirmTime" jdbcType="INTEGER"/>
+        <result property="email" column="email" jdbcType="VARCHAR"/>
+        <result property="signatureimg" column="signatureImg" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="UserMap">
+        select
+          id, verifiedMobile, password, salt, payPassword, payPasswordSalt, locale, uri, nickname, title, tags, type, point, coin, smallAvatar, mediumAvatar, largeAvatar, emailVerified, setup, roles, promoted, promotedSeq, promotedTime, locked, lockDeadline, consecutivePasswordErrorTimes, lastPasswordFailTime, loginTime, loginIp, loginSessionId, approvalTime, approvalStatus, newMessageNum, newNotificationNum, createdIp, createdTime, updatedTime, inviteCode, orgId, orgCode, registeredWay, bindStatus, confirmTime, email, signatureImg
+        from zhgh_new_test.user
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="UserMap">
+        select
+          id, verifiedMobile, password, salt, payPassword, payPasswordSalt, locale, uri, nickname, title, tags, type, point, coin, smallAvatar, mediumAvatar, largeAvatar, emailVerified, setup, roles, promoted, promotedSeq, promotedTime, locked, lockDeadline, consecutivePasswordErrorTimes, lastPasswordFailTime, loginTime, loginIp, loginSessionId, approvalTime, approvalStatus, newMessageNum, newNotificationNum, createdIp, createdTime, updatedTime, inviteCode, orgId, orgCode, registeredWay, bindStatus, confirmTime, email, signatureImg
+        from zhgh_new_test.user
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="UserMap">
+        select
+        id, verifiedMobile, password, salt, payPassword, payPasswordSalt, locale, uri, nickname, title, tags, type,
+        point, coin, smallAvatar, mediumAvatar, largeAvatar, emailVerified, setup, roles, promoted, promotedSeq,
+        promotedTime, locked, lockDeadline, consecutivePasswordErrorTimes, lastPasswordFailTime, loginTime, loginIp,
+        loginSessionId, approvalTime, approvalStatus, newMessageNum, newNotificationNum, createdIp, createdTime,
+        updatedTime, inviteCode, orgId, orgCode, registeredWay, bindStatus, confirmTime, email, signatureImg
+        from zhgh_new_test.user
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="verifiedmobile != null and verifiedmobile != ''">
+                and verifiedMobile = #{verifiedmobile}
+            </if>
+            <if test="password != null and password != ''">
+                and password = #{password}
+            </if>
+            <if test="salt != null and salt != ''">
+                and salt = #{salt}
+            </if>
+            <if test="paypassword != null and paypassword != ''">
+                and payPassword = #{paypassword}
+            </if>
+            <if test="paypasswordsalt != null and paypasswordsalt != ''">
+                and payPasswordSalt = #{paypasswordsalt}
+            </if>
+            <if test="locale != null and locale != ''">
+                and locale = #{locale}
+            </if>
+            <if test="uri != null and uri != ''">
+                and uri = #{uri}
+            </if>
+            <if test="nickname != null and nickname != ''">
+                and nickname = #{nickname}
+            </if>
+            <if test="title != null and title != ''">
+                and title = #{title}
+            </if>
+            <if test="tags != null and tags != ''">
+                and tags = #{tags}
+            </if>
+            <if test="type != null and type != ''">
+                and type = #{type}
+            </if>
+            <if test="point != null">
+                and point = #{point}
+            </if>
+            <if test="coin != null">
+                and coin = #{coin}
+            </if>
+            <if test="smallavatar != null and smallavatar != ''">
+                and smallAvatar = #{smallavatar}
+            </if>
+            <if test="mediumavatar != null and mediumavatar != ''">
+                and mediumAvatar = #{mediumavatar}
+            </if>
+            <if test="largeavatar != null and largeavatar != ''">
+                and largeAvatar = #{largeavatar}
+            </if>
+            <if test="emailverified != null">
+                and emailVerified = #{emailverified}
+            </if>
+            <if test="setup != null">
+                and setup = #{setup}
+            </if>
+            <if test="roles != null and roles != ''">
+                and roles = #{roles}
+            </if>
+            <if test="promoted != null">
+                and promoted = #{promoted}
+            </if>
+            <if test="promotedseq != null">
+                and promotedSeq = #{promotedseq}
+            </if>
+            <if test="promotedtime != null">
+                and promotedTime = #{promotedtime}
+            </if>
+            <if test="locked != null">
+                and locked = #{locked}
+            </if>
+            <if test="lockdeadline != null">
+                and lockDeadline = #{lockdeadline}
+            </if>
+            <if test="consecutivepassworderrortimes != null">
+                and consecutivePasswordErrorTimes = #{consecutivepassworderrortimes}
+            </if>
+            <if test="lastpasswordfailtime != null">
+                and lastPasswordFailTime = #{lastpasswordfailtime}
+            </if>
+            <if test="logintime != null">
+                and loginTime = #{logintime}
+            </if>
+            <if test="loginip != null and loginip != ''">
+                and loginIp = #{loginip}
+            </if>
+            <if test="loginsessionid != null and loginsessionid != ''">
+                and loginSessionId = #{loginsessionid}
+            </if>
+            <if test="approvaltime != null">
+                and approvalTime = #{approvaltime}
+            </if>
+            <if test="approvalstatus != null">
+                and approvalStatus = #{approvalstatus}
+            </if>
+            <if test="newmessagenum != null">
+                and newMessageNum = #{newmessagenum}
+            </if>
+            <if test="newnotificationnum != null">
+                and newNotificationNum = #{newnotificationnum}
+            </if>
+            <if test="createdip != null and createdip != ''">
+                and createdIp = #{createdip}
+            </if>
+            <if test="createdtime != null">
+                and createdTime = #{createdtime}
+            </if>
+            <if test="updatedtime != null">
+                and updatedTime = #{updatedtime}
+            </if>
+            <if test="invitecode != null and invitecode != ''">
+                and inviteCode = #{invitecode}
+            </if>
+            <if test="orgid != null">
+                and orgId = #{orgid}
+            </if>
+            <if test="orgcode != null and orgcode != ''">
+                and orgCode = #{orgcode}
+            </if>
+            <if test="registeredway != null and registeredway != ''">
+                and registeredWay = #{registeredway}
+            </if>
+            <if test="bindstatus != null">
+                and bindStatus = #{bindstatus}
+            </if>
+            <if test="confirmtime != null">
+                and confirmTime = #{confirmtime}
+            </if>
+            <if test="email != null and email != ''">
+                and email = #{email}
+            </if>
+            <if test="signatureimg != null and signatureimg != ''">
+                and signatureImg = #{signatureimg}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into zhgh_new_test.user(verifiedMobile, password, salt, payPassword, payPasswordSalt, locale, uri, nickname, title, tags, type, point, coin, smallAvatar, mediumAvatar, largeAvatar, emailVerified, setup, roles, promoted, promotedSeq, promotedTime, locked, lockDeadline, consecutivePasswordErrorTimes, lastPasswordFailTime, loginTime, loginIp, loginSessionId, approvalTime, approvalStatus, newMessageNum, newNotificationNum, createdIp, createdTime, updatedTime, inviteCode, orgId, orgCode, registeredWay, bindStatus, confirmTime, email, signatureImg)
+        values (#{verifiedmobile}, #{password}, #{salt}, #{paypassword}, #{paypasswordsalt}, #{locale}, #{uri}, #{nickname}, #{title}, #{tags}, #{type}, #{point}, #{coin}, #{smallavatar}, #{mediumavatar}, #{largeavatar}, #{emailverified}, #{setup}, #{roles}, #{promoted}, #{promotedseq}, #{promotedtime}, #{locked}, #{lockdeadline}, #{consecutivepassworderrortimes}, #{lastpasswordfailtime}, #{logintime}, #{loginip}, #{loginsessionid}, #{approvaltime}, #{approvalstatus}, #{newmessagenum}, #{newnotificationnum}, #{createdip}, #{createdtime}, #{updatedtime}, #{invitecode}, #{orgid}, #{orgcode}, #{registeredway}, #{bindstatus}, #{confirmtime}, #{email}, #{signatureimg})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into zhgh_new_test.user(verifiedMobile, password, salt, payPassword, payPasswordSalt, locale, uri,
+        nickname, title, tags, type, point, coin, smallAvatar, mediumAvatar, largeAvatar, emailVerified, setup, roles,
+        promoted, promotedSeq, promotedTime, locked, lockDeadline, consecutivePasswordErrorTimes, lastPasswordFailTime,
+        loginTime, loginIp, loginSessionId, approvalTime, approvalStatus, newMessageNum, newNotificationNum, createdIp,
+        createdTime, updatedTime, inviteCode, orgId, orgCode, registeredWay, bindStatus, confirmTime, email,
+        signatureImg)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.verifiedmobile}, #{entity.password}, #{entity.salt}, #{entity.paypassword},
+            #{entity.paypasswordsalt}, #{entity.locale}, #{entity.uri}, #{entity.nickname}, #{entity.title},
+            #{entity.tags}, #{entity.type}, #{entity.point}, #{entity.coin}, #{entity.smallavatar},
+            #{entity.mediumavatar}, #{entity.largeavatar}, #{entity.emailverified}, #{entity.setup}, #{entity.roles},
+            #{entity.promoted}, #{entity.promotedseq}, #{entity.promotedtime}, #{entity.locked}, #{entity.lockdeadline},
+            #{entity.consecutivepassworderrortimes}, #{entity.lastpasswordfailtime}, #{entity.logintime},
+            #{entity.loginip}, #{entity.loginsessionid}, #{entity.approvaltime}, #{entity.approvalstatus},
+            #{entity.newmessagenum}, #{entity.newnotificationnum}, #{entity.createdip}, #{entity.createdtime},
+            #{entity.updatedtime}, #{entity.invitecode}, #{entity.orgid}, #{entity.orgcode}, #{entity.registeredway},
+            #{entity.bindstatus}, #{entity.confirmtime}, #{entity.email}, #{entity.signatureimg})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into zhgh_new_test.user(verifiedMobile, password, salt, payPassword, payPasswordSalt, locale, uri,
+        nickname, title, tags, type, point, coin, smallAvatar, mediumAvatar, largeAvatar, emailVerified, setup, roles,
+        promoted, promotedSeq, promotedTime, locked, lockDeadline, consecutivePasswordErrorTimes, lastPasswordFailTime,
+        loginTime, loginIp, loginSessionId, approvalTime, approvalStatus, newMessageNum, newNotificationNum, createdIp,
+        createdTime, updatedTime, inviteCode, orgId, orgCode, registeredWay, bindStatus, confirmTime, email,
+        signatureImg)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.verifiedmobile}, #{entity.password}, #{entity.salt}, #{entity.paypassword},
+            #{entity.paypasswordsalt}, #{entity.locale}, #{entity.uri}, #{entity.nickname}, #{entity.title},
+            #{entity.tags}, #{entity.type}, #{entity.point}, #{entity.coin}, #{entity.smallavatar},
+            #{entity.mediumavatar}, #{entity.largeavatar}, #{entity.emailverified}, #{entity.setup}, #{entity.roles},
+            #{entity.promoted}, #{entity.promotedseq}, #{entity.promotedtime}, #{entity.locked}, #{entity.lockdeadline},
+            #{entity.consecutivepassworderrortimes}, #{entity.lastpasswordfailtime}, #{entity.logintime},
+            #{entity.loginip}, #{entity.loginsessionid}, #{entity.approvaltime}, #{entity.approvalstatus},
+            #{entity.newmessagenum}, #{entity.newnotificationnum}, #{entity.createdip}, #{entity.createdtime},
+            #{entity.updatedtime}, #{entity.invitecode}, #{entity.orgid}, #{entity.orgcode}, #{entity.registeredway},
+            #{entity.bindstatus}, #{entity.confirmtime}, #{entity.email}, #{entity.signatureimg})
+        </foreach>
+        on duplicate key update
+        verifiedMobile = values(verifiedMobile) , password = values(password) , salt = values(salt) , payPassword =
+        values(payPassword) , payPasswordSalt = values(payPasswordSalt) , locale = values(locale) , uri = values(uri) ,
+        nickname = values(nickname) , title = values(title) , tags = values(tags) , type = values(type) , point =
+        values(point) , coin = values(coin) , smallAvatar = values(smallAvatar) , mediumAvatar = values(mediumAvatar) ,
+        largeAvatar = values(largeAvatar) , emailVerified = values(emailVerified) , setup = values(setup) , roles =
+        values(roles) , promoted = values(promoted) , promotedSeq = values(promotedSeq) , promotedTime =
+        values(promotedTime) , locked = values(locked) , lockDeadline = values(lockDeadline) ,
+        consecutivePasswordErrorTimes = values(consecutivePasswordErrorTimes) , lastPasswordFailTime =
+        values(lastPasswordFailTime) , loginTime = values(loginTime) , loginIp = values(loginIp) , loginSessionId =
+        values(loginSessionId) , approvalTime = values(approvalTime) , approvalStatus = values(approvalStatus) ,
+        newMessageNum = values(newMessageNum) , newNotificationNum = values(newNotificationNum) , createdIp =
+        values(createdIp) , createdTime = values(createdTime) , updatedTime = values(updatedTime) , inviteCode =
+        values(inviteCode) , orgId = values(orgId) , orgCode = values(orgCode) , registeredWay = values(registeredWay) ,
+        bindStatus = values(bindStatus) , confirmTime = values(confirmTime) , email = values(email) , signatureImg =
+        values(signatureImg)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update zhgh_new_test.user
+        <set>
+            <if test="verifiedmobile != null and verifiedmobile != ''">
+                verifiedMobile = #{verifiedmobile},
+            </if>
+            <if test="password != null and password != ''">
+                password = #{password},
+            </if>
+            <if test="salt != null and salt != ''">
+                salt = #{salt},
+            </if>
+            <if test="paypassword != null and paypassword != ''">
+                payPassword = #{paypassword},
+            </if>
+            <if test="paypasswordsalt != null and paypasswordsalt != ''">
+                payPasswordSalt = #{paypasswordsalt},
+            </if>
+            <if test="locale != null and locale != ''">
+                locale = #{locale},
+            </if>
+            <if test="uri != null and uri != ''">
+                uri = #{uri},
+            </if>
+            <if test="nickname != null and nickname != ''">
+                nickname = #{nickname},
+            </if>
+            <if test="title != null and title != ''">
+                title = #{title},
+            </if>
+            <if test="tags != null and tags != ''">
+                tags = #{tags},
+            </if>
+            <if test="type != null and type != ''">
+                type = #{type},
+            </if>
+            <if test="point != null">
+                point = #{point},
+            </if>
+            <if test="coin != null">
+                coin = #{coin},
+            </if>
+            <if test="smallavatar != null and smallavatar != ''">
+                smallAvatar = #{smallavatar},
+            </if>
+            <if test="mediumavatar != null and mediumavatar != ''">
+                mediumAvatar = #{mediumavatar},
+            </if>
+            <if test="largeavatar != null and largeavatar != ''">
+                largeAvatar = #{largeavatar},
+            </if>
+            <if test="emailverified != null">
+                emailVerified = #{emailverified},
+            </if>
+            <if test="setup != null">
+                setup = #{setup},
+            </if>
+            <if test="roles != null and roles != ''">
+                roles = #{roles},
+            </if>
+            <if test="promoted != null">
+                promoted = #{promoted},
+            </if>
+            <if test="promotedseq != null">
+                promotedSeq = #{promotedseq},
+            </if>
+            <if test="promotedtime != null">
+                promotedTime = #{promotedtime},
+            </if>
+            <if test="locked != null">
+                locked = #{locked},
+            </if>
+            <if test="lockdeadline != null">
+                lockDeadline = #{lockdeadline},
+            </if>
+            <if test="consecutivepassworderrortimes != null">
+                consecutivePasswordErrorTimes = #{consecutivepassworderrortimes},
+            </if>
+            <if test="lastpasswordfailtime != null">
+                lastPasswordFailTime = #{lastpasswordfailtime},
+            </if>
+            <if test="logintime != null">
+                loginTime = #{logintime},
+            </if>
+            <if test="loginip != null and loginip != ''">
+                loginIp = #{loginip},
+            </if>
+            <if test="loginsessionid != null and loginsessionid != ''">
+                loginSessionId = #{loginsessionid},
+            </if>
+            <if test="approvaltime != null">
+                approvalTime = #{approvaltime},
+            </if>
+            <if test="approvalstatus != null">
+                approvalStatus = #{approvalstatus},
+            </if>
+            <if test="newmessagenum != null">
+                newMessageNum = #{newmessagenum},
+            </if>
+            <if test="newnotificationnum != null">
+                newNotificationNum = #{newnotificationnum},
+            </if>
+            <if test="createdip != null and createdip != ''">
+                createdIp = #{createdip},
+            </if>
+            <if test="createdtime != null">
+                createdTime = #{createdtime},
+            </if>
+            <if test="updatedtime != null">
+                updatedTime = #{updatedtime},
+            </if>
+            <if test="invitecode != null and invitecode != ''">
+                inviteCode = #{invitecode},
+            </if>
+            <if test="orgid != null">
+                orgId = #{orgid},
+            </if>
+            <if test="orgcode != null and orgcode != ''">
+                orgCode = #{orgcode},
+            </if>
+            <if test="registeredway != null and registeredway != ''">
+                registeredWay = #{registeredway},
+            </if>
+            <if test="bindstatus != null">
+                bindStatus = #{bindstatus},
+            </if>
+            <if test="confirmtime != null">
+                confirmTime = #{confirmtime},
+            </if>
+            <if test="email != null and email != ''">
+                email = #{email},
+            </if>
+            <if test="signatureimg != null and signatureimg != ''">
+                signatureImg = #{signatureimg},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from zhgh_new_test.user where id = #{id}
+    </delete>
+
+
+
+    <!--查询单个-->
+    <select id="selectPsychologicalCounselors" resultMap="UserMap">
+        select
+          id, verifiedMobile, password, salt, payPassword, payPasswordSalt, locale, uri, nickname, title, tags, type, point, coin, smallAvatar, mediumAvatar, largeAvatar, emailVerified, setup, roles, promoted, promotedSeq, promotedTime, locked, lockDeadline, consecutivePasswordErrorTimes, lastPasswordFailTime, loginTime, loginIp, loginSessionId, approvalTime, approvalStatus, newMessageNum, newNotificationNum, createdIp, createdTime, updatedTime, inviteCode, orgId, orgCode, registeredWay, bindStatus, confirmTime, email, signatureImg
+        from zhgh_new_test.user
+        where roles like '%psychological_counselor%'
+    </select>
+
+
+</mapper>
+

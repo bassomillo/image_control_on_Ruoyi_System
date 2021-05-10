@@ -7,6 +7,7 @@
         id, title, description, coverUrl, sticky, status, createUserId, createDate, updateUserId, updateDate, entranceStartDate, entranceEndDate, duration, maxSubmit, mark, isSigned
     </sql>
 
+    <!--条件查询后台考试列表-->
     <select id="getBackExamList" resultType="com.ruoyi.project.democratic.entity.Exam">
         select *
         from exam
@@ -17,6 +18,55 @@
             </if>
         </where>
         order by sticky desc, updateDate desc
+    </select>
+
+    <!--获取用户导出数据-->
+    <select id="getUserExportData" resultType="com.ruoyi.project.democratic.entity.DO.ExamPaperExportDO">
+        select u.id as userId, up.truename as name, up.gender, up.mobile, u.orgId
+        from user u
+        inner join user_profile up on (
+            up.id = u.id
+        )
+        where
+            u.id = #{userId}
+    </select>
+
+    <!--获取时间段内发布的考试，借用newStatus字段保存orgId-->
+    <select id="getPublishList" resultType="com.ruoyi.project.democratic.entity.Exam">
+        select e.*, u.orgId as newStatus
+        from exam e
+        left join user u on (
+            u.id = e.createUserId
+        )
+        <where>
+            e.isShow = 1
+            <if test="startTime != null and startTime != ''">
+                and e.createDate &gt;= #{startTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                and e.createDate &lt;= #{endTime}
+            </if>
+        </where>
+    </select>
+
+    <!--查询首页考试列表-->
+    <select id="getTopExamList" resultType="com.ruoyi.project.democratic.entity.Exam">
+        select *
+        from exam
+        <where>
+            isShow = 1
+            and status != "unpublished"
+            <if test="title != null and title != ''">
+                and title like concat('%', #{title}, '%') escape '/'
+            </if>
+            <if test="examIdList.size() != 0">
+                and id in
+                <foreach collection="examIdList" item="id" index="index" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+        order by sticky desc, status asc, createDate desc
     </select>
 
 </mapper>

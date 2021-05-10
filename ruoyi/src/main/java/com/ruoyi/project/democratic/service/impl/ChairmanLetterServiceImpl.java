@@ -487,7 +487,7 @@ public class ChairmanLetterServiceImpl extends ServiceImpl<ChairmanLetterMapper,
 
             Date date = new Date();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            String name = "主席信箱" + sdf.format(date) + ".xlsx";
+            String name = "主席信箱" + sdf.format(date) + ".xls";
 
             //导出
             Workbook wb = getWorkbook(exportList, request);

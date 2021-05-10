@@ -7,9 +7,11 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ruoyi.project.union.entity.vo.AccountSearchVo;
 import com.ruoyi.project.union.entity.vo.UserSearchPojo;
 import com.ruoyi.project.union.entity.vo.UserVo;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * <p>
@@ -22,9 +24,11 @@ import java.util.List;
 @Repository
 public interface UserDao extends BaseMapper<User> {
 
+    User getLoginUser(@Param("username") String username);
+
     List<Integer> searchUser(UserSearchPojo userSearchPojo);
 
     List<UserShowPojo> searchOrgUser(OrgUserSearchPojo orgUserSearchPojo);
 
-    List<UserVo> searchAccount(AccountSearchVo accountSearchVo);
+    List<UserVo> searchAccount(@Param("userIds") Set<Long> userIds, @Param("current") Integer current, @Param("size") Integer size);
 }

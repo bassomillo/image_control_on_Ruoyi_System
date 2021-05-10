@@ -152,6 +152,10 @@ public class Exam extends Model<Exam> {
     @ApiModelProperty(value = "是否展示（用作判断是否被删除），1是，0否")
     private Integer isShow;
 
+    @TableField(exist = false)
+    @ApiModelProperty(value = "首页状态，未作答/已作答/已结束")
+    private String newStatus;
+
     public static final String ID = "id";
 
     public static final String TITLE = "title";

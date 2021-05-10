@@ -140,7 +140,7 @@ public class ManagerLetterController {
     }
 
     @ApiOperation(value = "首页/后台-下载文件")
-    @PostMapping("/downloadFile")
+    @GetMapping("/downloadFile")
     public AjaxResult downloadFile(@RequestParam("id") Integer id,
                                    HttpServletResponse response){
         return IManagerLetterService.downloadFile(id, response);
@@ -152,7 +152,7 @@ public class ManagerLetterController {
             @ApiImplicitParam(name = "year", value = "年份"),
             @ApiImplicitParam(name = "userId", value = "当前登录者id", required = true)
     })
-    @PostMapping("/export")
+    @GetMapping("/export")
     public AjaxResult export(@RequestParam(value = "content", required = false) String content,
                              @RequestParam(value = "year", required = false) Integer year,
                              @RequestParam("userId") Integer userId,

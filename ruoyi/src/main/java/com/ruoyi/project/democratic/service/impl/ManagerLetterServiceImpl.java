@@ -468,7 +468,7 @@ public class ManagerLetterServiceImpl extends ServiceImpl<ManagerLetterMapper, M
 
             Date date = new Date();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            String name = "总经理信箱" + sdf.format(date) + ".xlsx";
+            String name = "总经理信箱" + sdf.format(date) + ".xls";
 
             //导出
             Workbook wb = getWorkbook(exportList, request);

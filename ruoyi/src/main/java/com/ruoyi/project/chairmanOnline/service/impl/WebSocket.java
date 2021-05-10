@@ -30,7 +30,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  **/
 
 @Component
-@ServerEndpoint(value = "/connectWebSocket/{userId}",configurator= GetHttpSessionConfigurator.class )
+@ServerEndpoint(value = "/connectWebSocket/{token}/{userId}", configurator = GetHttpSessionConfigurator.class)
 public class WebSocket {
 
 
@@ -52,7 +52,8 @@ public class WebSocket {
     /**
      * 在线人数
      */
-    public static AtomicInteger onlineNumber = new AtomicInteger(0);;
+    public static AtomicInteger onlineNumber = new AtomicInteger(0);
+    ;
     /**
      * 以用户的姓名为key，WebSocket为对象保存起来
      */
@@ -72,10 +73,11 @@ public class WebSocket {
      * @param session
      */
     @OnOpen
-    public void onOpen(@PathParam("userId") Integer userId, Session session,EndpointConfig conf) {
+    public void onOpen(@PathParam("userId") Integer userId, Session session, EndpointConfig conf,@PathParam("token") String token) {
 
         HandshakeRequest req = (HandshakeRequest) conf.getUserProperties().get("sessionKey");
-        System.out.println(conf.getUserProperties().get("weideheaders"));
+        logger.info("header信息：" + conf.getUserProperties().get("weideheaders"));
+        logger.info("token:"+token);
 
         onlineNumber.incrementAndGet();
         logger.info("现在来连接的客户id：" + session.getId() + "用户名：" + userId);
@@ -99,10 +101,7 @@ public class WebSocket {
                 for (SocketChatRecord record : socketChatRecords) {
                     this.sendMessageTo(record);
                 }
-
             }
-
-
         } catch (IOException e) {
             logger.info(userId + "上线的时候通知所有人发生了错误");
         }
@@ -137,23 +136,23 @@ public class WebSocket {
 
     /**
      * 收到客户端的消息
-     *
      * @param message 消息
      * @param session 会话
      */
     @OnMessage
     public void onMessage(String message, Session session) {
         try {
-            logger.info("来自客户端消息：" + message + "客户端的id是：" + session.getId());
-            System.out.println("------------  :" + message);
+            System.out.println("--------收到消息--------------  :" + message);
             SocketChatRecord socketChatRecord = JSON.parseObject(message, SocketChatRecord.class);
+            logger.info("来自客户端消息：" + message + "客户端的id是：" + session.getId(),"token是："+socketChatRecord.getToken());
             System.out.println("开始推送消息给" + socketChatRecord.getReceiverid());
+            socketChatRecord.setCreatedtime(new Date());
+            socketChatRecord.setToken("");
             sendMessageTo(socketChatRecord);
         } catch (Exception e) {
             e.printStackTrace();
             logger.info("发生了错误了");
         }
-
     }
 
 
@@ -161,36 +160,36 @@ public class WebSocket {
 
         //创建对话，对话发生时记录信息,对话如果已存在则更新
         int conversationId = socketChatConversationService.createConversation(socketChatRecord);
+        //更新对话中的一些统计数值
+        socketChatConversationService.conversationStatistics(conversationId);
 
-        if(socketChatRecord.getIssent() == 0){
-            //每条聊天信息都记录到数据库。补推时聊天记录已存在则为更新。写入数据库,可能有并发问题
+        //每条聊天信息都记录到数据库。补推时聊天记录已存在则为更新。写入数据库,可能有并发问题
+        if (null == socketChatRecord.getId()) {
             logger.info("将首次收到的聊天记录写入数据库");
             socketChatRecord.setConversationid(conversationId);
             socketChatRecordService.insertOrUpdateRecord(socketChatRecord);
         }
 
         for (WebSocket item : clients.values()) {
-
             if (item.userId.equals(socketChatRecord.getReceiverid())) {
+                item.session.getAsyncRemote().sendText(JSON.toJSON(socketChatRecord).toString());
 
-                item.session.getAsyncRemote().sendText(socketChatRecord.toString());
                 //成功发送到对方客户端，更改
                 socketChatRecord.setIssent(1);
                 socketChatRecord.setCreatedtime(new Date());
                 socketChatRecordService.update(socketChatRecord);
-//                break;
+                break;
             }
         }
-
     }
 
-    public void sendMessageAll(WebSocketSystemMessageVO webSocketSystemMessageVO) throws IOException {
+    private void sendMessageAll(WebSocketSystemMessageVO webSocketSystemMessageVO) throws IOException {
         for (WebSocket item : clients.values()) {
-            item.session.getAsyncRemote().sendText(webSocketSystemMessageVO.toString());
+            item.session.getAsyncRemote().sendText(JSON.toJSON(webSocketSystemMessageVO).toString());
         }
     }
 
-    public static synchronized int getOnlineCount() {
+    public static int getOnlineCount() {
         return onlineNumber.get();
     }
 

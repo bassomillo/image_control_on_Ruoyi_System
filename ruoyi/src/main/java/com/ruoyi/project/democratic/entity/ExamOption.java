@@ -67,6 +67,14 @@ public class ExamOption extends Model<ExamOption> {
     @ApiModelProperty(value = "答案，0否，1是")
     private Integer isAnswer;
 
+    @TableField(exist = false)
+    @ApiModelProperty(value = "计数", hidden = true)
+    private Integer count = 0;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "百分比", hidden = true)
+    private Double scale = 0.0;
+
 
     public static final String ID = "id";
 

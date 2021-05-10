@@ -2,8 +2,11 @@ package com.ruoyi.project.chairmanOnline.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.ruoyi.project.chairmanOnline.dao.SocketChatRecordDao;
+import com.ruoyi.project.chairmanOnline.entity.DTO.SocketChatRecordDTO;
 import com.ruoyi.project.chairmanOnline.entity.QO.SocketChatRecordQO;
+import com.ruoyi.project.chairmanOnline.entity.SocketChatConversation;
 import com.ruoyi.project.chairmanOnline.entity.SocketChatRecord;
+import com.ruoyi.project.chairmanOnline.service.SocketChatConversationService;
 import com.ruoyi.project.chairmanOnline.service.SocketChatRecordService;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +26,9 @@ public class SocketChatRecordServiceImpl implements SocketChatRecordService {
     @Resource
     private SocketChatRecordDao socketChatRecordDao;
 
+    @Resource
+    private SocketChatConversationService socketChatConversationService;
+
     /**
      * 通过ID查询单条数据
      *
@@ -37,12 +43,10 @@ public class SocketChatRecordServiceImpl implements SocketChatRecordService {
     /**
      * 查询多条数据
      *
-     * @param offset 查询起始位置
-     * @param limit  查询条数
      * @return 对象列表
      */
     @Override
-    public List<SocketChatRecord> queryAll(SocketChatRecord socketChatRecord,int pageNum, int pageSize) {
+    public List<SocketChatRecord> queryAll(SocketChatRecord socketChatRecord, int pageNum, int pageSize) {
         PageHelper.startPage(pageNum, pageSize);
         return this.socketChatRecordDao.queryAll(socketChatRecord);
     }
@@ -92,9 +96,9 @@ public class SocketChatRecordServiceImpl implements SocketChatRecordService {
      */
 
     @Override
-    public List<SocketChatRecord> queryChatRecord(Integer senderId, Integer recriverId,int pageNum,int pageSize) {
+    public List<SocketChatRecord> queryChatRecord(Integer senderId, Integer recriverId, int pageNum, int pageSize) {
         PageHelper.startPage(pageNum, pageSize);
-        return this.socketChatRecordDao.queryChatRecord(senderId,recriverId);
+        return this.socketChatRecordDao.queryChatRecord(senderId, recriverId);
     }
 
     /**
@@ -120,17 +124,45 @@ public class SocketChatRecordServiceImpl implements SocketChatRecordService {
      */
 
     @Override
-    public int insertOrUpdateRecord(SocketChatRecord socketChatRecord){
+    public int insertOrUpdateRecord(SocketChatRecord socketChatRecord) {
         List<SocketChatRecord> socketChatRecords = new ArrayList<>();
         socketChatRecords.add(socketChatRecord);
-        return  socketChatRecordDao.insertOrUpdateBatch(socketChatRecords);
+        return socketChatRecordDao.insertOrUpdateBatch(socketChatRecords);
     }
 
     @Override
-    public List<SocketChatRecord> selectChatRecordsByCondition(SocketChatRecordQO socketChatRecordQO,int pageNum,int pageSize) {
+    public List<SocketChatRecord> selectChatRecordsByCondition(SocketChatRecordQO socketChatRecordQO, int pageNum, int pageSize) {
         PageHelper.startPage(pageNum, pageSize);
         return socketChatRecordDao.selectChatRecordsByCondition(socketChatRecordQO);
     }
 
+    @Override
+    public int chatRecordsIsRead(List<Integer> recordIds) {
+        //本次已读数量
+        int total = 0;
+        for (int recordId : recordIds) {
+            SocketChatRecord socketChatRecord = new SocketChatRecord();
+            socketChatRecord.setId(recordId);
+            socketChatRecord.setIsread(1);
+            socketChatRecordDao.update(socketChatRecord);
+            total++;
+        }
+        return total;
+    }
+
+    /**
+     * 消息已读，适用小数据量
+     *
+     * @param
+     * @Author
+     * @description
+     **/
+    @Override
+    public int chatRecordsIsRead(int userId, int conversationId) {
+        //此对话中接受者为userId的信息全部设为已读
+        return socketChatRecordDao.chatRecordsIsRead(userId, conversationId);
+    }
+
 
 }
+
