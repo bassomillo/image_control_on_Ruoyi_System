@@ -3,10 +3,12 @@ package com.ruoyi.project.democratic.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.project.democratic.entity.Vote;
+import com.ruoyi.project.democratic.entity.VotePaper;
 import com.ruoyi.project.democratic.entity.VoteQuestion;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -145,4 +147,115 @@ public interface IQuestionnaireService extends IService<Vote> {
      * @return
      */
     AjaxResult importQuestion(List<VoteQuestion> questionList);
+
+    /**
+     * 删除文件/图片
+     * @param fileId
+     * @param type
+     * @param id
+     * @return
+     */
+    AjaxResult deleteFile(Integer fileId,
+                          String type,
+                          Integer id);
+
+    /**
+     * 后台发布情况
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    AjaxResult getPublishList(String startTime,
+                              String endTime);
+
+    /**
+     * 后台导出发布情况
+     * @param startTime
+     * @param endTime
+     * @param response
+     * @return
+     */
+    AjaxResult exportPublishList(String startTime,
+                                 String endTime,
+                                 HttpServletResponse response);
+
+    /**
+     * 后台统计结果
+     * @param questionnaireId
+     * @return
+     */
+    AjaxResult analyseQuestionnaire(Integer questionnaireId);
+
+    /**
+     * 后台导出答题数据
+     * @param questionnaireId
+     * @param userId
+     * @param response
+     * @return
+     */
+    AjaxResult exportPaperData(Integer questionnaireId,
+                               Integer userId,
+                               HttpServletResponse response);
+
+    /**
+     * 后台导出统计结果
+     * @param questionnaireId
+     * @param response
+     * @return
+     */
+    AjaxResult exportAnalyse(Integer questionnaireId,
+                             HttpServletResponse response);
+
+    /**
+     * 后台人员情况
+     * @param questionnaireId
+     * @param orgId
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    AjaxResult getMember(Integer questionnaireId,
+                         Integer orgId,
+                         Integer pageNum,
+                         Integer pageSize);
+
+    /**
+     * 后台导出人员情况
+     * @param questionnaireId
+     * @param orgId
+     * @param response
+     * @return
+     */
+    AjaxResult exportMember(Integer questionnaireId,
+                            Integer orgId,
+                            HttpServletResponse response);
+
+    /**
+     * 首页条件查询列表
+     * @param userId
+     * @param title
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    AjaxResult getTopQuList(Integer userId,
+                            String title,
+                            Integer pageNum,
+                            Integer pageSize);
+
+    /**
+     * 首页查询问卷详情
+     * @param questionnaireId
+     * @param userId
+     * @return
+     */
+    AjaxResult getTopDetail(Integer questionnaireId,
+                            Integer userId);
+
+    /**
+     * 首页提交问卷
+     * @param paperList
+     * @return
+     */
+    AjaxResult submitQu(List<VotePaper> paperList);
 }

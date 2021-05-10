@@ -23,4 +23,15 @@ public class MemberInfoVO {
 
     @ApiModelProperty(value = "是否已被添加，1是，0否")
     private Integer isAdd;
+
+    @ApiModelProperty(value = "性别")
+    private String sex;
+
+    private Integer orgId;
+
+    @ApiModelProperty(value = "归属组织")
+    private String orgName;
+
+    @ApiModelProperty(value = "投票情况，1已投，2未投")
+    private Integer status = 0;
 }

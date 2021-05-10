@@ -28,6 +28,8 @@ public class ExamPaperExportDO {
 
     private String img;
 
+    private String employmentForm;
+
     private String orgNameDetail;
 
     private List<QuestionAndPaperDO> paperList;

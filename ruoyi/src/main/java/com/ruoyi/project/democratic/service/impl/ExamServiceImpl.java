@@ -1209,9 +1209,18 @@ public class ExamServiceImpl extends ServiceImpl<ExamMapper, Exam> implements IE
                 examSave.setSaveList(saveList);
             }
             //查询考试答题信息
-            List<ExamPaper> paperList = examPaperMapper.selectList(new QueryWrapper<ExamPaper>().
+            ExamPaper paper = examPaperMapper.selectOne(new QueryWrapper<ExamPaper>().
                     eq(ExamPaper.EXAMID, examId).
-                    eq(ExamPaper.USERID, userId));
+                    eq(ExamPaper.USERID, userId).
+                    orderByDesc(ExamPaper.SUBMITFLAG).
+                    last("limit 1"));
+            List<ExamPaper> paperList = new ArrayList<>();
+            if (paper != null) {
+                paperList = examPaperMapper.selectList(new QueryWrapper<ExamPaper>().
+                        eq(ExamPaper.EXAMID, examId).
+                        eq(ExamPaper.USERID, userId).
+                        eq(ExamPaper.SUBMITFLAG, paper.getSubmitFlag()));
+            }
 
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("exam", exam);

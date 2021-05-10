@@ -152,6 +152,10 @@ public class Vote extends Model<Vote> {
     @ApiModelProperty(value = "删除状态，1未删，0已删", hidden = true)
     private Integer isShow;
 
+    @TableField(exist = false)
+    @ApiModelProperty(value = "首页状态，未作答/已作答/已结束")
+    private String newStatus;
+
 
     public static final String ID = "id";
 

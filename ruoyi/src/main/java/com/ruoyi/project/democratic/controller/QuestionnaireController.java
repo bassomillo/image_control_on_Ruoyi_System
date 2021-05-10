@@ -3,6 +3,7 @@ package com.ruoyi.project.democratic.controller;
 
 import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.project.democratic.entity.Vote;
+import com.ruoyi.project.democratic.entity.VotePaper;
 import com.ruoyi.project.democratic.entity.VoteQuestion;
 import com.ruoyi.project.democratic.service.IQuestionnaireService;
 import com.ruoyi.project.tool.ExcelTool;
@@ -204,6 +205,127 @@ public class QuestionnaireController {
     public AjaxResult importQuestion(@RequestBody List<VoteQuestion> questionList){
 
         return questionnaireService.importQuestion(questionList);
+    }
+
+    @ApiOperation(value = "删除文件/图片")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "fileId", value = "附件id", required = true),
+            @ApiImplicitParam(name = "type", value = "删除的类型，qu问卷封面图片，quQuestion题目图片，" +
+                    "quOption选项图片", required = true),
+            @ApiImplicitParam(name = "id", value = "图片对应的考试/题目/选项id", required = true)
+    })
+    @PostMapping("/deleteFile")
+    public AjaxResult deleteFile(@RequestParam("fileId") Integer fileId,
+                                 @RequestParam("type") String type,
+                                 @RequestParam("id") Integer id){
+
+        return questionnaireService.deleteFile(fileId, type, id);
+    }
+
+    @ApiOperation(value = "后台-发布情况")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "startTime", value = "开始时间，格式yyyy-MM-dd HH:mm:ss"),
+            @ApiImplicitParam(name = "endTime", value = "结束时间，格式yyyy-MM-dd HH:mm:ss")
+    })
+    @PostMapping("/getPublishList")
+    public AjaxResult getPublishList(@RequestParam(value = "startTime", required = false) String startTime,
+                                     @RequestParam(value = "endTime", required = false) String endTime){
+
+        return questionnaireService.getPublishList(startTime, endTime);
+    }
+
+    @ApiOperation(value = "后台-导出发布情况")
+    @GetMapping("exportPublishList")
+    public AjaxResult exportPublishList(@RequestParam(value = "startTime", required = false) String startTime,
+                                        @RequestParam(value = "endTime", required = false) String endTime,
+                                        HttpServletResponse response){
+
+        return questionnaireService.exportPublishList(startTime, endTime, response);
+    }
+
+    @ApiOperation(value = "后台-统计结果")
+    @PostMapping("/analyseQuestionnaire")
+    public AjaxResult analyseQuestionnaire(@RequestParam("questionnaireId") Integer questionnaireId){
+
+        return questionnaireService.analyseQuestionnaire(questionnaireId);
+    }
+
+    @ApiOperation(value = "后台-导出答题数据")
+    @GetMapping("/exportPaperData")
+    public AjaxResult exportPaperData(@RequestParam("questionnaireId") Integer questionnaireId,
+                                      @RequestParam("userId") Integer userId,
+                                      HttpServletResponse response){
+
+        return questionnaireService.exportPaperData(questionnaireId, userId, response);
+    }
+
+    @ApiOperation(value = "后台-导出统计结果")
+    @GetMapping("/exportAnalyse")
+    public AjaxResult exportAnalyse(@RequestParam("questionnaireId") Integer questionnaireId,
+                                    HttpServletResponse response){
+
+        return questionnaireService.exportAnalyse(questionnaireId, response);
+    }
+
+    @ApiOperation(value = "后台-人员情况")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "questionnaireId", value = "问卷id", required = true),
+            @ApiImplicitParam(name = "orgId", value = "机构id"),
+            @ApiImplicitParam(name = "pageNum", value = "页码，默认1"),
+            @ApiImplicitParam(name = "pageSize", value = "页面大小，默认10")
+    })
+    @PostMapping("/getMember")
+    public AjaxResult getMember(@RequestParam("questionnaireId") Integer questionnaireId,
+                                @RequestParam(value = "orgId", required = false) Integer orgId,
+                                @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
+                                @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize){
+
+        return questionnaireService.getMember(questionnaireId, orgId, pageNum, pageSize);
+    }
+
+    @ApiOperation(value = "后台-导出人员情况")
+    @GetMapping("/exportMember")
+    public AjaxResult exportMember(@RequestParam("questionnaireId") Integer questionnaireId,
+                                   @RequestParam(value = "orgId", required = false) Integer orgId,
+                                   HttpServletResponse response){
+
+        return questionnaireService.exportMember(questionnaireId, orgId, response);
+    }
+
+    /***********************首页***************************/
+    @ApiOperation(value = "首页-条件查询问卷列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId", value = "当前登录者id", required = true),
+            @ApiImplicitParam(name = "title", value = "要搜索的标题内容"),
+            @ApiImplicitParam(name = "pageNum", value = "页码，默认1"),
+            @ApiImplicitParam(name = "pageSize", value = "页面大小，默认10")
+    })
+    @PostMapping("/getTopQuList")
+    public AjaxResult getTopQuList(@RequestParam("userId") Integer userId,
+                                     @RequestParam(value = "title", required = false) String title,
+                                     @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
+                                     @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize){
+
+        return questionnaireService.getTopQuList(userId, title, pageNum, pageSize);
+    }
+
+    @ApiOperation(value = "首页-根据问卷id查询详情")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "questionnaireId", value = "问卷id", required = true),
+            @ApiImplicitParam(name = "userId", value = "当前登录人id", required = true)
+    })
+    @PostMapping("/getTopDetail")
+    public AjaxResult getTopDetail(@RequestParam("questionnaireId") Integer questionnaireId,
+                                   @RequestParam("userId") Integer userId){
+
+        return questionnaireService.getTopDetail(questionnaireId, userId);
+    }
+
+    @ApiOperation(value = "首页-提交问卷")
+    @PostMapping("/submitQu")
+    public AjaxResult submitQu(@RequestBody List<VotePaper> paperList){
+
+        return questionnaireService.submitQu(paperList);
     }
 
 }
