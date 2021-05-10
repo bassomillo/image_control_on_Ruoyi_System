@@ -17,5 +17,5 @@ public interface StaffServiceSympathyService {
     public  List<String> StringToList(String strs);
     public  String ListToString(@NonNull CharSequence delimiter, @NonNull Iterable tokens);
     public List<Integer> FindSon(int id);
-    public AjaxResult export(StaffServiceSympathySearch staffServiceSympathySearch, HttpServletResponse response, HttpServletRequest request);
+    public AjaxResult export(StaffServiceSympathySearch1 staffServiceSympathySearch1, HttpServletResponse response, HttpServletRequest request);
 }

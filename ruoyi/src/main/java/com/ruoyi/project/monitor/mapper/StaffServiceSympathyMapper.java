@@ -21,4 +21,6 @@ public interface StaffServiceSympathyMapper<integer> {
     public List<Integer> StaffServiceSympathySearchBelowOrg(@Param("id") int id);
     public List<StaffServiceSympathyFindSon> StaffServiceSympathyFindSon();
     public String StaffServiceSympathyFindCreaterName(@Param("createdUserId") int createdUserId);
+    public List<StaffServiceSympathy> StaffServiceSympathySearch1(@Param("expenseOrgId") int expenseOrgId, @Param("orgId") int orgId, @Param("createdUserOrg") int createdUserOrg, @Param("submitStatus") Integer submitStatus, @Param("status") Integer status, @Param("type") String type, @Param("sons") List<Integer> sons);
+
 }

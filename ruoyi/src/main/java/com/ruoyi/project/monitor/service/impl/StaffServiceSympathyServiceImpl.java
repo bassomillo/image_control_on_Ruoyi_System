@@ -175,19 +175,17 @@ public class StaffServiceSympathyServiceImpl implements StaffServiceSympathyServ
     }
 
     @Override
-    public AjaxResult export(StaffServiceSympathySearch staffServiceSympathySearch, HttpServletResponse response, HttpServletRequest request){
+    public AjaxResult export(StaffServiceSympathySearch1 staffServiceSympathySearch1, HttpServletResponse response, HttpServletRequest request){
         try {
-            Integer submitStatus = staffServiceSympathySearch.getSubmitStatus();
-            int createdUserOrg = staffServiceSympathySearch.getCreatedUserOrg();
-            int expenseOrgId = staffServiceSympathySearch.getExpenseOrgId();
-            int orgId = staffServiceSympathySearch.getOrgId();
-            Integer status = staffServiceSympathySearch.getStatus();
-            String type = staffServiceSympathySearch.getType();
-            List<Integer> sons = FindSon(staffServiceSympathySearch.getCreatedUserOrg());
-            Integer pageSize = staffServiceSympathySearch.getPageSize();
-            Integer index = staffServiceSympathySearch.getIndex();
+            Integer submitStatus = staffServiceSympathySearch1.getSubmitStatus();
+            int createdUserOrg = staffServiceSympathySearch1.getCreatedUserOrg();
+            int expenseOrgId = staffServiceSympathySearch1.getExpenseOrgId();
+            int orgId = staffServiceSympathySearch1.getOrgId();
+            Integer status = staffServiceSympathySearch1.getStatus();
+            String type = staffServiceSympathySearch1.getType();
+            List<Integer> sons = FindSon(staffServiceSympathySearch1.getCreatedUserOrg());
 
-            List<StaffServiceSympathy> staffServiceSympathyList = staffServiceSympathyMapper.StaffServiceSympathySearch(expenseOrgId, orgId, createdUserOrg, submitStatus, status, type, sons, pageSize, (index - 1) * pageSize);
+            List<StaffServiceSympathy> staffServiceSympathyList = staffServiceSympathyMapper.StaffServiceSympathySearch1(expenseOrgId, orgId, createdUserOrg, submitStatus, status, type, sons);
             List<StaffServiceSympathyReview> staffServiceSympathyReviewList = new ArrayList<>();
             for (StaffServiceSympathy staffServiceSympathy : staffServiceSympathyList) {
                 StaffServiceSympathyReview staffServiceSympathyReview = new StaffServiceSympathyReview();
