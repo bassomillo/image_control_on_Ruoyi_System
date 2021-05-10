@@ -138,6 +138,7 @@ public class SocketChatRecordServiceImpl implements SocketChatRecordService {
 
     @Override
     public int chatRecordsIsRead(List<Integer> recordIds) {
+        //本次已读数量
         int total = 0;
         for (int recordId : recordIds) {
             SocketChatRecord socketChatRecord = new SocketChatRecord();
@@ -145,35 +146,23 @@ public class SocketChatRecordServiceImpl implements SocketChatRecordService {
             socketChatRecord.setIsread(1);
             socketChatRecordDao.update(socketChatRecord);
             total++;
-            //更新对话已读信息数量统计
-            Integer id = socketChatConversationService.queryById(this.queryById(recordId).getConversationid()).getId();
-            socketChatConversationService.setConversationUnreadnum(id, -1);
         }
         return total;
     }
 
-
     /**
-     * 检查对话是否有存在未读信息，并赋值
+     * 消息已读，适用小数据量
      *
      * @param
      * @Author
      * @description
      **/
-
     @Override
-    public List<SocketChatConversation> conversationUnreadRecords(int userId, List<SocketChatConversation> socketChatConversations) {
-
-        List<SocketChatRecordDTO> socketChatRecordDTOS = socketChatRecordDao.selectUnreadRecordsByUserId(userId);
-        //temp
-        for (SocketChatRecordDTO socketChatRecordDTO : socketChatRecordDTOS) {
-            for (SocketChatConversation socketChatConversation : socketChatConversations) {
-                if (socketChatRecordDTO.getConversationId().equals(socketChatConversation.getId())) {
-                    socketChatConversation.setUnreadnum(socketChatRecordDTO.getUnredNum());
-                }
-            }
-        }
-        return socketChatConversations;
+    public int chatRecordsIsRead(int userId, int conversationId) {
+        //此对话中接受者为userId的信息全部设为已读
+        return socketChatRecordDao.chatRecordsIsRead(userId, conversationId);
     }
 
+
 }
+

@@ -8,6 +8,8 @@ import com.ruoyi.project.chairmanOnline.entity.SocketChatRecord;
 import com.ruoyi.project.chairmanOnline.service.SocketChatRecordService;
 import com.ruoyi.project.common.FastdfsClientUtil;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.web.bind.annotation.*;
@@ -84,12 +86,12 @@ public class SocketChatRecordController {
          fastDfsUtil.downLoadFile(response ,fileUrl,"file"+String.valueOf(System.currentTimeMillis()));
     }
 
-
     @ApiOperation("消息已读")
     @PostMapping("recordIsRead")
-    public AjaxResult recordIsRead(@RequestParam List<Integer> recordIds){
-        return  AjaxResult.success(socketChatRecordService.chatRecordsIsRead(recordIds));
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId", value = "当前登陆用户的id")})
+    public AjaxResult recordIsRead(@RequestParam int userId,@RequestParam int conversationId){
+        return  AjaxResult.success(socketChatRecordService.chatRecordsIsRead(userId,conversationId));
     }
-
 
 }

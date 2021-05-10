@@ -21,4 +21,13 @@ public class StaffServiceSympathySearch {
 
     @ApiModelProperty(value = "选本人创建填0,选下级创建填1,不选不填")
     private Integer status;
+
+    @ApiModelProperty(value = "慰问形式，填节假日慰问记录或者生日慰问记录")
+    private String type;
+
+    @ApiModelProperty(value = "页面大小")
+    private Integer pageSize;
+
+    @ApiModelProperty(value = "第几页")
+    private Integer index;
 }

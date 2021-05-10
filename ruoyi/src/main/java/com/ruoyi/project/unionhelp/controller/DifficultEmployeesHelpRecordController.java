@@ -3,8 +3,11 @@ package com.ruoyi.project.unionhelp.controller;
 
 import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.project.unionhelp.entity.DifficultEmployeesHelpRecord;
+import com.ruoyi.project.unionhelp.entity.DifficultEmployeesHelpRecordSearch;
+import com.ruoyi.project.unionhelp.entity.DifficultEmployeesHelpRecordSearchRequire;
 import com.ruoyi.project.unionhelp.service.IDifficultEmployeesHelpRecordService;
 import com.ruoyi.project.unionhelp.service.IUserProfileService1;
+import com.ruoyi.project.unionhelp.vo.SearchUser;
 import com.ruoyi.project.unionhelp.vo.Userinfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -29,7 +32,7 @@ import java.util.List;
 @RequestMapping("//difficultEmployeesHelpRecord")
 public class DifficultEmployeesHelpRecordController {
     @Autowired
-    private IDifficultEmployeesHelpRecordService helpRecordService;
+    private IDifficultEmployeesHelpRecordService iDifficultEmployeesHelpRecordService;
     @Autowired
     private IUserProfileService1 iUserProfileService;
 
@@ -51,12 +54,13 @@ public class DifficultEmployeesHelpRecordController {
     }
 
     @ApiOperation(value = "工会管理-困难员工-困难员工帮扶救助-新增记录")
-    @PutMapping("/insert")
+    @PutMapping("/insertUnionHelp")
     private AjaxResult insertUnionHelpInsert(@RequestBody DifficultEmployeesHelpRecord difficultEmployeesHelpRecord){
         Date time = new Date();
         int createTime = getSecondTimestamp(time);
         difficultEmployeesHelpRecord.setCreatedTime(createTime);
-        if(helpRecordService.save(difficultEmployeesHelpRecord)){
+        difficultEmployeesHelpRecord.setUpdatedTime(createTime);
+        if(iDifficultEmployeesHelpRecordService.save(difficultEmployeesHelpRecord)){
             return AjaxResult.success("提交成功");
         }
         else {
@@ -65,13 +69,13 @@ public class DifficultEmployeesHelpRecordController {
     }
 
     @ApiOperation(value = "工会管理-困难员工-困难员工帮扶救助-操作-编辑")
-    @PutMapping("/update/{id}")
+    @PutMapping("/updateUnionHelp/{id}")
     private AjaxResult updateUnionHelpUpdate(@RequestBody DifficultEmployeesHelpRecord difficultEmployeesHelpRecord) {
 
         Date time = new Date();
         int updateTime = getSecondTimestamp(time);
         difficultEmployeesHelpRecord.setUpdatedTime(updateTime);
-        if (helpRecordService.updateById(difficultEmployeesHelpRecord)) {
+        if (iDifficultEmployeesHelpRecordService.updateById(difficultEmployeesHelpRecord)) {
             return AjaxResult.success("提交成功");
         } else {
             return AjaxResult.error("提交失败");
@@ -79,13 +83,30 @@ public class DifficultEmployeesHelpRecordController {
     }
 
     @ApiOperation(value = "工会管理-困难员工-困难员工帮扶救助-新增记录-帮扶对象查询接口")
-    @GetMapping("/getUserInfo/{CurrentPage}/{CurrentSize}")
-    private AjaxResult findAllPage(@RequestParam("CurrentSize") int pageSize, @RequestParam("CurrremtPage") int index, @RequestParam(required = false) String searchContent){
-        String searchContent1= searchContent.replace("%", "/%");
-        List<Userinfo> userinfoList = iUserProfileService.findAllPage(pageSize, index-1, searchContent1);
-        return AjaxResult.success("搜索成功",userinfoList);
-        }
-}
+    @PostMapping("/getUserInfo")
+    private AjaxResult searchUser(@RequestBody SearchUser searchUser){
 
+        return AjaxResult.success("搜索成功",iUserProfileService.search(searchUser));
+        }
+
+    @ApiOperation(value = "工会管理-困难员工-困难员工帮扶救助-删除接口")
+    @GetMapping("/deleteUnionHelp/{id}")
+    private AjaxResult deleteUnionHelpUpdate(@RequestParam("id") int id) {
+        if (iDifficultEmployeesHelpRecordService.removeById(id)) {
+            return AjaxResult.success("提交成功");
+        } else {
+            return AjaxResult.error("提交失败");
+        }
+    }
+
+    @ApiOperation(value = "工会管理-困难员工-困难员工帮扶救助-查询")
+    @PostMapping("/searchUnionHelp")
+    private AjaxResult search(@RequestBody DifficultEmployeesHelpRecordSearchRequire difficultEmployeesHelpRecordSearchRequire){
+        return iDifficultEmployeesHelpRecordService.searchHelper(difficultEmployeesHelpRecordSearchRequire);
+    }
+
+
+
+}
 
 

@@ -7,6 +7,7 @@ import com.ruoyi.project.democratic.entity.VO.GetMemberVO;
 import com.ruoyi.project.democratic.entity.VO.GroupToExamVO;
 import com.ruoyi.project.democratic.service.IExamMemberService;
 import com.ruoyi.project.democratic.service.IVoteGroupService;
+import com.ruoyi.project.democratic.service.IVoteMemberService;
 import com.ruoyi.project.tool.ExcelTool;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -41,6 +42,8 @@ public class ExamMemberController {
     private IExamMemberService examMemberService;
     @Autowired
     private IVoteGroupService voteGroupService;
+    @Autowired
+    private IVoteMemberService voteMemberService;
 
     /*****************************************Tree************************************************/
     @ApiOperation(value = "组织树-条件获取组织树下人员")
@@ -50,18 +53,32 @@ public class ExamMemberController {
         return examMemberService.getTreeMember(getMember);
     }
 
-    @ApiOperation(value = "组织树-添加单个/多个人员至考试")
+    @ApiOperation(value = "组织树-添加单个/多个人员至考试/问卷/投票")
     @PostMapping("/addMember")
     public AjaxResult addMember(@RequestBody AddTreeMemberVO treeMember){
 
-        return examMemberService.addMember(treeMember);
+        if ("exam".equals(treeMember.getType())) {
+            return examMemberService.addMember(treeMember);
+        }else if ("questionnaire".equals(treeMember.getType())){
+            return voteMemberService.addMemberQ(treeMember);
+        }else if ("vote".equals(treeMember.getType())){
+
+        }
+        return AjaxResult.error("请填写type类型");
     }
 
-    @ApiOperation(value = "组织树-添加全部人员至考试【若为导入的人员（即无组织树id），调用另一接口】")
+    @ApiOperation(value = "组织树-添加全部人员至考试/问卷/投票【若为导入的人员（即无组织树id），调用另一接口】")
     @PostMapping("/addAllMember")
     public AjaxResult addAllMember(@RequestBody GetMemberVO getMember){
 
-        return examMemberService.addAllMember(getMember);
+        if ("exam".equals(getMember.getType())) {
+            return examMemberService.addAllMember(getMember);
+        }else if ("questionnaire".equals(getMember.getType())){
+            return voteMemberService.addAllMemberQ(getMember);
+        }else if ("vote".equals(getMember.getType())){
+
+        }
+        return AjaxResult.error("请填写type类型");
     }
 
     @ApiOperation(value = "组织树-添加单个/多个人员至分组")
@@ -164,17 +181,25 @@ public class ExamMemberController {
         return voteGroupService.deleteGroupMember(groupId, memberId);
     }
 
-    @ApiOperation(value = "分组-加入考试")
-    @PostMapping("/addToExam")
-    public AjaxResult addToExam(@RequestBody GroupToExamVO group){
+    @ApiOperation(value = "分组-加入考试/问卷/投票")
+    @PostMapping("/addToExamQuVote")
+    public AjaxResult addToExamQuVote(@RequestBody GroupToExamVO group){
 
-        return voteGroupService.addToExam(group);
+        if ("exam".equals(group.getType())) {
+            return voteGroupService.addToExam(group);
+        }else if ("questionnaire".equals(group.getType())){
+            return voteGroupService.addToQu(group);
+        }else if ("vote".equals(group.getType())){
+
+        }
+        return AjaxResult.error("请填写type类型");
     }
 
     /*****************************************Member************************************************/
     @ApiOperation(value = "参考人员-条件查询参考人员列表")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "examId", value = "考试id", required = true),
+            @ApiImplicitParam(name = "type", value = "类型，exam考试，questionnaire问卷，vote投票", required = true),
+            @ApiImplicitParam(name = "eqvId", value = "考试/问卷/投票id", required = true),
             @ApiImplicitParam(name = "name", value = "真实姓名"),
             @ApiImplicitParam(name = "employmentForm", value = "用工形式"),
             @ApiImplicitParam(name = "mobile", value = "联系电话"),
@@ -182,26 +207,43 @@ public class ExamMemberController {
             @ApiImplicitParam(name = "pageSize", value = "页面大小，默认10")
     })
     @PostMapping("/getExamMemberList")
-    public AjaxResult getExamMemberList(@RequestParam("examId") Integer examId,
+    public AjaxResult getExamMemberList(@RequestParam("type") String type,
+                                        @RequestParam("eqvId") Integer eqvId,
                                         @RequestParam(value = "name", required = false) String name,
                                         @RequestParam(value = "employmentForm", required = false) String employmentForm,
                                         @RequestParam(value = "mobile", required = false) String mobile,
                                         @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
                                         @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize){
 
-        return examMemberService.getExamMemberList(examId, name, employmentForm, mobile, pageNum, pageSize);
+        if ("exam".equals(type)) {
+            return examMemberService.getExamMemberList(eqvId, name, employmentForm, mobile, pageNum, pageSize);
+        }else if ("questionnaire".equals(type)){
+            return voteMemberService.getQuMemberList(eqvId, name, employmentForm, mobile, pageNum, pageSize);
+        }else if ("vote".equals(type)){
+
+        }
+        return AjaxResult.error("请填写type类型");
     }
 
     @ApiOperation(value = "参考人员-删除人员")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "examId", value = "考试id", required = true),
+            @ApiImplicitParam(name = "type", value = "类型，exam考试，questionnaire问卷，vote投票", required = true),
+            @ApiImplicitParam(name = "eqvId", value = "考试/问卷/投票id", required = true),
             @ApiImplicitParam(name = "userId", value = "人员id", required = true)
     })
     @PostMapping("/deleteExamMember")
-    public AjaxResult deleteExamMember(@RequestParam("examId") Integer examId,
+    public AjaxResult deleteExamMember(@RequestParam("type") String type,
+                                       @RequestParam("eqvId") Integer eqvId,
                                        @RequestParam("userId") Integer userId){
 
-        return examMemberService.deleteExamMember(examId, userId);
+        if ("exam".equals(type)) {
+            return examMemberService.deleteExamMember(eqvId, userId);
+        }else if ("questionnaire".equals(type)){
+            return voteMemberService.deleteQuMember(eqvId, userId);
+        }else if ("vote".equals(type)){
+
+        }
+        return AjaxResult.error("请填写type类型");
     }
 }
 

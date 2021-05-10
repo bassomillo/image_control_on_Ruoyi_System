@@ -39,4 +39,13 @@ public interface ExamMapper extends BaseMapper<Exam> {
      */
     List<Exam> getPublishList(@Param("startTime") String startTime,
                               @Param("endTime") String endTime);
+
+    /**
+     * 条件查询首页考试列表
+     * @param title
+     * @param examIdList
+     * @return
+     */
+    List<Exam> getTopExamList(@Param("title") String title,
+                              @Param("examIdList") List<Integer> examIdList);
 }

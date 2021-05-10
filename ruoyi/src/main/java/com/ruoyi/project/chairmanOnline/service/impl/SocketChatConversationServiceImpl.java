@@ -1,16 +1,24 @@
 package com.ruoyi.project.chairmanOnline.service.impl;
 
 import com.github.pagehelper.PageHelper;
+import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.project.chairmanOnline.dao.SocketChatConversationDao;
+import com.ruoyi.project.chairmanOnline.dao.SocketChatRecordDao;
+import com.ruoyi.project.chairmanOnline.entity.DTO.SocketChatRecordDTO;
+import com.ruoyi.project.chairmanOnline.entity.QO.SocketChatConversationQO;
 import com.ruoyi.project.chairmanOnline.entity.SocketChatConversation;
 import com.ruoyi.project.chairmanOnline.entity.SocketChatRecord;
+import com.ruoyi.project.chairmanOnline.entity.VO.SocketChatConversationVO;
 import com.ruoyi.project.chairmanOnline.service.SocketChatConversationService;
 import com.ruoyi.project.chairmanOnline.service.SocketChatRecordService;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 聊天会话表(SocketChatConversation)表服务实现类
@@ -27,6 +35,9 @@ public class SocketChatConversationServiceImpl implements SocketChatConversation
 
     @Resource
     private SocketChatRecordService socketChatRecordService;
+
+    @Resource
+    SocketChatRecordDao socketChatRecordDao;
 
 
     /**
@@ -96,10 +107,11 @@ public class SocketChatConversationServiceImpl implements SocketChatConversation
 
 
     @Override
-    public List<SocketChatConversation> queryConversation(int userId, int pageNum, int pageSize) {
+    public AjaxResult queryConversation(int userId, int pageNum, int pageSize, SocketChatConversationQO socketChatConversationQO) {
+        int total = socketChatConversationDao.queryConversationByUserId(userId, socketChatConversationQO).size();
         PageHelper.startPage(pageNum, pageSize);
-        List<SocketChatConversation> socketChatConversations = socketChatConversationDao.queryConversationByUserId(userId);
-        return socketChatRecordService.conversationUnreadRecords(userId, socketChatConversations);
+        List<SocketChatConversationVO> socketChatConversations = socketChatConversationDao.queryConversationByUserId(userId, socketChatConversationQO);
+        return AjaxResult.success(this.conversationUnreadRecords(userId,socketChatConversations), total);
     }
 
 
@@ -128,6 +140,12 @@ public class SocketChatConversationServiceImpl implements SocketChatConversation
         }
     }
 
+    /**
+     * 接收消息时，更新对话中的一些数值总量
+     *
+     * @param
+     * @description
+     **/
 
     @Override
     public void conversationStatistics(int id) {
@@ -139,12 +157,29 @@ public class SocketChatConversationServiceImpl implements SocketChatConversation
         this.update(socketChatConversation);
     }
 
+
+    /**
+     * 检查对话是否有存在未读信息，并计算数值
+     *
+     * @param
+     * @Author
+     * @description
+     **/
+
     @Override
-    public synchronized void setConversationUnreadnum(int id, int num) {
-        Integer unreadnum = this.queryById(id).getUnreadnum();
-        SocketChatConversation socketChatConversation = new SocketChatConversation();
-        socketChatConversation.setId(id);
-        socketChatConversation.setUnreadnum(unreadnum + num);
-        this.update(socketChatConversation);
+    public List<SocketChatConversationVO> conversationUnreadRecords(int userId, List<SocketChatConversationVO> socketChatConversationVOs) {
+
+        List<SocketChatRecordDTO> socketChatRecordDTOS = socketChatRecordDao.selectUnreadRecordsByUserId(userId);
+        //temp
+        for (SocketChatRecordDTO socketChatRecordDTO : socketChatRecordDTOS) {
+            for (SocketChatConversationVO socketChatConversationVO : socketChatConversationVOs) {
+                if (socketChatRecordDTO.getConversationId().equals(socketChatConversationVO.getId())) {
+                    socketChatConversationVO.setUnreadnum(socketChatRecordDTO.getUnredNum());
+                }
+            }
+        }
+        return socketChatConversationVOs;
     }
+
+
 }
