@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -29,28 +30,33 @@ public class WebTag extends Model<WebTag> {
      * 标签ID
      */
     @TableId(value = "id", type = IdType.AUTO)
+    @ApiModelProperty(value = "标签ID")
     private Integer id;
 
     /**
      * 标签名称
      */
+    @ApiModelProperty(value = "标签名称")
     private String name;
 
     /**
      * 标签创建时间
      */
+    @ApiModelProperty(value = "标签创建时间")
     @TableField("createdTime")
     private Integer createdTime;
 
     /**
      * 组织机构id
      */
+    @ApiModelProperty(value = "组织机构id")
     @TableField("orgId")
     private Integer orgId;
 
     /**
      * 组织机构内部编码
      */
+    @ApiModelProperty(value = "组织机构内部编码")
     @TableField("orgCode")
     private String orgCode;
 

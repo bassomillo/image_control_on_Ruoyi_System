@@ -37,9 +37,9 @@ public class WebArticleCategoryServiceImpl extends ServiceImpl<WebArticleCategor
     }
 
     @Override
-    public AjaxResult TopArticleCategoryGet(Integer pagesize, Integer page) {
+    public AjaxResult TopArticleCategoryGet(Integer pagesize, Integer page, String name) {
         try {
-            List<String> list = webArticleCategoryMapper.GetTopArticleCategory(pagesize, (page-1)*pagesize);
+            List<String> list = webArticleCategoryMapper.GetTopArticleCategory(pagesize, (page-1)*pagesize, name);
             return AjaxResult.success("操作成功", list);
         } catch (Exception e) {
             System.out.println(e.getMessage());

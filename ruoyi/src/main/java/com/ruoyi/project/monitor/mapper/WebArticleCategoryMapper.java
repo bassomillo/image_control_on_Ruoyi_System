@@ -15,8 +15,9 @@ import java.util.List;
  * @since 2021-04-23
  */
 public interface WebArticleCategoryMapper extends BaseMapper<WebArticleCategory> {
-    @Select("SELECT * FROM article_category WHERE parentId=0 ORDER BY id limit ${pagesize} OFFSET ${index}")
-    List<String> GetTopArticleCategory(@Param("pagesize") Integer pagesize, @Param("index") Integer index);
+    List<String> GetTopArticleCategory(@Param("pagesize") Integer pagesize,
+                                       @Param("index") Integer index,
+                                       @Param("name")String name);
 
     @Insert("INSERT INTO article_category(name, weight,publishArticle, published, parentId, createdTime) VALUES" +
             "(#{name}, #{weight}, #{publishArticle}, #{published}, #{parentId}, #{createdTime})")
@@ -35,7 +36,7 @@ public interface WebArticleCategoryMapper extends BaseMapper<WebArticleCategory>
             "parentId=#{parentId} WHERE id=#{id}")
     Boolean UpdateWebArticleCategory(WebArticleCategory webArticleCategory);
 
-    @Select("SELECT * FROM article_category ORDER BY id limit ${pagesize} OFFSET ${index}")
+    @Select("SELECT * FROM article_category ORDER BY id DESC limit ${pagesize} OFFSET ${index}")
     List<WebArticleCategory> GetWebArticleCategorys(@Param("pagesize") Integer pagesize, @Param("index") Integer index);
 
     @Select("SELECT COUNT(*) FROM article_category")

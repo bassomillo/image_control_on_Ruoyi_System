@@ -44,7 +44,19 @@ public class WebTagGroupServiceImpl extends ServiceImpl<WebTagGroupDao, WebTagGr
 
             webTagGroup.setCreatedTime(timestamp);
             webTagGroup.setUpdatedTime(timestamp);
+            //插入tag_group数据库
             webTagGroupDao.InsertWebTagGroup(webTagGroup);
+
+            //插入tag_group_tag数据库
+            Integer tagGroupId = webTagGroupDao.GetMaxId();
+            String tagIds = webTagGroup.getTagIds();
+            String[] arr = tagIds.split(",");
+            for(String s : arr){
+                if(s!=null){
+                    Integer tagId = Integer.valueOf(s);
+                    webTagGroupDao.InsertWebTagGroupTag(tagId, tagGroupId);
+                }
+            }
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return AjaxResult.error(e.getMessage());
@@ -56,6 +68,7 @@ public class WebTagGroupServiceImpl extends ServiceImpl<WebTagGroupDao, WebTagGr
     public AjaxResult WebTagGroupDelete(Integer id) {
         try {
             webTagGroupDao.DeleteWebTagGroup(id);
+            webTagGroupDao.DeleteWebTagGroupTag(id);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return AjaxResult.error(e.getMessage());

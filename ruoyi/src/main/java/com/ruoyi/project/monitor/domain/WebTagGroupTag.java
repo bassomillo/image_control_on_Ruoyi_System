@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -25,18 +26,21 @@ public class WebTagGroupTag extends Model<WebTagGroupTag> {
 
     private static final long serialVersionUID=1L;
 
+    @ApiModelProperty(value = "id")
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
     /**
-     * 标签ID
+     * 标签组ID
      */
+    @ApiModelProperty(value = "标签组ID")
     @TableField("tagId")
     private Integer tagId;
 
     /**
      * 标签组ID
      */
+    @ApiModelProperty(value = "标签组ID")
     @TableField("groupId")
     private Integer groupId;
 
