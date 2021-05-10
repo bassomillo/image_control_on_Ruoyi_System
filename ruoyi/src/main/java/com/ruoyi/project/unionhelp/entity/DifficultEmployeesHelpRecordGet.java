@@ -1,30 +1,24 @@
 package com.ruoyi.project.unionhelp.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.extension.activerecord.Model;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableField;
-import java.io.Serializable;
-
+import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
 
-/**
- * <p>
- * 困难员工帮扶记录表
- * </p>
- *
- * @author crl
- * @since 2021-04-14
- */
+import java.io.Serializable;
 @Data
-@EqualsAndHashCode(callSuper = false)
-@Accessors(chain = true)
-public class DifficultEmployeesHelpRecord extends Model<DifficultEmployeesHelpRecord> {
-
+public class DifficultEmployeesHelpRecordGet {
     private static final long serialVersionUID=1L;
+
+    @ApiModelProperty(value = "姓名")
+    private String truename;
+
+    @ApiModelProperty(value = "电话")
+    private String mobile;
+
+//    @ApiModelProperty(value = "邮箱")
+//    private String email;
 
     @ApiModelProperty(value = "id号")
     @TableId(value = "id", type = IdType.AUTO)
@@ -92,49 +86,5 @@ public class DifficultEmployeesHelpRecord extends Model<DifficultEmployeesHelpRe
     @TableField("remark")
     @ApiModelProperty(value = "备注")
     private String remark;
-
-    /**
-     * 创建时间
-     */
-    @TableField("createdTime")
-    @ApiModelProperty(value = "创建时间-时间戳格式")
-    private Integer createdTime;
-
-    /**
-     * 更新时间
-     */
-    @TableField("updatedTime")
-    @ApiModelProperty(value = "更新时间-时间戳格式")
-    private Integer updatedTime;
-
-
-    public static final String ID = "id";
-
-    public static final String USERID = "userId";
-
-    public static final String MODALITY = "modality";
-
-    public static final String GREETINGTYPE = "greetingType";
-
-    public static final String MONEY = "money";
-
-    public static final String HELPTIME = "helpTime";
-
-    public static final String COMFORTER = "comforter";
-
-    public static final String COMFORTERMOBILE = "comforterMobile";
-
-    public static final String CONTENT = "content";
-
-    public static final String REMARK = "remark";
-
-    public static final String CREATEDTIME = "createdTime";
-
-    public static final String UPDATEDTIME = "updatedTime";
-
-    @Override
-    protected Serializable pkVal() {
-        return this.id;
-    }
 
 }

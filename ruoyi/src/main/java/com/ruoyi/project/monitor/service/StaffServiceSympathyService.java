@@ -4,6 +4,8 @@ import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.project.monitor.domain.*;
 import lombok.NonNull;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 public interface StaffServiceSympathyService {
@@ -15,4 +17,5 @@ public interface StaffServiceSympathyService {
     public  List<String> StringToList(String strs);
     public  String ListToString(@NonNull CharSequence delimiter, @NonNull Iterable tokens);
     public List<Integer> FindSon(int id);
+    public AjaxResult export(StaffServiceSympathySearch staffServiceSympathySearch, HttpServletResponse response, HttpServletRequest request);
 }

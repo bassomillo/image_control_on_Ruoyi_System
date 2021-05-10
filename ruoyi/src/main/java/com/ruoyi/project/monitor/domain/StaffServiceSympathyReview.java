@@ -58,4 +58,25 @@ public class StaffServiceSympathyReview {
     @ApiModelProperty(value = "更新时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date updatedTime;
+
+    @ApiModelProperty(value = "填报人")
+    private String createName;
+
+    @ApiModelProperty(value = "慰问单位id")
+    private Integer expenseOrgId;
+
+    @ApiModelProperty(value = "资金来源-String")
+    private String fundsSourcesList1;
+
+    @ApiModelProperty(value = "覆盖人群-String")
+    private String coverTypeList1;
+
+    @ApiModelProperty(value = "慰问形式-String")
+    private String sympathyTypeList1;
+
+    @ApiModelProperty(value = "提交时间-String")
+    private String submitTime1;
+
+    @ApiModelProperty(value = "慰问时间-String")
+    private String sympathyTime1;
 }

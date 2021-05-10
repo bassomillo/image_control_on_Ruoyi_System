@@ -9,6 +9,8 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @Api(tags = "网页")
@@ -58,7 +60,7 @@ public class StaffServiceSympathyController {
      */
     @ApiOperation(value = "工会管理-慰问记录-选择多个公告删除")
     @PostMapping("/selectdeleteSite")
-    public AjaxResult deleteSiteSetting(@RequestParam List<Integer> listId){
+    public AjaxResult deleteSiteSetting(@RequestBody List<Integer> listId){
         AjaxResult result = staffServiceSympathyService.StaffServiceSympathyDelete(listId);
         return result;
     }
@@ -70,6 +72,16 @@ public class StaffServiceSympathyController {
     @PostMapping("/submitSite")
     public AjaxResult submitSiteSetting(int id){
         AjaxResult result = staffServiceSympathyService.StaffServiceSympathySubmit(id);
+        return result;
+    }
+
+    /**
+     * 批量导出
+     */
+    @ApiOperation(value = "工会管理-慰问记录-批量导出")
+    @PostMapping("/outputSite")
+    public AjaxResult outputSiteSetting(@RequestBody StaffServiceSympathySearch staffServiceSympathySearch, HttpServletResponse response, HttpServletRequest request){
+        AjaxResult result = staffServiceSympathyService.export(staffServiceSympathySearch,response,request);
         return result;
     }
 }

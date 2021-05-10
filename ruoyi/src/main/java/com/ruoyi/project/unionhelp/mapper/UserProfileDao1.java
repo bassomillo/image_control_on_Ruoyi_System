@@ -19,6 +19,6 @@ import java.util.List;
  */
 public interface UserProfileDao1 extends BaseMapper<UserProfile1> {
 //    @Select("select mss,truename,mobile,orgId,user.email,smallAvatar from user_profile,user where user.id = user_profile.id and concat(mss,truename,mobile,orgId,user.email,smallAvatar) like concat('%',${searchContent},'%') limit ${pageSize} OFFSET ${index}")
-    List<Userinfo> findAllPage(@Param("pageSize") int pageSize, @Param("index") int index, @Param("searchContent") String searchContent);
+    List<Userinfo> searchUser(@Param("pageSize") Integer pageSize, @Param("index") Integer index, @Param("searchContent") String searchContent);
 
 }
