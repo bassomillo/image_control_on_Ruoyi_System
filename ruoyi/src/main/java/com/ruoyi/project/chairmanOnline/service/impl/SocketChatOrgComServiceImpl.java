@@ -27,19 +27,18 @@ public class SocketChatOrgComServiceImpl implements SocketChatOrgComService {
       */
     @Override
     public Integer getCommissionerByUserId(int userId) {
-        QueryWrapper<SocketChatOrgCommissioner> QueryWrapper = new QueryWrapper<>();
-        QueryWrapper.eq("userId", userId).like("position", "秘书");
-        SocketChatOrgCommissioner one = socketChatOrgComDao.selectOne(QueryWrapper);
-        if(null == one){
+        QueryWrapper<SocketChatOrgCommissioner> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(SocketChatOrgCommissioner::getUserid, userId).like(SocketChatOrgCommissioner::getPosition, "秘书");
+        SocketChatOrgCommissioner sec = socketChatOrgComDao.selectOne(queryWrapper);
+        if(null == sec){
             return userId;
         }
-        QueryWrapper.clear();
-        QueryWrapper.eq("orgId", one.getOrgid()).eq("position", one.getPosition().trim().replace("秘书", ""));
-        SocketChatOrgCommissioner scc = socketChatOrgComDao.selectOne(QueryWrapper);
-        if(null == scc){
+        queryWrapper.clear();
+        queryWrapper.eq("orgId", sec.getOrgid()).eq("position", sec.getPosition().trim().replace("秘书", ""));
+        SocketChatOrgCommissioner gm = socketChatOrgComDao.selectOne(queryWrapper);
+        if(null == gm){
             return userId;
         }
-
-        return scc.getUserid();
+        return gm.getUserid();
     }
 }

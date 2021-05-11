@@ -1,5 +1,6 @@
 package com.ruoyi.project.chairmanOnline.service;
 
+import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.project.chairmanOnline.entity.SocketChatroomRecord;
 import org.apache.ibatis.annotations.Param;
 
@@ -54,6 +55,6 @@ public interface SocketChatroomRecordService {
      */
     boolean deleteById(Integer id);
 
-    List<SocketChatroomRecord> queryRecordBytagId (int tagId);
+    AjaxResult queryRecordBytagId (int tagId, int pageNum, int pageSize);
 
 }

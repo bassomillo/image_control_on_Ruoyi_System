@@ -8,14 +8,12 @@ import com.ruoyi.project.chairmanOnline.entity.VO.WebSocketSystemMessageVO;
 import com.ruoyi.project.chairmanOnline.service.SocketChatConversationService;
 import com.ruoyi.project.chairmanOnline.service.SocketChatOrgComService;
 import com.ruoyi.project.chairmanOnline.service.SocketChatRecordService;
-import com.ruoyi.project.chairmanOnline.service.SocketChatroomRecordService;
 import com.ruoyi.project.union.service.LoginTokenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
@@ -27,7 +25,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
+/** 一对一聊天
+ *
  * @param
  * @Author weide
  * @description websocket 通讯
@@ -42,7 +41,6 @@ public class WebSocket {
     private static SocketChatConversationService socketChatConversationService;
 
     private static LoginTokenService loginTokenService;
-
 
     private static SocketChatOrgComService socketChatOrgComService;
 
@@ -103,7 +101,6 @@ public class WebSocket {
         //此用户是秘书的话，将id替换成对用总经理的id
         userId = socketChatOrgComService.getCommissionerByUserId(userId);
 
-        onlineNumber.incrementAndGet();
         logger.info("现在来连接的客户id：" + session.getId() + "用户名：" + userId);
         this.userId = userId;
         this.session = session;
@@ -114,11 +111,9 @@ public class WebSocket {
             notice();
             //消息补推
             supplementRecords(userId);
-
         } catch (IOException e) {
             logger.info(userId + "上线的时候通知所有人发生了错误");
         }
-
     }
 
 
@@ -134,7 +129,8 @@ public class WebSocket {
      */
     @OnClose
     public void onClose() {
-        onlineNumber.decrementAndGet();
+
+        //线下通知
         Set<Integer> set = clients.keySet();
         WebSocketSystemMessageVO webSocketSystemMessageVO = new WebSocketSystemMessageVO();
         webSocketSystemMessageVO.setCurrentOnlineIds(set);
@@ -156,13 +152,12 @@ public class WebSocket {
      */
     @OnMessage
     public void onMessage(String message, Session session) {
-
-        System.out.println("--------收到消息--------------  :" + message);
+        logger.info("--------收到消息--------------  :" + message);
         try {
             SocketChatRecord socketChatRecord = JSON.parseObject(message, SocketChatRecord.class);
             //判断token的有效性
             logger.info("来自客户端消息：" + message + "客户端的id是：" + session.getId(), "token是：" + socketChatRecord.getToken());
-            System.out.println("开始推送消息给" + socketChatRecord.getReceiverid());
+            logger.info("开始推送消息给" + socketChatRecord.getReceiverid());
 
             //发送者身份，此处会隐藏掉秘书身份
             socketChatRecord.setSenderid(userId);
@@ -199,27 +194,10 @@ public class WebSocket {
         }
     }
 
-
-    private void sendMessageSomeUser(SocketChatroomRecord socketChatroomRecord, List<Integer> userIds) {
-        if (userIds.size() > 0) {
-            for (int userId : userIds) {
-                if (clients.containsKey(userId)) {
-                    clients.get(userId).session.getAsyncRemote().sendText(socketChatroomRecord.toString());
-                }
-            }
-        }
-    }
-
-
     private void sendMessageAll(WebSocketSystemMessageVO webSocketSystemMessageVO) throws IOException {
         for (WebSocket item : clients.values()) {
             item.session.getAsyncRemote().sendText(JSON.toJSON(webSocketSystemMessageVO).toString());
         }
-    }
-
-
-    public static int getOnlineCount() {
-        return onlineNumber.get();
     }
 
     //上线通知
@@ -233,7 +211,6 @@ public class WebSocket {
 
     //用户上线补推消息
     private void supplementRecords(int userId) throws IOException {
-
         List<SocketChatRecord> socketChatRecords = socketChatRecordService.queryUnsentRecord(userId);
         if (socketChatRecords.size() > 0) {
             for (SocketChatRecord record : socketChatRecords) {

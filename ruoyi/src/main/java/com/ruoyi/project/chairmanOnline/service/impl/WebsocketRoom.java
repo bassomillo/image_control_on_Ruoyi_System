@@ -29,8 +29,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 @ServerEndpoint(value = "/connectWebSocketRoom/{token}/{userId}/{tagId}")
 public class WebsocketRoom {
 
-    private static AtomicInteger onlineNum = new AtomicInteger(0);
-
     private static SocketChatroomRecordService socketChatroomRecordService;
 
     @Autowired

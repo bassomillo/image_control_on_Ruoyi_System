@@ -26,8 +26,6 @@ public class SocketChatroomRecordController {
     @Resource
     private SocketChatroomRecordService socketChatroomRecordService;
 
-    @Resource
-    private SocketChatroomRecordDao socketChatroomRecordDao;
     /**
      * 全部查询
      *
@@ -36,8 +34,10 @@ public class SocketChatroomRecordController {
      */
     @ApiOperation("群聊记录")
     @PostMapping("queryRecordBytagId")
-    public AjaxResult queryRecordBytagId(Integer tagId) {
-        return AjaxResult.success(this.socketChatroomRecordService.queryRecordBytagId(tagId));
+    public AjaxResult queryRecordBytagId(Integer tagId,
+                                         @RequestParam(required = false, defaultValue = "1") int pageNum,
+                                         @RequestParam(required = false, defaultValue = "10") int pageSize) {
+        return this.socketChatroomRecordService.queryRecordBytagId(tagId,pageNum,pageSize);
     }
 
 

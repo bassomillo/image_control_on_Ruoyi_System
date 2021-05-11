@@ -126,7 +126,7 @@
     <!--查询-->
     <select id="queryRecordBytagId" resultMap="SocketChatroomRecordMap">
         select id, senderId, content, type, tagId, isShow, createdTime, isDelete from zhgh_new_test.socket_chatroom_record
-        where tagId = 1
+        where tagId = 1 order by createdTime DESC
     </select>
 </mapper>
 

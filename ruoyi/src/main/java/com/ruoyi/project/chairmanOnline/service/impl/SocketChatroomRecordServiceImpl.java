@@ -1,5 +1,8 @@
 package com.ruoyi.project.chairmanOnline.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.project.chairmanOnline.entity.SocketChatroomRecord;
 import com.ruoyi.project.chairmanOnline.dao.SocketChatroomRecordDao;
 import com.ruoyi.project.chairmanOnline.service.SocketChatroomRecordService;
@@ -77,9 +80,16 @@ public class SocketChatroomRecordServiceImpl implements SocketChatroomRecordServ
         return this.socketChatroomRecordDao.deleteById(id) > 0;
     }
 
+
+     /**
+          * 群聊记录
+          *
+          * @param
+          * @return
+          */
     @Override
-    public List<SocketChatroomRecord> queryRecordBytagId (int tagId)
-    {
-        return socketChatroomRecordDao.queryRecordBytagId(tagId);
+    public AjaxResult queryRecordBytagId(int tagId, int pageNum, int pageSize) {
+        Page<Object> page = PageHelper.startPage(pageNum, pageSize);
+        return AjaxResult.success(socketChatroomRecordDao.queryRecordBytagId(tagId),(int)page.getTotal());
     }
 }

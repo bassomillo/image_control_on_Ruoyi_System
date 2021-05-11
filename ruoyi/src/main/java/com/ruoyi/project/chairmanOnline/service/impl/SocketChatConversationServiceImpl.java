@@ -1,5 +1,6 @@
 package com.ruoyi.project.chairmanOnline.service.impl;
 
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.project.chairmanOnline.dao.SocketChatConversationDao;
@@ -104,10 +105,10 @@ public class SocketChatConversationServiceImpl implements SocketChatConversation
 
     @Override
     public AjaxResult queryConversation(int userId, int pageNum, int pageSize, SocketChatConversationQO socketChatConversationQO) {
-        int total = socketChatConversationDao.queryConversationByUserId(userId, socketChatConversationQO).size();
-        PageHelper.startPage(pageNum, pageSize);
+//        int total = socketChatConversationDao.queryConversationByUserId(userId, socketChatConversationQO).size();
+        Page<Object> page = PageHelper.startPage(pageNum, pageSize);
         List<SocketChatConversationVO> socketChatConversations = socketChatConversationDao.queryConversationByUserId(userId, socketChatConversationQO);
-        return AjaxResult.success(this.conversationUnreadRecords(userId,socketChatConversations), total);
+        return AjaxResult.success(this.conversationUnreadRecords(userId,socketChatConversations), (int)page.getTotal());
     }
 
     /**
