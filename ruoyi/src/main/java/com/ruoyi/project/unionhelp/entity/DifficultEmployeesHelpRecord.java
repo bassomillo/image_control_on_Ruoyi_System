@@ -62,7 +62,7 @@ public class DifficultEmployeesHelpRecord extends Model<DifficultEmployeesHelpRe
      * 帮扶时间
      */
     @TableField("helpTime")
-    @ApiModelProperty(value = "帮扶时间")
+    @ApiModelProperty(value = "帮扶时间-时间戳格式")
     private Integer helpTime;
 
     /**
@@ -97,14 +97,14 @@ public class DifficultEmployeesHelpRecord extends Model<DifficultEmployeesHelpRe
      * 创建时间
      */
     @TableField("createdTime")
-    @ApiModelProperty(value = "创建时间")
+    @ApiModelProperty(value = "创建时间-时间戳格式")
     private Integer createdTime;
 
     /**
      * 更新时间
      */
     @TableField("updatedTime")
-    @ApiModelProperty(value = "更新时间")
+    @ApiModelProperty(value = "更新时间-时间戳格式")
     private Integer updatedTime;
 
 

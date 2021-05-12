@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.unionhelp.mapper.DifficultEmployeesHelpRecordDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, userId, truename, company, gender, department, idcard, orgId, standard, difficultType, modelType, difficultStaffType, primaryCause, registeredAdministrativeArea, minorCause, healthStatus, diseaseType, disabilityType, healthInsuranceStatus, averageMonthlyIncome, familyTotalIncome, otherFamilyTotalIncome, familyPerMonthlyIncome, annualNecessaryExpend, familySize, isSaveAbility, isZeroEmploymentFamily, isSingleParent, residentsType, housingType, buildingArea, bankType, bankName, bankAccount, difficultStatus, staffStatus, other, familyMembers, status, auditStatus, auditUserId, filingTime, reason, createdTime, updatedTime, mobile, employmentForm, helpPlan, helpRequire, submitUserId, isPoverty, isLogout
+    </sql>
+
+    <select id="searchHelper" resultType="com.ruoyi.project.unionhelp.entity.DifficultEmployeesHelpRecordGet">
+        select u.truename,u.mobile,d.userId,d.modality,d.greetingType,d.money,d.helpTime,d.comforter,d.comforterMobile,
+               d.content,d.remark
+        from difficult_employees_help_record as d
+        inner join user_profile as u on (d.userId = u.id)
+        where 1=1
+        <if test="searchUser != null and searchUser != ''">
+            and (u.truename like concat('%',#{searchUser},'%') escape '/'
+            or u.mobile like concat('%',#{searchUser},'%') escape '/'
+            or u.email like concat('%',#{searchUser},'%')
+            )
+        </if>
+
+        <if test="searchHelper != null and searchHelper != ''">
+            and d.comforter like concat('%',#{searchHelper},'%') escape '/'
+        </if>
+        limit #{pageSize} OFFSET #{index}
+    </select>
+</mapper>

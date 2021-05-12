@@ -190,7 +190,7 @@ public class ToolUtils {
     }
 
     /**
-     * 获取此部门组织架构树id
+     * 获取此部门组织架构树id（上属）
      * @param orgId
      * @return
      */
@@ -208,6 +208,33 @@ public class ToolUtils {
             orgInt.add(Integer.valueOf(s));
         }
         return orgInt;
+    }
+
+    /**
+     * 获取此部门组织架构树id（下属）
+     * @param orgId
+     * @return
+     */
+    public List<Integer> getOrgDownInt(Integer orgId){
+        List<Integer> idList = new ArrayList<>();
+
+        if (orgId != null) {
+            Org org0 = orgDao.selectOne(new QueryWrapper<Org>().
+                    eq(Org.ID, orgId));
+            String str;
+            if (org0.getParentId() == 0){
+                str = orgId + ".";
+            }else {
+                str = "." + orgId + ".";
+            }
+            List<Org> orgList = orgDao.selectList(new QueryWrapper<Org>().
+                    like(Org.ORGCODE, str));
+            for (Org org : orgList) {
+                idList.add(org.getId());
+            }
+        }
+
+        return idList;
     }
 
 }

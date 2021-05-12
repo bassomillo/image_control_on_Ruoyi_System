@@ -35,8 +35,9 @@ public class WebTagGroupController {
     @ApiOperation("标签组管理-创建/编辑标签组可选标签名称")
     @GetMapping("/gettagname")
     public AjaxResult gettagnames(@RequestParam("pagesize") Integer pagesize,
-                                  @RequestParam("page") Integer page){
-        AjaxResult result = webTagService.TagNamesGet(pagesize, page);
+                                  @RequestParam("page") Integer page,
+                                  @RequestParam(value = "name", required = false)String name){
+        AjaxResult result = webTagService.TagNamesGet(name, pagesize, page);
         return result;
     }
 

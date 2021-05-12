@@ -1,6 +1,15 @@
 package com.ruoyi.project.system.controller;
 
 import java.util.List;
+
+import com.ruoyi.common.utils.ServletUtils;
+import com.ruoyi.common.utils.spring.SpringUtils;
+import com.ruoyi.framework.security.LoginUser;
+import com.ruoyi.framework.security.service.TokenService;
+import com.ruoyi.project.union.entity.User;
+import com.ruoyi.project.union.service.LoginTokenService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -29,6 +38,7 @@ import com.ruoyi.project.system.service.ISysConfigService;
  * @author ruoyi
  */
 @RestController
+@Api(tags = "系统管理 - 运营设置")
 @RequestMapping("/system/config")
 public class SysConfigController extends BaseController
 {
@@ -70,6 +80,7 @@ public class SysConfigController extends BaseController
     /**
      * 根据参数键名查询参数值
      */
+    @ApiOperation(value = "根据参数键名查询参数值", httpMethod = "GET")
     @GetMapping(value = "/configKey/{configKey}")
     public AjaxResult getConfigKey(@PathVariable String configKey)
     {
@@ -79,8 +90,9 @@ public class SysConfigController extends BaseController
     /**
      * 新增参数配置
      */
-    @PreAuthorize("@ss.hasPermi('system:config:add')")
+//    @PreAuthorize("@ss.hasPermi('system:config:add')")
     @Log(title = "参数管理", businessType = BusinessType.INSERT)
+    @ApiOperation(value = "新增参数配置", httpMethod = "POST")
     @PostMapping
     public AjaxResult add(@Validated @RequestBody SysConfig config)
     {
@@ -88,7 +100,9 @@ public class SysConfigController extends BaseController
         {
             return AjaxResult.error("新增参数'" + config.getConfigName() + "'失败，参数键名已存在");
         }
-        config.setCreateBy(SecurityUtils.getUsername());
+        User loginUser = SpringUtils.getBean(LoginTokenService.class).getLoginUser(ServletUtils.getRequest());
+        config.setUpdateBy(loginUser.getNickname());
+//        config.setCreateBy(SecurityUtils.getUsername());
         return toAjax(configService.insertConfig(config));
     }
 
@@ -105,6 +119,20 @@ public class SysConfigController extends BaseController
             return AjaxResult.error("修改参数'" + config.getConfigName() + "'失败，参数键名已存在");
         }
         config.setUpdateBy(SecurityUtils.getUsername());
+        return toAjax(configService.updateConfig(config));
+    }
+
+    @Log(title = "参数管理", businessType = BusinessType.UPDATE)
+    @ApiOperation(value = "修改参数配置", httpMethod = "POST")
+    @PostMapping(value = "/editSetting")
+    public AjaxResult editSetting(@RequestBody SysConfig config)
+    {
+        if (UserConstants.NOT_UNIQUE.equals(configService.checkConfigKeyUnique(config)))
+        {
+            return AjaxResult.error("修改参数'" + config.getConfigName() + "'失败，参数键名已存在");
+        }
+        User loginUser = SpringUtils.getBean(LoginTokenService.class).getLoginUser(ServletUtils.getRequest());
+        config.setUpdateBy(loginUser.getNickname());
         return toAjax(configService.updateConfig(config));
     }
 

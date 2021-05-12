@@ -16,7 +16,7 @@ import java.util.Date;
  * @since 2021-04-23
  */
 public interface WebArticleCategoryService extends IService<WebArticleCategory> {
-    AjaxResult TopArticleCategoryGet(Integer pagesize, Integer page);
+    AjaxResult TopArticleCategoryGet(Integer pagesize, Integer page, String name);
 
     AjaxResult WebArticleCategoryInsert (WebArticleCategory webArticleCategory);
 

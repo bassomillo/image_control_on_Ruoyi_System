@@ -55,6 +55,7 @@
                 cover_type as coverType, sympathy_cost as sympathyCost, remark
         from staff_service_sympathy
         where 1=1
+            and type = #{type}
         <if test="expenseOrgId != ''">
             and expense_orgId = #{expenseOrgId}
         </if>
@@ -77,7 +78,7 @@
         <if test="submitStatus != null">
             and submit_status = #{submitStatus}
         </if>
-
+        limit #{pageSize} OFFSET #{index}
 
     </select>
 
@@ -85,6 +86,7 @@
         select count(id)
         from staff_service_sympathy
         where 1=1
+            and type = #{type}
         <if test="expenseOrgId != ''">
             and expense_orgId = #{expenseOrgId}
         </if>
@@ -107,6 +109,41 @@
         <if test="submitStatus != null">
             and submit_status = #{submitStatus}
         </if>
+
+    </select>
+
+    <select id="StaffServiceSympathySearch1" resultType="com.ruoyi.project.monitor.domain.StaffServiceSympathy">
+        select id, created_userId as createdUserId, expense_orgId as expenseOrgId,
+        orgId, type, sympathy_type as sympathyType, sympathy_time as sympathyTime,
+        submit_time as submitTime, submit_status as submitStatus,
+        funds_sources as fundsSources, sympathy_number as sympathyNumber,
+        cover_type as coverType, sympathy_cost as sympathyCost, remark
+        from staff_service_sympathy
+        where 1=1
+        and type = #{type}
+        <if test="expenseOrgId != ''">
+            and expense_orgId = #{expenseOrgId}
+        </if>
+
+        <if test="orgId != ''">
+            and orgId = #{orgId}
+        </if>
+
+        <if test="status == 0">
+            and orgId = #{createdUserOrg}
+        </if>
+
+        <if test="status == 1">
+            and orgId in
+            <foreach collection="sons" item="son" open="(" separator="," close=")" index="index">
+                #{son}
+            </foreach>
+        </if>
+
+        <if test="submitStatus != null">
+            and submit_status = #{submitStatus}
+        </if>
+
 
     </select>
 
@@ -131,5 +168,12 @@
     <select id="StaffServiceSympathyFindSon" resultType="com.ruoyi.project.monitor.domain.StaffServiceSympathyFindSon">
         select id, orgCode
         from org
+    </select>
+
+
+    <select id="StaffServiceSympathyFindCreaterName" resultType="java.lang.String">
+        select truename
+        from user_profile
+        where id=#{createdUserId}
     </select>
 </mapper>

@@ -1,7 +1,9 @@
 package com.ruoyi.project.org.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.ruoyi.common.utils.ServletUtils;
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.common.utils.spring.SpringUtils;
 import com.ruoyi.framework.converters.LocalDateTimeConverters;
 import com.ruoyi.framework.converters.LocalDateTimePattern;
 import com.ruoyi.framework.web.domain.AjaxResult;
@@ -14,8 +16,10 @@ import com.ruoyi.project.org.service.IOrgCommissionerService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.project.org.service.IOrgService;
 import com.ruoyi.project.tool.ExcelTool;
+import com.ruoyi.project.union.entity.User;
 import com.ruoyi.project.union.entity.UserProfile;
 import com.ruoyi.project.union.mapper.UserProfileDao;
+import com.ruoyi.project.union.service.LoginTokenService;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -54,6 +58,7 @@ public class OrgCommissionerServiceImpl extends ServiceImpl<OrgCommissionerDao, 
 
     @Override
     public AjaxResult searchOrgRole(OrgRoleSearchPojo roleSearchPojo) {
+        roleSearchPojo.setCurrent((roleSearchPojo.getCurrent() - 1) * roleSearchPojo.getSize());
         return AjaxResult.success(orgCommissionerDao.searchOrgRole(roleSearchPojo));
     }
 
@@ -212,7 +217,6 @@ public class OrgCommissionerServiceImpl extends ServiceImpl<OrgCommissionerDao, 
         LocalDateTimeConverters localDateTimeConverters = new LocalDateTimeConverters();
         
         try {
-            List<String> errorMsg = new ArrayList<>();
             wb = ExcelTool.getWb(file);
             Sheet sheet = wb.getSheetAt(0);
             int rowStart = 2;
@@ -222,24 +226,13 @@ public class OrgCommissionerServiceImpl extends ServiceImpl<OrgCommissionerDao, 
                 Row row = sheet.getRow(rowNum);
 
                 // 拼接工会组织的orgCode
-                String[] orgs = ExcelTool.getCellValue(row.getCell(0)).split("/");
-                Integer parentId = -1;
                 Integer realParentId = null;
-                for (int i = 0; i < orgs.length; i++) {
-                    Org org = orgDao.selectOne(new QueryWrapper<Org>().eq(Org.NAME, orgs[i]).eq(parentId != -1, Org.PARENTID, parentId));
-                    if (org != null) {
-                        if(i == orgs.length - 1)
-                            realParentId = org.getId();
-                        parentId = org.getId();
-                    } else {
-                        errorMsg.add("第" + rowNum + "行上级工会组织与实际名称不符。");
-                        break;
-                    }
-                }
+                orgsCheck(row, rowNum, realParentId, null, 0);
                 Org org = new Org();
                 org.setName(ExcelTool.getCellValue(row.getCell(1)));
                 org.setParentId(realParentId);
-//                org.setCreatedUserId();
+                User loginUser = SpringUtils.getBean(LoginTokenService.class).getLoginUser(ServletUtils.getRequest());
+                org.setCreatedUserId(loginUser.getId());
                 org.setSimpleName(ExcelTool.getCellValue(row.getCell(1)));
                 org.setOrgCategory(ExcelTool.getCellValue(row.getCell(2)));
                 org.setOrgLevel(ExcelTool.getCellValue(row.getCell(3)));
@@ -251,16 +244,35 @@ public class OrgCommissionerServiceImpl extends ServiceImpl<OrgCommissionerDao, 
 
                 orgService.createOrg(org);
             }
-            if(0 != errorMsg.size()) {
-                errorMsg.add("其余部门导入成功。");
-                return AjaxResult.success(errorMsg);
-            }
+
             return AjaxResult.success("导入成功，共" + dataNum + "条数据。");
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
             log.error("Excel文件异常，读取失败：" + e);
             return AjaxResult.error(e.toString());
+        }
+    }
+
+    public void orgsCheck(Row row, Integer rowNum, Integer realParentId, List<String> errorMsg, Integer cellNum) {
+        // 拼接工会组织的orgCode
+        String[] orgs = ExcelTool.getCellValue(row.getCell(cellNum)).split("/");
+        Integer parentId = -1;
+        for (int i = 0; i < orgs.length; i++) {
+            Org org = orgDao.selectOne(new QueryWrapper<Org>().eq(Org.NAME, orgs[i]).eq(parentId != -1, Org.PARENTID, parentId));
+            if (org != null) {
+                /**
+                 * 在机构导入时导入的机构串是到机构的上一级父机构为止，此时realParentId的意义是上一级父机构id
+                 * 在会员导入时导入的机构串则是直接到机构，此时realParentId的意义是会员所在机构id
+                 */
+                if(i == orgs.length - 1)
+                    realParentId = org.getId();
+                parentId = org.getId();
+            } else {
+                if(null != errorMsg)
+                    errorMsg.add("第" + rowNum + "行上级工会组织与实际名称不符。");
+                break;
+            }
         }
     }
 
@@ -280,8 +292,12 @@ public class OrgCommissionerServiceImpl extends ServiceImpl<OrgCommissionerDao, 
             int dataNum = rowEnd - rowStart;
             for(int rowNum = rowStart; rowNum < rowEnd; rowNum++) { // 遍历
                 Row row = sheet.getRow(rowNum);
-                if(StringUtils.isEmpty(ExcelTool.getCellValue(row.getCell(0))))
+                if(StringUtils.isEmpty(ExcelTool.getCellValue(row.getCell(0)))) {
                     errorMsg.add("第" + rowNum + "行信息有误，导入必须包含上级工会组织名称。");
+                } else {
+                    Integer realParentId = null;
+                    orgsCheck(row, rowNum, realParentId, errorMsg, 0);
+                }
                 if(StringUtils.isEmpty(ExcelTool.getCellValue(row.getCell(1))))
                     errorMsg.add("第" + rowNum + "行信息有误，导入必须包含工会组织简称。");
                 if(StringUtils.isEmpty(ExcelTool.getCellValue(row.getCell(2))))

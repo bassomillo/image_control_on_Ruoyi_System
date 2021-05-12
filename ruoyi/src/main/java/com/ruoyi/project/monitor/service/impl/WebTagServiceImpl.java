@@ -2,6 +2,7 @@ package com.ruoyi.project.monitor.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.framework.web.domain.AjaxResult;
+import com.ruoyi.project.monitor.domain.VO.WebTagNamesVO;
 import com.ruoyi.project.monitor.domain.VO.WebTagVO;
 import com.ruoyi.project.monitor.domain.VO.WebTagVO2;
 import com.ruoyi.project.monitor.domain.VO.WebTagVO3;
@@ -53,6 +54,7 @@ public class WebTagServiceImpl extends ServiceImpl<WebTagDao, WebTag> implements
     public AjaxResult WebTagDelete(Integer id) {
         try {
             webTagDao.DeleteWebTag(id);
+            webTagDao.DeleteWebTagGroupTag(id);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return AjaxResult.error(e.getMessage());
@@ -101,9 +103,9 @@ public class WebTagServiceImpl extends ServiceImpl<WebTagDao, WebTag> implements
     }
 
     @Override
-    public AjaxResult TagNamesGet(Integer pagesize, Integer page) {
+    public AjaxResult TagNamesGet(String name, Integer pagesize, Integer page) {
         try {
-            List<String> namelist = webTagDao.GetWebTagNames(pagesize, (page-1)*pagesize);
+            List<WebTagNamesVO> namelist = webTagDao.GetWebTagNames(name, pagesize, (page-1)*pagesize);
             return AjaxResult.success("操作成功", namelist);
         } catch (Exception e) {
             System.out.println(e.getMessage());

@@ -12,6 +12,7 @@ import com.ruoyi.framework.security.service.SysLoginService;
 import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.project.system.domain.SysMenu;
 import com.ruoyi.project.system.service.ISysMenuService;
+import com.ruoyi.project.tool.CheckUtil;
 import com.ruoyi.project.tool.MD5Utils;
 import com.ruoyi.project.tool.RSAUtil;
 import com.ruoyi.project.union.entity.LoginForm;
@@ -32,6 +33,9 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
@@ -116,7 +120,7 @@ public class LoginController {
         // 获取对应账号信息
         User user = loginTokenService.getLoginUser(request);
         if(user == null)
-            return AjaxResult.error(MessageUtils.message("user.token.expire"));
+            return AjaxResult.error(401, MessageUtils.message("user.token.expire"));
         User u = userService.getById(user.getId());
         user.setPassword(u.getPassword());
         map.put("user", user);
@@ -138,6 +142,26 @@ public class LoginController {
     {
         loginTokenService.delLoginUser(request);
         return AjaxResult.success(MessageUtils.message("user.logout.success"));
+    }
+
+    @RequestMapping(value = "weChat", method=RequestMethod.GET)
+    public void weChatLogin(HttpServletRequest request, HttpServletResponse response) {
+        System.out.println("success");
+        String signature = request.getParameter("signature");
+        String timestamp = request.getParameter("timestamp");
+        String nonce = request.getParameter("nonce");
+        String echostr = request.getParameter("echostr");
+        PrintWriter out = null;
+        try {
+            out = response.getWriter();
+            if(CheckUtil.checkSignature(signature, timestamp, nonce)){
+                out.write(echostr);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            out.close();
+        }
     }
 }
 
