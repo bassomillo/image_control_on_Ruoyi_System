@@ -110,9 +110,7 @@ public class FileUploadUtils
         }
 
         assertAllowed(file, allowedExtension);
-
         String fileName = extractFilename(file);
-
         File desc = getAbsoluteFile(baseDir, fileName);
         file.transferTo(desc);
         String pathFileName = getPathFileName(baseDir, fileName);
@@ -126,7 +124,8 @@ public class FileUploadUtils
     {
         String fileName = file.getOriginalFilename();
         String extension = getExtension(file);
-        fileName = DateUtils.datePath() + "/" + encodingFilename(fileName) + "." + extension;
+//        fileName = DateUtils.datePath() + "/" + encodingFilename(fileName) + "." + extension;
+        fileName =  encodingFilename(fileName) + "." + extension;
         return fileName;
     }
 
@@ -150,8 +149,10 @@ public class FileUploadUtils
     {
         int dirLastIndex = RuoYiConfig.getProfile().length() + 1;
         String currentDir = StringUtils.substring(uploadDir, dirLastIndex);
-        String pathFileName = Constants.RESOURCE_PREFIX + "/" + currentDir + "/" + fileName;
+//        String pathFileName = Constants.RESOURCE_PREFIX + "/" + currentDir + "/" + fileName;
+        String pathFileName =  uploadDir + "/" + fileName;
         return pathFileName;
+
     }
 
     /**
