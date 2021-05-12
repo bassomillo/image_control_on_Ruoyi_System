@@ -16,6 +16,7 @@ import java.util.List;
  */
 @Service("userService")
 public class SocketUserServiceImpl implements SocketUserService {
+
     @Resource
     private SocketUserDao socketUserDao;
 
@@ -87,4 +88,6 @@ public class SocketUserServiceImpl implements SocketUserService {
     public List<SocketUser> selectPsychologicalCounselors() {
         return socketUserDao.selectPsychologicalCounselors();
     }
+
+
 }

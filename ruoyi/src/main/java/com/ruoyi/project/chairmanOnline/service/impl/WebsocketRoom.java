@@ -103,10 +103,11 @@ public class WebsocketRoom {
     public void onMessage(Session session, String message) {
         SocketChatroomRecord socketChatroomRecord = JSON.parseObject(message, SocketChatroomRecord.class);
         socketChatroomRecordService.insert(socketChatroomRecord);
-        List<WebsocketRoom> arraySet = roomClients.get(socketChatroomRecord.getTagid());
+        SocketChatroomRecord record = socketChatroomRecordService.getUserInfo(socketChatroomRecord);
+        List<WebsocketRoom> arraySet = roomClients.get(record.getTagid());
         for (WebsocketRoom webScoketServer : arraySet) {
             try {
-                webScoketServer.onSend(socketChatroomRecord.toString());
+                webScoketServer.onSend(record.toString());
             } catch (IOException e) {
                 e.printStackTrace();
                 continue;

@@ -125,8 +125,21 @@
 
     <!--查询-->
     <select id="queryRecordBytagId" resultMap="SocketChatroomRecordMap">
-        select id, senderId, content, type, tagId, isShow, createdTime, isDelete from zhgh_new_test.socket_chatroom_record
-        where tagId = 1 order by createdTime DESC
+    SELECT
+        t1.id,
+        t1.senderId,
+        t1.content,
+        t1.type,
+        t1.tagId,
+        t1.isShow,
+        t1.createdTime,
+        t1.isDelete,
+        `user`.nickname as nickname,
+        `user`.smallAvatar as smallAvatar
+    FROM
+        ( SELECT id, senderId, content, type, tagId, isShow, createdTime, isDelete FROM zhgh_new_test.socket_chatroom_record WHERE tagId = #{tagId} ) t1
+        LEFT JOIN `user` ON t1.senderId = `user`.id
+    order by t1.createdTime DESC
     </select>
 </mapper>
 

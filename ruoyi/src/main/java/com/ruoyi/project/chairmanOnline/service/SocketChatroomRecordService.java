@@ -55,6 +55,7 @@ public interface SocketChatroomRecordService {
      */
     boolean deleteById(Integer id);
 
-    AjaxResult queryRecordBytagId (int tagId, int pageNum, int pageSize);
+    AjaxResult queryRecordBytagId(int tagId, int pageNum, int pageSize);
 
+    SocketChatroomRecord getUserInfo(SocketChatroomRecord socketChatroomRecord);
 }

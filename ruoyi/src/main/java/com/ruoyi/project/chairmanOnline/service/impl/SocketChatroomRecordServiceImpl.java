@@ -5,7 +5,9 @@ import com.github.pagehelper.PageHelper;
 import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.project.chairmanOnline.entity.SocketChatroomRecord;
 import com.ruoyi.project.chairmanOnline.dao.SocketChatroomRecordDao;
+import com.ruoyi.project.chairmanOnline.entity.SocketUser;
 import com.ruoyi.project.chairmanOnline.service.SocketChatroomRecordService;
+import com.ruoyi.project.chairmanOnline.service.SocketUserService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -21,6 +23,9 @@ import java.util.List;
 public class SocketChatroomRecordServiceImpl implements SocketChatroomRecordService {
     @Resource
     private SocketChatroomRecordDao socketChatroomRecordDao;
+
+    @Resource
+    private SocketUserService socketUserService;
 
     /**
      * 通过ID查询单条数据
@@ -81,15 +86,30 @@ public class SocketChatroomRecordServiceImpl implements SocketChatroomRecordServ
     }
 
 
-     /**
-          * 群聊记录
-          *
-          * @param
-          * @return
-          */
+    /**
+     * 群聊记录
+     *
+     * @param
+     * @return
+     */
     @Override
     public AjaxResult queryRecordBytagId(int tagId, int pageNum, int pageSize) {
         Page<Object> page = PageHelper.startPage(pageNum, pageSize);
-        return AjaxResult.success(socketChatroomRecordDao.queryRecordBytagId(tagId),(int)page.getTotal());
+        return AjaxResult.success(socketChatroomRecordDao.queryRecordBytagId(tagId), (int) page.getTotal());
+    }
+
+
+    /**
+     * 获取用户头像和姓名等信息
+     *
+     * @param
+     * @return
+     */
+    @Override
+    public SocketChatroomRecord getUserInfo(SocketChatroomRecord socketChatroomRecord) {
+        SocketUser user = socketUserService.queryById(socketChatroomRecord.getSenderid());
+        socketChatroomRecord.setNickname(user.getNickname());
+        socketChatroomRecord.setSmallAvatar(user.getSmallavatar());
+        return socketChatroomRecord;
     }
 }

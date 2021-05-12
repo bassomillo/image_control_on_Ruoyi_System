@@ -51,6 +51,21 @@ public class SocketChatroomRecord implements Serializable {
     @Transient
     private  String token;
 
+    /**
+     * 头像
+     */
+
+    @Transient
+    private  String smallAvatar;
+
+
+    /**
+     * 发送者姓名
+     */
+    @Transient
+    private  String nickname;
+
+
 
 
 }

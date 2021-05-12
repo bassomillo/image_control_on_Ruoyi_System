@@ -1,5 +1,9 @@
 package com.ruoyi.project.chairmanOnline.controller;
 
+import com.github.tobato.fastdfs.domain.fdfs.StorePath;
+import com.github.tobato.fastdfs.domain.proto.storage.DownloadByteArray;
+import com.ruoyi.common.utils.file.FileUploadUtils;
+import com.ruoyi.common.utils.file.FileUtils;
 import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.project.chairmanOnline.entity.QO.SocketChatRecordQO;
 import com.ruoyi.project.chairmanOnline.entity.SocketChatOrgCommissioner;
@@ -16,8 +20,12 @@ import org.springframework.web.multipart.MultipartFile;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URLEncoder;
 
 /**
  * 聊天记录(SocketChatRecord)表控制层
@@ -96,5 +104,23 @@ public class SocketChatRecordController {
             @ApiImplicitParam(name = "userId", value = "当前登陆用户的id")})
     public AjaxResult recordIsRead(@RequestParam int userId,@RequestParam int conversationId){
         return  AjaxResult.success(socketChatRecordService.chatRecordsIsRead(userId,conversationId));
+    }
+
+
+
+    @ApiOperation("文件上传")
+    @PostMapping("upload2")
+    public AjaxResult upload2(MultipartFile file) throws IOException {
+        String uploadUrl = FileUploadUtils.upload(file);
+        return AjaxResult.success(uploadUrl);
+    }
+
+
+    @ApiOperation("文件下载")
+    @PostMapping("download2")
+    public void download2(HttpServletResponse response, HttpServletRequest request,String fileUrl) throws IOException {
+
+
+
     }
 }
