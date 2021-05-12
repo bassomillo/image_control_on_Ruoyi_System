@@ -63,7 +63,7 @@ public class OrgController {
     @Log(title = "新增子机构", businessType = BusinessType.INSERT)
     @PostMapping("/createOrg")
     public AjaxResult createOrg(@RequestBody Org org) {
-        if(orgService.isRepeat(org.getName(), org.getParentId()))
+        if(orgService.isRepeat(org.getName(), null, org.getParentId()))
             return AjaxResult.error("当前机构下存在同名机构，机构名<" + org.getName() + ">不可用");
         orgService.createOrg(org);
         return AjaxResult.success();

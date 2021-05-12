@@ -67,10 +67,7 @@ public class UserProfile extends Model<UserProfile> {
     @ApiModelProperty(value = "自我介绍")
     private String about;
 
-    /**
-     * 公司
-     */
-    @ApiModelProperty(value = "工作单位？ ")
+    @ApiModelProperty(value = "工作单位")
     private String company;
 
     /**
@@ -243,6 +240,10 @@ public class UserProfile extends Model<UserProfile> {
     @TableField(exist = false)
     @ApiModelProperty(value = "用户名")
     private String nickname;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "头衔")
+    private String title;
 
 
     public static final String ID = "id";

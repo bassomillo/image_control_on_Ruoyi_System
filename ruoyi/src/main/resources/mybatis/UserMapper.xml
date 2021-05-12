@@ -55,11 +55,11 @@
             and u.bindStatus = #{bindStatus}
         </if>
         <if test="joinWorkDateStart != null and joinWorkDateStart != ''">
-            and up.joinWorkDateStart &gt;= #{joinWorkDateStart}
+            and up.joinWorkDate &gt;= #{joinWorkDateStart}
 --              and left(create_time, 10) &lt;= #{endTime}
         </if>
         <if test="joinWorkDateEnd != null and joinWorkDateEnd != ''">
-            and up.joinWorkDateEnd &lt;= #{joinWorkDateEnd}
+            and up.joinWorkDate &lt;= #{joinWorkDateEnd}
         </if>
         <if test="gender != null">
             and up.gender = #{gender}
@@ -82,6 +82,7 @@
         <if test="msg != null">
             and CONCAT_WS(u.nickname, up.truename, u.email, up.mobile) like concat('%', #{msg}, '%')
         </if>
+        order by u.id
         limit #{current}, #{size}
     </select>
 
@@ -99,6 +100,22 @@
         <foreach collection="userIds" item="userId" open="(" separator="," close=")">
             #{userId}
         </foreach>
+        <if test="nickname != null">
+            and u.nickname like concat('%', #{nickname}, '%')
+        </if>
+        <if test="truename != null">
+            and up.truename like concat('%', #{truename}, '%')
+        </if>
+        <if test="orgId != null">
+            and u.orgId = #{orgId}
+        </if>
         limit #{current}, #{size}
+    </select>
+
+    <select id="selectUserByMobile" resultType="com.ruoyi.project.union.entity.User">
+        select u.*
+        from user as u
+        left join user_profile as up on u.id = up.id
+        where up.mobile = #{mobile}
     </select>
 </mapper>
