@@ -931,77 +931,82 @@ public class ExamServiceImpl extends ServiceImpl<ExamMapper, Exam> implements IE
     /**
      * 后台导出答题数据
      * @param examId
-     * @param userId
      * @return
      */
     @Override
-    public AjaxResult exportPaperData(Integer examId, Integer userId, HttpServletResponse response) {
+    public AjaxResult exportPaperData(Integer examId, HttpServletResponse response) {
         try {
             //获取数据
-            ExamPaperExportDO exportDO =examMapper.getUserExportData(userId);
-
-            //设置用户基础信息
-            exportDO.setSex("male".equals(exportDO.getGender()) ? "男" : "女");
-            Org org = orgDao.selectOne(new QueryWrapper<Org>().
-                    eq(Org.ID, exportDO.getOrgId()));
-            exportDO.setOrgName(org.getName());
-            String orgNameDetail = toolUtils.getOrgName(exportDO.getOrgId());
-            exportDO.setOrgNameDetail(orgNameDetail);
-
-            //设置用户考试信息
-            ExamPaper examPaper = examPaperMapper.selectOne(new QueryWrapper<ExamPaper>().
+            List<ExamPaper> paperUsers = examPaperMapper.selectList(new QueryWrapper<ExamPaper>().
                     eq(ExamPaper.EXAMID, examId).
-                    eq(ExamPaper.USERID, userId).
-                    orderByDesc(ExamPaper.SUBMITFLAG).
-                    last("limit 1"));
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String date = sdf.format(examPaper.getSubmitDate());
-            exportDO.setTime(date);
-            exportDO.setImg(examPaper.getSignatureImg());
-            int flag = examPaper.getSubmitFlag();
-            //计算得分
-            List<ExamPaper> examPaperList = examPaperMapper.selectList(new QueryWrapper<ExamPaper>().
-                    eq(ExamPaper.EXAMID, examId).
-                    eq(ExamPaper.USERID, userId));
-            double score = 0;
-            List<QuestionAndPaperDO> paperDOList = new ArrayList<>();
-            for (ExamPaper paper : examPaperList){
+                    select("distinct examId, userId"));
+            //获取数据
+            List<ExamPaperExportDO> exportDOs =examMapper.getUserExportData(paperUsers);
+
+            for (ExamPaperExportDO exportDO : exportDOs) {
+                //设置用户基础信息
+                exportDO.setSex("male".equals(exportDO.getGender()) ? "男" : "女");
+                Org org = orgDao.selectOne(new QueryWrapper<Org>().
+                        eq(Org.ID, exportDO.getOrgId()));
+                exportDO.setOrgName(org.getName());
+                String orgNameDetail = toolUtils.getOrgName(exportDO.getOrgId());
+                exportDO.setOrgNameDetail(orgNameDetail);
+
+                //设置用户考试信息
+                ExamPaper examPaper = examPaperMapper.selectOne(new QueryWrapper<ExamPaper>().
+                        eq(ExamPaper.EXAMID, examId).
+                        eq(ExamPaper.USERID, exportDO.getUserId()).
+                        orderByAsc(ExamPaper.SUBMITFLAG).
+                        last("limit 1"));
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String date = sdf.format(examPaper.getSubmitDate());
+                exportDO.setTime(date);
+                exportDO.setImg(examPaper.getSignatureImg());
+                int flag = examPaper.getSubmitFlag();
                 //计算得分
-                if (paper.getSubmitFlag() == flag){
-                    score += paper.getScore().doubleValue();
-                }
-                //查询答题信息
-                QuestionAndPaperDO qap = new QuestionAndPaperDO();
-                ExamQuestion question = examQuestionMapper.selectOne(new QueryWrapper<ExamQuestion>().
-                        eq(ExamQuestion.ID, paper.getExamQuestionId()));
-                qap.setQuestion(question.getContent());
-                if ("completion".equals(paper.getType())){
-                    //填空
-                    qap.setContent(paper.getSubmitContent());
-                }else if ("multiple".equals(paper.getType())){
-                    //多选
-                    String[] ids = paper.getSubmitContent().split(" ");
-                    String content = "";
-                    for (String id : ids){
-                        ExamOption option = examOptionMapper.selectOne(new QueryWrapper<ExamOption>().
-                                eq(ExamOption.ID, id));
-                        content += option.getContent() + " ";
+                List<ExamPaper> examPaperList = examPaperMapper.selectList(new QueryWrapper<ExamPaper>().
+                        eq(ExamPaper.EXAMID, examId).
+                        eq(ExamPaper.USERID, exportDO.getUserId()));
+                double score = 0;
+                List<QuestionAndPaperDO> paperDOList = new ArrayList<>();
+                for (ExamPaper paper : examPaperList) {
+                    //计算得分
+                    if (paper.getSubmitFlag() == flag) {
+                        score += paper.getScore().doubleValue();
                     }
-                    qap.setContent(content);
-                }else {
-                    //单选/判断
-                    ExamOption option = examOptionMapper.selectOne(new QueryWrapper<ExamOption>().
-                            eq(ExamOption.ID, paper.getSubmitContent()));
-                    qap.setContent(option==null ? "" : option.getContent());
+                    //查询答题信息
+                    QuestionAndPaperDO qap = new QuestionAndPaperDO();
+                    ExamQuestion question = examQuestionMapper.selectOne(new QueryWrapper<ExamQuestion>().
+                            eq(ExamQuestion.ID, paper.getExamQuestionId()));
+                    qap.setQuestion(question.getContent());
+                    if ("completion".equals(paper.getType())) {
+                        //填空
+                        qap.setContent(paper.getSubmitContent());
+                    } else if ("multiple".equals(paper.getType())) {
+                        //多选
+                        String[] ids = paper.getSubmitContent().split(" ");
+                        String content = "";
+                        for (String id : ids) {
+                            ExamOption option = examOptionMapper.selectOne(new QueryWrapper<ExamOption>().
+                                    eq(ExamOption.ID, id));
+                            content += option.getContent() + " ";
+                        }
+                        qap.setContent(content);
+                    } else {
+                        //单选/判断
+                        ExamOption option = examOptionMapper.selectOne(new QueryWrapper<ExamOption>().
+                                eq(ExamOption.ID, paper.getSubmitContent()));
+                        qap.setContent(option == null ? "" : option.getContent());
+                    }
+                    paperDOList.add(qap);
                 }
-                paperDOList.add(qap);
+                exportDO.setScore(score);
+                exportDO.setPaperList(paperDOList);
             }
-            exportDO.setScore(score);
-            exportDO.setPaperList(paperDOList);
 
             //导出
             String name = "答题详细数据" + ".xls";
-            Workbook wb = getWorkbook(exportDO, null);
+            Workbook wb = getWorkbookPaper(exportDOs, null);
             ExcelTool.export(wb, name, response);
 
         }catch (Exception e){
@@ -1388,12 +1393,12 @@ public class ExamServiceImpl extends ServiceImpl<ExamMapper, Exam> implements IE
 
     /**
      * 导出答题数据处理
-     * @param export
+     * @param exportList
      * @param request
      * @return
      * @throws Exception
      */
-    private Workbook getWorkbook(ExamPaperExportDO export, HttpServletRequest request) throws Exception{
+    private Workbook getWorkbookPaper(List<ExamPaperExportDO> exportList, HttpServletRequest request) throws Exception{
         //读取模板
         Workbook wb = ExcelTool.read(request, "/static/excel/答题详细数据导出模板.xls");
 //        Workbook wb = new HSSFWorkbook();
@@ -1418,22 +1423,24 @@ public class ExamServiceImpl extends ServiceImpl<ExamMapper, Exam> implements IE
         ExcelTool.createCell(row0, 6, style, "签名");
         ExcelTool.createCell(row0, 7, style, "归属组织");
 
-        Row row = sheet.createRow(r++);
-        //组装一行数据
-        ExcelTool.createCell(row, 0, style, export.getName());
-        ExcelTool.createCell(row, 1, style, export.getSex());
-        ExcelTool.createCell(row, 2, style, export.getMobile());
-        ExcelTool.createCell(row, 3, style, export.getOrgName());
-        ExcelTool.createCell(row, 4, style, export.getTime());
-        ExcelTool.createCell(row, 5, style, export.getScore());
-        ExcelTool.createCell(row, 6, style, export.getImg());
-        ExcelTool.createCell(row, 7, style, export.getOrgNameDetail());
+        for (ExamPaperExportDO export : exportList) {
+            Row row = sheet.createRow(r++);
+            //组装一行数据
+            ExcelTool.createCell(row, 0, style, export.getName());
+            ExcelTool.createCell(row, 1, style, export.getSex());
+            ExcelTool.createCell(row, 2, style, export.getMobile());
+            ExcelTool.createCell(row, 3, style, export.getOrgName());
+            ExcelTool.createCell(row, 4, style, export.getTime());
+            ExcelTool.createCell(row, 5, style, export.getScore());
+            ExcelTool.createCell(row, 6, style, export.getImg());
+            ExcelTool.createCell(row, 7, style, export.getOrgNameDetail());
 
-        int i = 8;
-        for (QuestionAndPaperDO paperDO : export.getPaperList()){
-            ExcelTool.createCell(row0, i, style, paperDO.getQuestion());
-            ExcelTool.createCell(row, i, style, paperDO.getContent());
-            i++;
+            int i = 8;
+            for (QuestionAndPaperDO paperDO : export.getPaperList()) {
+                ExcelTool.createCell(row0, i, style, paperDO.getQuestion());
+                ExcelTool.createCell(row, i, style, paperDO.getContent());
+                i++;
+            }
         }
 
         return wb;

@@ -187,11 +187,9 @@ public interface IExamService extends IService<Exam> {
     /**
      * 后台导出答题数据
      * @param examId
-     * @param userId
      * @return
      */
     AjaxResult exportPaperData(Integer examId,
-                               Integer userId,
                                HttpServletResponse response);
 
     /**

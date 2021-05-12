@@ -37,6 +37,7 @@ import org.springframework.web.util.HtmlUtils;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -827,71 +828,75 @@ public class QuestionnaireServiceImpl extends ServiceImpl<VoteMapper, Vote> impl
     /**
      * 后台导出答题数据
      * @param questionnaireId
-     * @param userId
      * @param response
      * @return
      */
     @Override
-    public AjaxResult exportPaperData(Integer questionnaireId, Integer userId, HttpServletResponse response) {
+    public AjaxResult exportPaperData(Integer questionnaireId, HttpServletResponse response) {
         try {
             //获取数据
-            ExamPaperExportDO exportDO =voteMapper.getUserExportData(userId);
-
-            //设置用户基础信息
-            exportDO.setSex("male".equals(exportDO.getGender()) ? "男" : "女");
-            Org org = orgDao.selectOne(new QueryWrapper<Org>().
-                    eq(Org.ID, exportDO.getOrgId()));
-            exportDO.setOrgName(org.getName());
-            String orgNameDetail = toolUtils.getOrgName(exportDO.getOrgId());
-            exportDO.setOrgNameDetail(orgNameDetail);
-
-            //设置用户问卷信息
-            VotePaper quPaper = votePaperMapper.selectOne(new QueryWrapper<VotePaper>().
+            List<VotePaper> paperUsers = votePaperMapper.selectList(new QueryWrapper<VotePaper>().
                     eq(VotePaper.VOTEID, questionnaireId).
-                    eq(VotePaper.USERID, userId).
-                    orderByDesc(VotePaper.SUBMITFLAG).
-                    last("limit 1"));
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String date = sdf.format(quPaper.getSubmitDate());
-            exportDO.setTime(date);
-            exportDO.setImg(quPaper.getSignatureImg());
+                    select("distinct voteId, userId"));
+            List<ExamPaperExportDO> exportDOs =voteMapper.getUserExportData(paperUsers);
 
-            List<VotePaper> quPaperList = votePaperMapper.selectList(new QueryWrapper<VotePaper>().
-                    eq(VotePaper.VOTEID, questionnaireId).
-                    eq(VotePaper.USERID, userId));
-            List<QuestionAndPaperDO> paperDOList = new ArrayList<>();
-            for (VotePaper paper : quPaperList){
-                //查询答题信息
-                QuestionAndPaperDO qap = new QuestionAndPaperDO();
-                VoteQuestion question = voteQuestionMapper.selectOne(new QueryWrapper<VoteQuestion>().
-                        eq(VoteQuestion.ID, paper.getVoteQuestionId()));
-                qap.setQuestion(question.getContent());
-                if ("completion".equals(paper.getType())){
-                    //填空
-                    qap.setContent(paper.getSubmitContent());
-                }else if ("multiple".equals(paper.getType())){
-                    //多选
-                    String[] ids = paper.getSubmitContent().split(" ");
-                    String content = "";
-                    for (String id : ids){
+            for (ExamPaperExportDO exportDO : exportDOs) {
+                //设置用户基础信息
+                exportDO.setSex("male".equals(exportDO.getGender()) ? "男" : "女");
+                Org org = orgDao.selectOne(new QueryWrapper<Org>().
+                        eq(Org.ID, exportDO.getOrgId()));
+                exportDO.setOrgName(org.getName());
+                String orgNameDetail = toolUtils.getOrgName(exportDO.getOrgId());
+                exportDO.setOrgNameDetail(orgNameDetail);
+
+                //设置用户问卷信息
+                VotePaper quPaper = votePaperMapper.selectOne(new QueryWrapper<VotePaper>().
+                        eq(VotePaper.VOTEID, questionnaireId).
+                        eq(VotePaper.USERID, exportDO.getUserId()).
+                        orderByAsc(VotePaper.SUBMITFLAG).
+                        last("limit 1"));
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String date = sdf.format(quPaper.getSubmitDate());
+                exportDO.setTime(date);
+                exportDO.setImg(quPaper.getSignatureImg());
+
+                List<VotePaper> quPaperList = votePaperMapper.selectList(new QueryWrapper<VotePaper>().
+                        eq(VotePaper.VOTEID, questionnaireId).
+                        eq(VotePaper.USERID, exportDO.getUserId()));
+                List<QuestionAndPaperDO> paperDOList = new ArrayList<>();
+                for (VotePaper paper : quPaperList) {
+                    //查询答题信息
+                    QuestionAndPaperDO qap = new QuestionAndPaperDO();
+                    VoteQuestion question = voteQuestionMapper.selectOne(new QueryWrapper<VoteQuestion>().
+                            eq(VoteQuestion.ID, paper.getVoteQuestionId()));
+                    qap.setQuestion(question.getContent());
+                    if ("completion".equals(paper.getType())) {
+                        //填空
+                        qap.setContent(paper.getSubmitContent());
+                    } else if ("multiple".equals(paper.getType())) {
+                        //多选
+                        String[] ids = paper.getSubmitContent().split(" ");
+                        String content = "";
+                        for (String id : ids) {
+                            VoteOption option = voteOptionMapper.selectOne(new QueryWrapper<VoteOption>().
+                                    eq(VoteOption.ID, id));
+                            content += option.getContent() + " ";
+                        }
+                        qap.setContent(content);
+                    } else {
+                        //单选
                         VoteOption option = voteOptionMapper.selectOne(new QueryWrapper<VoteOption>().
-                                eq(VoteOption.ID, id));
-                        content += option.getContent() + " ";
+                                eq(VoteOption.ID, paper.getSubmitContent()));
+                        qap.setContent(option == null ? "" : option.getContent());
                     }
-                    qap.setContent(content);
-                }else {
-                    //单选
-                    VoteOption option = voteOptionMapper.selectOne(new QueryWrapper<VoteOption>().
-                            eq(VoteOption.ID, paper.getSubmitContent()));
-                    qap.setContent(option==null ? "" : option.getContent());
+                    paperDOList.add(qap);
                 }
-                paperDOList.add(qap);
+                exportDO.setPaperList(paperDOList);
             }
-            exportDO.setPaperList(paperDOList);
 
             //导出
             String name = "答题详细数据" + ".xls";
-            Workbook wb = getWorkbook(exportDO, null);
+            Workbook wb = getWorkbookPaper(exportDOs, null);
             ExcelTool.export(wb, name, response);
 
         }catch (Exception e){
@@ -1164,8 +1169,9 @@ public class QuestionnaireServiceImpl extends ServiceImpl<VoteMapper, Vote> impl
                 count ++;
             }
 
+            Date date = new Date();
             for (VotePaper paper : paperList){
-                paper.setSubmitDate(new Date());
+                paper.setSubmitDate(date);
                 paper.setTel(profile.getMobile());
                 paper.setSubmitFlag(count);
                 votePaperMapper.insert(paper);
@@ -1210,12 +1216,12 @@ public class QuestionnaireServiceImpl extends ServiceImpl<VoteMapper, Vote> impl
 
     /**
      * 导出答题数据处理
-     * @param export
+     * @param exportList
      * @param request
      * @return
      * @throws Exception
      */
-    private Workbook getWorkbook(ExamPaperExportDO export, HttpServletRequest request) throws Exception{
+    private Workbook getWorkbookPaper(List<ExamPaperExportDO> exportList, HttpServletRequest request) throws Exception{
         //读取模板
         Workbook wb = ExcelTool.read(request, "/static/excel/答题详细数据导出模板.xls");
         //获取sheet
@@ -1239,22 +1245,24 @@ public class QuestionnaireServiceImpl extends ServiceImpl<VoteMapper, Vote> impl
         ExcelTool.createCell(row0, 6, style, "用工形式");
         ExcelTool.createCell(row0, 7, style, "归属组织");
 
-        Row row = sheet.createRow(r++);
-        //组装一行数据
-        ExcelTool.createCell(row, 0, style, export.getName());
-        ExcelTool.createCell(row, 1, style, export.getSex());
-        ExcelTool.createCell(row, 2, style, export.getMobile());
-        ExcelTool.createCell(row, 3, style, export.getOrgName());
-        ExcelTool.createCell(row, 4, style, export.getTime());
-        ExcelTool.createCell(row, 5, style, export.getImg());
-        ExcelTool.createCell(row, 6, style, export.getEmploymentForm());
-        ExcelTool.createCell(row, 7, style, export.getOrgNameDetail());
+        for (ExamPaperExportDO export : exportList) {
+            Row row = sheet.createRow(r++);
+            //组装一行数据
+            ExcelTool.createCell(row, 0, style, export.getName());
+            ExcelTool.createCell(row, 1, style, export.getSex());
+            ExcelTool.createCell(row, 2, style, export.getMobile());
+            ExcelTool.createCell(row, 3, style, export.getOrgName());
+            ExcelTool.createCell(row, 4, style, export.getTime());
+            ExcelTool.createCell(row, 5, style, export.getImg());
+            ExcelTool.createCell(row, 6, style, export.getEmploymentForm());
+            ExcelTool.createCell(row, 7, style, export.getOrgNameDetail());
 
-        int i = 8;
-        for (QuestionAndPaperDO paperDO : export.getPaperList()){
-            ExcelTool.createCell(row0, i, style, paperDO.getQuestion());
-            ExcelTool.createCell(row, i, style, paperDO.getContent());
-            i++;
+            int i = 8;
+            for (QuestionAndPaperDO paperDO : export.getPaperList()) {
+                ExcelTool.createCell(row0, i, style, paperDO.getQuestion());
+                ExcelTool.createCell(row, i, style, paperDO.getContent());
+                i++;
+            }
         }
 
         return wb;
@@ -1341,10 +1349,14 @@ public class QuestionnaireServiceImpl extends ServiceImpl<VoteMapper, Vote> impl
                 char a = 'A';
                 for (VoteOption option : question.getOptionList()){
                     a = (char) (a + 1);
+                    BigDecimal scale = new BigDecimal(option.getScale());
+                    scale = scale.multiply(new BigDecimal(100));
+                    String str = scale.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
+
                     Row row = sheet.createRow(r++);
                     ExcelTool.createCell(row, 0, style2, a + "." + option.getContent());
                     ExcelTool.createCell(row, 1, style, option.getCount());
-                    ExcelTool.createCell(row, 2, style, (option.getScale()*100) + "%");
+                    ExcelTool.createCell(row, 2, style, str + "%");
                 }
             }
 

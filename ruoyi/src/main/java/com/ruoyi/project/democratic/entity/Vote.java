@@ -44,7 +44,7 @@ public class Vote extends Model<Vote> {
     /**
      * 描述
      */
-    @ApiModelProperty(value = "描述")
+    @ApiModelProperty(value = "描述，传输时记得转义引号，否则接收不到")
     private String description;
 
     /**

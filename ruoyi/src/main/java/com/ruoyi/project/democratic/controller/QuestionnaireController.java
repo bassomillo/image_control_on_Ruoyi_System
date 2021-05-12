@@ -212,7 +212,7 @@ public class QuestionnaireController {
             @ApiImplicitParam(name = "fileId", value = "附件id", required = true),
             @ApiImplicitParam(name = "type", value = "删除的类型，qu问卷封面图片，quQuestion题目图片，" +
                     "quOption选项图片", required = true),
-            @ApiImplicitParam(name = "id", value = "图片对应的考试/题目/选项id", required = true)
+            @ApiImplicitParam(name = "id", value = "图片对应的问卷/题目/选项id", required = true)
     })
     @PostMapping("/deleteFile")
     public AjaxResult deleteFile(@RequestParam("fileId") Integer fileId,
@@ -253,10 +253,9 @@ public class QuestionnaireController {
     @ApiOperation(value = "后台-导出答题数据")
     @GetMapping("/exportPaperData")
     public AjaxResult exportPaperData(@RequestParam("questionnaireId") Integer questionnaireId,
-                                      @RequestParam("userId") Integer userId,
                                       HttpServletResponse response){
 
-        return questionnaireService.exportPaperData(questionnaireId, userId, response);
+        return questionnaireService.exportPaperData(questionnaireId, response);
     }
 
     @ApiOperation(value = "后台-导出统计结果")
@@ -270,7 +269,7 @@ public class QuestionnaireController {
     @ApiOperation(value = "后台-人员情况")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "questionnaireId", value = "问卷id", required = true),
-            @ApiImplicitParam(name = "orgId", value = "机构id"),
+            @ApiImplicitParam(name = "orgId", value = "组织机构id"),
             @ApiImplicitParam(name = "pageNum", value = "页码，默认1"),
             @ApiImplicitParam(name = "pageSize", value = "页面大小，默认10")
     })

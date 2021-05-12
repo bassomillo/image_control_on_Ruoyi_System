@@ -3,6 +3,7 @@ package com.ruoyi.project.democratic.mapper;
 import com.ruoyi.project.democratic.entity.DO.ExamPaperExportDO;
 import com.ruoyi.project.democratic.entity.Exam;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.ruoyi.project.democratic.entity.ExamPaper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -26,10 +27,10 @@ public interface ExamMapper extends BaseMapper<Exam> {
 
     /**
      * 获取用户导出数据
-     * @param userId
+     * @param users
      * @return
      */
-    ExamPaperExportDO getUserExportData(@Param("userId") Integer userId);
+    List<ExamPaperExportDO> getUserExportData(@Param("users") List<ExamPaper> users);
 
     /**
      * 获取时间段内发布的考试

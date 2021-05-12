@@ -189,12 +189,10 @@ public interface IQuestionnaireService extends IService<Vote> {
     /**
      * 后台导出答题数据
      * @param questionnaireId
-     * @param userId
      * @param response
      * @return
      */
     AjaxResult exportPaperData(Integer questionnaireId,
-                               Integer userId,
                                HttpServletResponse response);
 
     /**
