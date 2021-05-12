@@ -63,6 +63,18 @@ public class ExamController {
         return examService.getBackExamList(title, pageNum, pageSize);
     }
 
+    @ApiOperation(value = "后台-置顶/取消置顶")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "examId", value = "考试id", required = true),
+            @ApiImplicitParam(name = "sticky", value = "是否置顶，1置顶，0不置顶", required = true)
+    })
+    @PostMapping("/setTop")
+    public AjaxResult setTop(@RequestParam("examId") Integer examId,
+                             @RequestParam("sticky") Integer sticky){
+
+        return examService.setTop(examId, sticky);
+    }
+
     @ApiOperation(value = "后台-发布")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "examId", value = "考试id", required = true),
@@ -175,10 +187,9 @@ public class ExamController {
     @ApiOperation(value = "后台-校验导入")
     @PostMapping("/checkImportQuestion")
     public AjaxResult checkImportQuestion(MultipartFile file,
-                                          @RequestParam("examId") Integer examId,
-                                          HttpServletRequest request){
+                                          @RequestParam("examId") Integer examId){
 
-        return examService.checkImportQuestion(file, examId, request);
+        return examService.checkImportQuestion(file, examId);
     }
 
     @ApiOperation(value = "后台-批量导题")
@@ -239,19 +250,50 @@ public class ExamController {
         return examService.analyseExam(examId);
     }
 
+    @ApiOperation(value = "后台-导出答题数据")
+    @GetMapping("/exportPaperData")
+    public AjaxResult exportPaperData(@RequestParam("examId") Integer examId,
+                                      HttpServletResponse response){
+
+        return examService.exportPaperData(examId, response);
+    }
+
+    @ApiOperation(value = "后台-发布情况")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "startTime", value = "开始时间，格式yyyy-MM-dd HH:mm:ss"),
+            @ApiImplicitParam(name = "endTime", value = "结束时间，格式yyyy-MM-dd HH:mm:ss")
+    })
+    @PostMapping("/getPublishList")
+    public AjaxResult getPublishList(@RequestParam(value = "startTime", required = false) String startTime,
+                                     @RequestParam(value = "endTime", required = false) String endTime){
+
+        return examService.getPublishList(startTime, endTime);
+    }
+
+    @ApiOperation(value = "后台-导出发布情况")
+    @GetMapping("exportPublishList")
+    public AjaxResult exportPublishList(@RequestParam(value = "startTime", required = false) String startTime,
+                                        @RequestParam(value = "endTime", required = false) String endTime,
+                                        HttpServletResponse response){
+
+        return examService.exportPublishList(startTime, endTime, response);
+    }
+
     /***********************首页***************************/
-    @ApiOperation(value = "首页-查询考试列表")
+    @ApiOperation(value = "首页-条件查询考试列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userId", value = "当前登录者id", required = true),
+            @ApiImplicitParam(name = "title", value = "要搜索的标题内容"),
             @ApiImplicitParam(name = "pageNum", value = "页码，默认1"),
             @ApiImplicitParam(name = "pageSize", value = "页面大小，默认10")
     })
     @PostMapping("/getTopExamList")
     public AjaxResult getTopExamList(@RequestParam("userId") Integer userId,
+                                     @RequestParam(value = "title", required = false) String title,
                                      @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
                                      @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize){
 
-        return examService.getTopExamList(userId, pageNum, pageSize);
+        return examService.getTopExamList(userId, title, pageNum, pageSize);
     }
 
     @ApiOperation(value = "首页-保存答题记录")

@@ -8,9 +8,13 @@ import com.ruoyi.project.chairmanOnline.entity.SocketChatRecord;
 import com.ruoyi.project.chairmanOnline.service.SocketChatRecordService;
 import com.ruoyi.project.common.FastdfsClientUtil;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -35,6 +39,7 @@ public class SocketChatRecordController {
     private SocketChatRecordService socketChatRecordService;
 
 
+    @ApiIgnore
     @ApiOperation("总经理、咨询师查询聊天记录,按时间降序")
     @PostMapping("selectChatRecords")
     public AjaxResult selectChatRecords(Integer conversionId,
@@ -45,13 +50,13 @@ public class SocketChatRecordController {
         return AjaxResult.success(this.socketChatRecordService.queryAll(socketChatRecordQM, pageNum, pageSize));
     }
 
-    @ApiOperation("普通用户查询聊天记录,按时间降序")
+    @ApiOperation("用户查询聊天记录,按时间降序")
     @PostMapping("selectChatRecordsWithChairmanId")
-    public AjaxResult selectChatRecordsWithChairmanId(@RequestParam Integer userId, @RequestParam(name = "总经理或者咨询师id") int chairmanIdOrcounselorId,
+    public AjaxResult selectChatRecordsWithChairmanId(@RequestParam int userId1, @RequestParam int userId2,
                                                       @RequestParam(required = false, defaultValue = "1") int pageNum,
                                                       @RequestParam(required = false, defaultValue = "10") int pageSize) {
         int chairmanId = 111111;
-        return AjaxResult.success(this.socketChatRecordService.queryChatRecord(userId, chairmanIdOrcounselorId, pageNum, pageSize));
+        return AjaxResult.success(this.socketChatRecordService.queryChatRecord(userId1, userId2, pageNum, pageSize));
     }
 
 
@@ -79,6 +84,14 @@ public class SocketChatRecordController {
     @PostMapping("download")
     public void download(HttpServletResponse response,String fileUrl) throws IOException {
          fastDfsUtil.downLoadFile(response ,fileUrl,"file"+String.valueOf(System.currentTimeMillis()));
+    }
+
+    @ApiOperation("消息已读")
+    @PostMapping("recordIsRead")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId", value = "当前登陆用户的id")})
+    public AjaxResult recordIsRead(@RequestParam int userId,@RequestParam int conversationId){
+        return  AjaxResult.success(socketChatRecordService.chatRecordsIsRead(userId,conversationId));
     }
 
 }

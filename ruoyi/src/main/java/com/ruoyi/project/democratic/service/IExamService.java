@@ -10,6 +10,7 @@ import com.ruoyi.project.democratic.entity.VO.ExamBaseVO;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -39,6 +40,15 @@ public interface IExamService extends IService<Exam> {
     AjaxResult getBackExamList(String title,
                            Integer pageNum,
                            Integer pageSize);
+
+    /**
+     * 后台置顶/取消置顶
+     * @param examId
+     * @param sticky
+     * @return
+     */
+    AjaxResult setTop(Integer examId,
+                      Integer sticky);
 
     /**
      * 后台发布考试
@@ -135,12 +145,10 @@ public interface IExamService extends IService<Exam> {
      * 后台-校验导入
      * @param file
      * @param examId
-     * @param request
      * @return
      */
     AjaxResult checkImportQuestion(MultipartFile file,
-                                   Integer examId,
-                                   HttpServletRequest request);
+                                   Integer examId);
 
     /**
      * 后台-批量导题
@@ -177,13 +185,43 @@ public interface IExamService extends IService<Exam> {
     AjaxResult analyseExam(Integer examId);
 
     /**
+     * 后台导出答题数据
+     * @param examId
+     * @return
+     */
+    AjaxResult exportPaperData(Integer examId,
+                               HttpServletResponse response);
+
+    /**
+     * 后台发布情况
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    AjaxResult getPublishList(String startTime,
+                              String endTime);
+
+    /**
+     * 后台导出发布情况
+     * @param startTime
+     * @param endTime
+     * @param response
+     * @return
+     */
+    AjaxResult exportPublishList(String startTime,
+                                 String endTime,
+                                 HttpServletResponse response);
+
+    /**
      * 首页-查询列表
      * @param userId
+     * @param title
      * @param pageNum
      * @param pageSize
      * @return
      */
     AjaxResult getTopExamList(Integer userId,
+                              String title,
                               Integer pageNum,
                               Integer pageSize);
 

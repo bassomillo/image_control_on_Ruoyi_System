@@ -21,6 +21,14 @@
         <result property="issent" column="isSent" jdbcType="VARCHAR"/>
     </resultMap>
 
+    <resultMap type="com.ruoyi.project.chairmanOnline.entity.DTO.SocketChatRecordDTO" id="SocketChatRecordDTOMap">
+        <result property="conversationId" column="conversationId" jdbcType="INTEGER"/>
+        <result property="receiverId" column="receiverId" jdbcType="INTEGER"/>
+        <result property="unredNum" column="unredNum" jdbcType="INTEGER"/>
+    </resultMap>
+
+
+
     <!--查询单个-->
     <select id="queryById" resultMap="SocketChatRecordMap">
         select
@@ -231,5 +239,29 @@
             </if>
         </where> order by createdTime desc
     </select>
+
+    <!--接受者userid的未读信息-->
+    <select id="selectUnreadRecordsByUserId" resultMap="SocketChatRecordDTOMap">
+         SELECT
+	      conversationId,
+	      receiverId,
+	      count( 1 ) AS unredNum
+        FROM
+	      `socket_chat_record`
+        WHERE
+	      isRead = 0
+	      AND receiverId = #{userId}
+          GROUP BY
+	      conversationId
+    </select>
+
+    <!--消息更新为已读-->
+    <update id="chatRecordsIsRead">
+        UPDATE zhgh_new_test.socket_chat_record
+        SET isRead = 1
+        WHERE
+	    conversationId = #{conversationId} and receiverId = #{userId} and isRead = 0 and isDelete =0
+    </update>
+
 </mapper>
 

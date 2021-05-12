@@ -1,6 +1,7 @@
 package com.ruoyi.project.chairmanOnline.service;
 
 import com.ruoyi.project.chairmanOnline.entity.QO.SocketChatRecordQO;
+import com.ruoyi.project.chairmanOnline.entity.SocketChatConversation;
 import com.ruoyi.project.chairmanOnline.entity.SocketChatRecord;
 
 import java.util.List;
@@ -88,5 +89,24 @@ public interface SocketChatRecordService {
      * @return
      */
     List<SocketChatRecord> selectChatRecordsByCondition(SocketChatRecordQO socketChatRecordQO,int pageNum,int pageSize);
+
+
+    /**
+     * 消息已读 系统消息
+     *
+     * @param
+     * @return
+     */
+    int chatRecordsIsRead(List<Integer> recordIds);
+
+    /**
+     * 已读信息标记更新
+     *
+     * @param userId
+     * @return 对象列表
+     */
+    int chatRecordsIsRead(int userId,int conversationId);
+
+
 
 }

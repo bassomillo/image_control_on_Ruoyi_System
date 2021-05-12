@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.monitor.mapper.WebArticleCategoryMapper">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, name, weight, publishArticle, seoTitle, seoKeyword, seoDesc, published, parentId, createdTime
+    </sql>
+
+    <select id="GetTopArticleCategory" resultType="java.lang.String">
+        SELECT name
+        FROM article_category
+        WHERE parentId=0
+        <if test="name != null">
+            and name like concat('%',#{name},'%') escape '/'
+        </if>
+        limit ${pagesize} OFFSET ${index}
+    </select>
+
+</mapper>

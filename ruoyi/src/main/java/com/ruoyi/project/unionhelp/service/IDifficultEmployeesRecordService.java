@@ -1,7 +1,10 @@
 package com.ruoyi.project.unionhelp.service;
 
+import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.project.unionhelp.entity.DifficultEmployeesRecord;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.Date;
 
 /**
  * <p>
@@ -13,4 +16,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IDifficultEmployeesRecordService extends IService<DifficultEmployeesRecord> {
 
+    AjaxResult insertDifficultEmployeesRecord(DifficultEmployeesRecord difficultEmployeesRecord);
+    AjaxResult updateDifficultEmployeesRecord(DifficultEmployeesRecord difficultEmployeesRecord);
+    int getSecondTimestamp(Date date);
 }

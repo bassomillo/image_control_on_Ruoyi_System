@@ -10,8 +10,10 @@ import com.ruoyi.project.democratic.entity.VO.AddTreeMemberVO;
 import com.ruoyi.project.democratic.entity.VO.GetMemberVO;
 import com.ruoyi.project.democratic.entity.VO.MemberInfoVO;
 import com.ruoyi.project.democratic.entity.VoteGroupMember;
+import com.ruoyi.project.democratic.entity.VoteMember;
 import com.ruoyi.project.democratic.mapper.ExamMemberMapper;
 import com.ruoyi.project.democratic.mapper.VoteGroupMemberMapper;
+import com.ruoyi.project.democratic.mapper.VoteMemberMapper;
 import com.ruoyi.project.democratic.service.IExamMemberService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.project.org.service.IOrgService;
@@ -49,6 +51,8 @@ public class ExamMemberServiceImpl extends ServiceImpl<ExamMemberMapper, ExamMem
 
     @Autowired
     private ExamMemberMapper examMemberMapper;
+    @Autowired
+    private VoteMemberMapper voteMemberMapper;
     @Autowired
     private IOrgService orgService;
     @Autowired
@@ -90,14 +94,40 @@ public class ExamMemberServiceImpl extends ServiceImpl<ExamMemberMapper, ExamMem
 
             List<MemberInfoVO> memberList = pageInfo.getList();
             for (MemberInfoVO member : memberList){
-                //查询成员是否已在考试中
-                ExamMember examMember = examMemberMapper.selectOne(new QueryWrapper<ExamMember>().
-                        eq(ExamMember.USERID, member.getId()).
-                        eq(ExamMember.EXAMID, getMember.getExamId()));
-                if (examMember == null){
-                    member.setIsAdd(0);
-                }else {
-                    member.setIsAdd(1);
+                if ("exam".equals(getMember.getType())) {
+                    //查询成员是否已在考试中
+                    ExamMember examMember = examMemberMapper.selectOne(new QueryWrapper<ExamMember>().
+                            eq(ExamMember.USERID, member.getId()).
+                            eq(ExamMember.EXAMID, getMember.getEqvId()));
+                    if (examMember == null) {
+                        member.setIsAdd(0);
+                    } else {
+                        member.setIsAdd(1);
+                    }
+                }
+                if ("questionnaire".equals(getMember.getType())){
+                    //查询成员是否已在问卷中
+                    VoteMember voteMember = voteMemberMapper.selectOne(new QueryWrapper<VoteMember>().
+                            eq(VoteMember.USERID, member.getId()).
+                            eq(VoteMember.VOTEID, getMember.getEqvId()).
+                            eq(VoteMember.TYPE, "questionnaire"));
+                    if (voteMember == null){
+                        member.setIsAdd(0);
+                    }else {
+                        member.setIsAdd(1);
+                    }
+                }
+                if ("vote".equals(getMember.getType())){
+                    //查询成员是否已在投票中
+                    VoteMember voteMember = voteMemberMapper.selectOne(new QueryWrapper<VoteMember>().
+                            eq(VoteMember.USERID, member.getId()).
+                            eq(VoteMember.VOTEID, getMember.getEqvId()).
+                            eq(VoteMember.TYPE, "vote"));
+                    if (voteMember == null){
+                        member.setIsAdd(0);
+                    }else {
+                        member.setIsAdd(1);
+                    }
                 }
             }
 
@@ -125,7 +155,7 @@ public class ExamMemberServiceImpl extends ServiceImpl<ExamMemberMapper, ExamMem
             for (Integer userId : treeMember.getUserIdList()){
                 //查询该成员是否已添加至考试
                 ExamMember examMember = examMemberMapper.selectOne(new QueryWrapper<ExamMember>().
-                        eq(ExamMember.EXAMID, treeMember.getExamId()).
+                        eq(ExamMember.EXAMID, treeMember.getEqvId()).
                         eq(ExamMember.USERID, userId));
                 if (examMember == null){
                     idList.add(userId);
@@ -138,8 +168,7 @@ public class ExamMemberServiceImpl extends ServiceImpl<ExamMemberMapper, ExamMem
                 List<ExamMember> memberList = new ArrayList<>();
                 for (UserProfile profile : profileList){
                     ExamMember examMember = new ExamMember();
-                    examMember = new ExamMember();
-                    examMember.setExamId(treeMember.getExamId());
+                    examMember.setExamId(treeMember.getEqvId());
                     examMember.setUserId(profile.getId());
                     examMember.setTel(profile.getMobile());
                     memberList.add(examMember);
@@ -179,7 +208,7 @@ public class ExamMemberServiceImpl extends ServiceImpl<ExamMemberMapper, ExamMem
                 //查询该人员是否已经加入考试
                 ExamMember examMember = examMemberMapper.selectOne(new QueryWrapper<ExamMember>().
                         eq(ExamMember.USERID, user.getId()).
-                        eq(ExamMember.EXAMID, getMember.getExamId()));
+                        eq(ExamMember.EXAMID, getMember.getEqvId()));
                 if (examMember == null){
                     userIdList0.add(user);
                 }
@@ -188,8 +217,7 @@ public class ExamMemberServiceImpl extends ServiceImpl<ExamMemberMapper, ExamMem
             List<ExamMember> memberList = new ArrayList<>();
             for (MemberInfoVO member : userIdList0){
                 ExamMember examMember = new ExamMember();
-                examMember = new ExamMember();
-                examMember.setExamId(getMember.getExamId());
+                examMember.setExamId(getMember.getEqvId());
                 examMember.setUserId(member.getId());
                 examMember.setTel(member.getMobile());
                 memberList.add(examMember);

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.chairmanOnline.dao.TagDao">
+
+    <resultMap type="com.ruoyi.project.chairmanOnline.entity.Tag" id="TagMap">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="createdtime" column="createdTime" jdbcType="VARCHAR"/>
+        <result property="orgid" column="orgId" jdbcType="VARCHAR"/>
+        <result property="orgcode" column="orgCode" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="TagMap">
+        select
+          id, name, createdTime, orgId, orgCode
+        from zhgh_new_test.tag
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="TagMap">
+        select
+          id, name, createdTime, orgId, orgCode
+        from zhgh_new_test.tag
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="TagMap">
+        select
+        id, name, createdTime, orgId, orgCode
+        from zhgh_new_test.tag
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="createdtime != null">
+                and createdTime = #{createdtime}
+            </if>
+            <if test="orgid != null">
+                and orgId = #{orgid}
+            </if>
+            <if test="orgcode != null and orgcode != ''">
+                and orgCode = #{orgcode}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into zhgh_new_test.tag(name, createdTime, orgId, orgCode)
+        values (#{name}, #{createdtime}, #{orgid}, #{orgcode})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into zhgh_new_test.tag(name, createdTime, orgId, orgCode)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.name}, #{entity.createdtime}, #{entity.orgid}, #{entity.orgcode})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into zhgh_new_test.tag(name, createdTime, orgId, orgCode)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.name}, #{entity.createdtime}, #{entity.orgid}, #{entity.orgcode})
+        </foreach>
+        on duplicate key update
+        name = values(name) , createdTime = values(createdTime) , orgId = values(orgId) , orgCode = values(orgCode)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update zhgh_new_test.tag
+        <set>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="createdtime != null">
+                createdTime = #{createdtime},
+            </if>
+            <if test="orgid != null">
+                orgId = #{orgid},
+            </if>
+            <if test="orgcode != null and orgcode != ''">
+                orgCode = #{orgcode},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from zhgh_new_test.tag where id = #{id}
+    </delete>
+
+</mapper>
+
