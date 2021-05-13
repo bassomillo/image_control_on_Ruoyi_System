@@ -62,7 +62,7 @@ public class ExamMemberController {
         }else if ("questionnaire".equals(treeMember.getType())){
             return voteMemberService.addMemberQ(treeMember);
         }else if ("vote".equals(treeMember.getType())){
-
+            return voteMemberService.addMemberVote(treeMember);
         }
         return AjaxResult.error("请填写type类型");
     }
@@ -76,7 +76,7 @@ public class ExamMemberController {
         }else if ("questionnaire".equals(getMember.getType())){
             return voteMemberService.addAllMemberQ(getMember);
         }else if ("vote".equals(getMember.getType())){
-
+            return voteMemberService.addAllMemberVote(getMember);
         }
         return AjaxResult.error("请填写type类型");
     }
@@ -190,7 +190,7 @@ public class ExamMemberController {
         }else if ("questionnaire".equals(group.getType())){
             return voteGroupService.addToQu(group);
         }else if ("vote".equals(group.getType())){
-
+            return voteGroupService.addToVote(group);
         }
         return AjaxResult.error("请填写type类型");
     }
@@ -220,7 +220,7 @@ public class ExamMemberController {
         }else if ("questionnaire".equals(type)){
             return voteMemberService.getQuMemberList(eqvId, name, employmentForm, mobile, pageNum, pageSize);
         }else if ("vote".equals(type)){
-
+            return voteMemberService.getVoteMemberList(eqvId, name, employmentForm, mobile, pageNum, pageSize);
         }
         return AjaxResult.error("请填写type类型");
     }
@@ -241,7 +241,7 @@ public class ExamMemberController {
         }else if ("questionnaire".equals(type)){
             return voteMemberService.deleteQuMember(eqvId, userId);
         }else if ("vote".equals(type)){
-
+            return voteMemberService.deleteVoteMember(eqvId, userId);
         }
         return AjaxResult.error("请填写type类型");
     }

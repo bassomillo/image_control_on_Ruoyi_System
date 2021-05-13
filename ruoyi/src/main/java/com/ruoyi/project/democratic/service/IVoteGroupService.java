@@ -69,4 +69,11 @@ public interface IVoteGroupService extends IService<VoteGroup> {
      * @return
      */
     AjaxResult addToQu(GroupToExamVO group);
+
+    /**
+     * 加入投票
+     * @param group
+     * @return
+     */
+    AjaxResult addToVote(GroupToExamVO group);
 }

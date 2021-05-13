@@ -34,7 +34,7 @@ public interface IVoteMemberService extends IService<VoteMember> {
     AjaxResult addAllMemberQ(GetMemberVO getMember);
 
     /**
-     * 条件查询参考人员列表
+     * 条件查询问卷参考人员列表
      * @param quId
      * @param name
      * @param employmentForm
@@ -51,7 +51,7 @@ public interface IVoteMemberService extends IService<VoteMember> {
                                Integer pageSize);
 
     /**
-     * 删除参考人员
+     * 删除问卷参考人员
      * @param quId
      * @param userId
      * @return
@@ -67,4 +67,55 @@ public interface IVoteMemberService extends IService<VoteMember> {
      */
     boolean insertQuMember(List<UserProfile> memberList,
                            Integer quId);
+
+    /**************************投票****************************/
+
+    /**
+     * 添加单个/多个人员至投票
+     * @param treeMember
+     * @return
+     */
+    AjaxResult addMemberVote(AddTreeMemberVO treeMember);
+
+    /**
+     * 添加全部人员至投票
+     * @param getMember
+     * @return
+     */
+    AjaxResult addAllMemberVote(GetMemberVO getMember);
+
+    /**
+     * 条件查询投票参考人员列表
+     * @param voteId
+     * @param name
+     * @param employmentForm
+     * @param mobile
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    AjaxResult getVoteMemberList(Integer voteId,
+                                 String name,
+                                 String employmentForm,
+                                 String mobile,
+                                 Integer pageNum,
+                                 Integer pageSize);
+
+    /**
+     * 删除投票参考人员
+     * @param voteId
+     * @param userId
+     * @return
+     */
+    AjaxResult deleteVoteMember(Integer voteId,
+                                Integer userId);
+
+    /**
+     * 加入投票成员
+     * @param memberList
+     * @param voteId
+     * @return
+     */
+    boolean insertVoteMember(List<UserProfile> memberList,
+                             Integer voteId);
 }

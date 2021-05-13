@@ -28,7 +28,10 @@
             up.id = u.id
         )
         where
-            u.id = #{userId}
+            u.id in
+            <foreach collection="users" index="index" item="user" separator="," open="(" close=")">
+                #{user.userId}
+            </foreach>
     </select>
 
     <!--获取时间段内发布的考试，借用newStatus字段保存orgId-->

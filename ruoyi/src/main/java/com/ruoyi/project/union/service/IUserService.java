@@ -10,8 +10,11 @@ import com.ruoyi.project.union.entity.vo.AccountSearchVo;
 import com.ruoyi.project.union.entity.vo.DisableUserVo;
 import com.ruoyi.project.union.entity.vo.UserRoleVo;
 import com.ruoyi.project.union.entity.vo.UserSearchPojo;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * <p>
@@ -25,6 +28,8 @@ public interface IUserService extends IService<User> {
 
     AjaxResult searchUser(UserSearchPojo userSearchPojo);
 
+    Workbook writeExcel(HttpServletRequest req, String path, UserSearchPojo userSearchPojo);
+
     AjaxResult searchAccount(AccountSearchVo accountSearchVo);
 
     void updateUserRole(UserRoleVo userRoleVo);
@@ -37,7 +42,17 @@ public interface IUserService extends IService<User> {
 
     void createUser(UserProfile userProfile);
 
+    AjaxResult userImportCheck(MultipartFile file);
+
+    AjaxResult userImport(MultipartFile file);
+
     AjaxResult disableUser(DisableUserVo disableUserVo, HttpServletRequest request);
+
+    void batchDisableUser(List<Integer> userIds);
+
+    AjaxResult disableImportCheck(MultipartFile file);
+
+    AjaxResult disableImport(MultipartFile file);
 
     void updateUser(UserProfile userProfile);
 

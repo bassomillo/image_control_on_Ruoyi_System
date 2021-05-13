@@ -20,4 +20,137 @@
         order by sticky desc, updateDate desc
     </select>
 
+    <!--获取时间段内发布的问卷，借用newStatus字段保存orgId-->
+    <select id="getPublishList" resultType="com.ruoyi.project.democratic.entity.Vote">
+        select v.*, u.orgId as newStatus
+        from vote v
+        left join user u on (
+            u.id = v.createUserId
+        )
+        <where>
+            v.isShow = 1
+            and v.type = "questionnaire"
+            <if test="startTime != null and startTime != ''">
+                and v.createDate &gt;= #{startTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                and v.createDate &lt;= #{endTime}
+            </if>
+        </where>
+    </select>
+
+    <!--查询首页问卷列表-->
+    <select id="getTopQuList" resultType="com.ruoyi.project.democratic.entity.Vote">
+        select *
+        from vote
+        <where>
+            isShow = 1
+            and type = "questionnaire"
+            and status != "unpublished"
+            <if test="title != null and title != ''">
+                and title like concat('%', #{title}, '%') escape '/'
+            </if>
+            <if test="voteIdList.size() != 0">
+                and id in
+                <foreach collection="voteIdList" item="id" index="index" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+        order by sticky desc, status asc, createDate desc
+    </select>
+
+    <!--获取用户导出数据-->
+    <select id="getUserExportData" resultType="com.ruoyi.project.democratic.entity.DO.ExamPaperExportDO">
+        select u.id as userId, up.truename as name, up.gender, up.mobile, u.orgId, up.employmentForm
+        from user u
+        inner join user_profile up on (
+            up.id = u.id
+        )
+        where
+            u.id in
+            <foreach collection="users" index="index" item="user" separator="," open="(" close=")">
+                #{user.userId}
+            </foreach>
+    </select>
+
+    <!--查询未投票员工-->
+    <select id="getMemberList" resultType="com.ruoyi.project.democratic.entity.VO.MemberInfoVO">
+        select u.id, up.truename, up.employmentForm, up.mobile, up.gender as sex, u.orgId
+        from vote_member vm
+        left join user u on (u.id = vm.userId and u.locked = 0)
+        left join user_profile up on (up.id = u.id)
+        left join vote_paper vp on (vp.voteId = #{quId} and vp.userId = vm.userId)
+        left join org o on (
+            o.id = u.orgId
+            <if test="orgIds.size() != 0">
+                and o.id in
+                <foreach collection="orgIds" index="index" item="id" separator="," open="(" close=")">
+                    #{id}
+                </foreach>
+            </if>
+        )
+        where
+            vm.voteId = #{quId}
+            and vp.id is null
+            and u.orgId = o.id
+    </select>
+
+
+    <!--==================================投票======================================-->
+
+    <!--后台条件查询投票列表-->
+    <select id="getVoteList" resultType="com.ruoyi.project.democratic.entity.Vote">
+        select *
+        from vote
+        <where>
+            isShow = 1
+            and type = "vote"
+            <if test="title != null and title != ''">
+                and title like concat('%', #{title}, '%') escape '/'
+            </if>
+        </where>
+        order by sticky desc, updateDate desc
+    </select>
+
+    <!--查询时间段内投票-->
+    <select id="getPublishListVote" resultType="com.ruoyi.project.democratic.entity.Vote">
+        select v.*, u.orgId as newStatus
+        from vote v
+        left join user u on (
+            u.id = v.createUserId
+        )
+        <where>
+            v.isShow = 1
+            and v.type = "vote"
+            <if test="startTime != null and startTime != ''">
+                and v.createDate &gt;= #{startTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                and v.createDate &lt;= #{endTime}
+            </if>
+        </where>
+    </select>
+
+    <!--查询首页投票列表-->
+    <select id="getTopVoteList" resultType="com.ruoyi.project.democratic.entity.Vote">
+        select *
+        from vote
+        <where>
+            isShow = 1
+            and type = "vote"
+            and status != "unpublished"
+            <if test="title != null and title != ''">
+                and title like concat('%', #{title}, '%') escape '/'
+            </if>
+            <if test="voteIdList.size() != 0">
+                and id in
+                <foreach collection="voteIdList" item="id" index="index" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+        order by sticky desc, status asc, createDate desc
+    </select>
+
 </mapper>
