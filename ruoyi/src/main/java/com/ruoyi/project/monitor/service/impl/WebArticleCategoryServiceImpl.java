@@ -2,6 +2,7 @@ package com.ruoyi.project.monitor.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.framework.web.domain.AjaxResult;
+import com.ruoyi.project.monitor.domain.VO.WebArticleCategoryBtreeVO;
 import com.ruoyi.project.monitor.domain.VO.WebArticleCategoryVO;
 import com.ruoyi.project.monitor.domain.WebArticleCategory;
 import com.ruoyi.project.monitor.mapper.WebArticleCategoryMapper;
@@ -55,6 +56,8 @@ public class WebArticleCategoryServiceImpl extends ServiceImpl<WebArticleCategor
             Integer timestamp = Integer.valueOf(Long.toString(time));
 
             webArticleCategory.setCreatedTime(timestamp);
+
+            webArticleCategory.setWeight(webArticleCategoryMapper.KidArticleNum(webArticleCategory.getParentId())+1);
             webArticleCategoryMapper.InsertWebArticleCategory(webArticleCategory);
 
         } catch (Exception e) {
@@ -112,27 +115,56 @@ public class WebArticleCategoryServiceImpl extends ServiceImpl<WebArticleCategor
         try {
             List<WebArticleCategory> list = webArticleCategoryMapper.GetWebArticleCategorys(pagesize, (page-1)*pagesize);
             List<WebArticleCategoryVO> webArticleCategoryVOList = new ArrayList<>();
+            List<WebArticleCategoryBtreeVO> webArticleCategoryBtreeVOList = new ArrayList<>();
             Integer articleCategoryNum = webArticleCategoryMapper.GetArticleCategoryNum();
             for(WebArticleCategory webArticleCategory : list){
                 Integer timestamp = webArticleCategory.getCreatedTime();
                 Date date = IntegerToDate(timestamp);//转成date类型
 
-                WebArticleCategoryVO webArticleCategoryVO = new WebArticleCategoryVO();
-                webArticleCategoryVO.setCreatedTime(date);
-                webArticleCategoryVO.setId(webArticleCategory.getId());
-                webArticleCategoryVO.setName(webArticleCategory.getName());
-                webArticleCategoryVO.setParentId(webArticleCategory.getParentId());
-                webArticleCategoryVO.setPublishArticle(webArticleCategory.getPublishArticle());
-                webArticleCategoryVO.setPublished(webArticleCategory.getPublished());
-                webArticleCategoryVO.setSeoDesc(webArticleCategory.getSeoDesc());
-                webArticleCategoryVO.setSeoKeyword(webArticleCategory.getSeoKeyword());
-                webArticleCategoryVO.setSeoTitle(webArticleCategory.getSeoTitle());
-                webArticleCategoryVO.setWeight(webArticleCategory.getWeight());
+                if(webArticleCategory.getParentId() == 0){
+                    WebArticleCategoryBtreeVO webArticleCategoryBtreeVO = new WebArticleCategoryBtreeVO();
+                    webArticleCategoryBtreeVO.setCreatedTime(date);
+                    webArticleCategoryBtreeVO.setId(webArticleCategory.getId());
+                    webArticleCategoryBtreeVO.setName(webArticleCategory.getName());
+                    webArticleCategoryBtreeVO.setParentId(webArticleCategory.getParentId());
+                    webArticleCategoryBtreeVO.setPublishArticle(webArticleCategory.getPublishArticle());
+                    webArticleCategoryBtreeVO.setPublished(webArticleCategory.getPublished());
+                    webArticleCategoryBtreeVO.setSeoDesc(webArticleCategory.getSeoDesc());
+                    webArticleCategoryBtreeVO.setSeoKeyword(webArticleCategory.getSeoKeyword());
+                    webArticleCategoryBtreeVO.setSeoTitle(webArticleCategory.getSeoTitle());
+                    webArticleCategoryBtreeVO.setWeight(webArticleCategory.getWeight());
+                    webArticleCategoryBtreeVOList.add(webArticleCategoryBtreeVO);
+                }
 
-                webArticleCategoryVOList.add(webArticleCategoryVO);
+            }
+            for(WebArticleCategory webArticleCategory : list){
+                Integer timestamp = webArticleCategory.getCreatedTime();
+                Date date = IntegerToDate(timestamp);//转成date类型
+                WebArticleCategoryVO webArticleCategoryVO = new WebArticleCategoryVO();
+
+                if (webArticleCategory.getParentId() != 0){
+                    webArticleCategoryVO.setCreatedTime(date);
+                    webArticleCategoryVO.setId(webArticleCategory.getId());
+                    webArticleCategoryVO.setName(webArticleCategory.getName());
+                    webArticleCategoryVO.setParentId(webArticleCategory.getParentId());
+                    webArticleCategoryVO.setPublishArticle(webArticleCategory.getPublishArticle());
+                    webArticleCategoryVO.setPublished(webArticleCategory.getPublished());
+                    webArticleCategoryVO.setSeoDesc(webArticleCategory.getSeoDesc());
+                    webArticleCategoryVO.setSeoKeyword(webArticleCategory.getSeoKeyword());
+                    webArticleCategoryVO.setSeoTitle(webArticleCategory.getSeoTitle());
+                    webArticleCategoryVO.setWeight(webArticleCategory.getWeight());
+
+                    for(WebArticleCategoryBtreeVO webArticleCategoryBtreeVO : webArticleCategoryBtreeVOList){
+                        if(webArticleCategoryBtreeVO.getId() == webArticleCategory.getParentId()){
+                            webArticleCategoryVOList.add(webArticleCategoryVO);
+                            webArticleCategoryBtreeVO.setChildren(webArticleCategoryVOList);
+                        }
+                    }
+                }
+
             }
             Map<String, Object> map = new HashMap<>();
-            map.put("list", webArticleCategoryVOList);
+            map.put("list", webArticleCategoryBtreeVOList);
             map.put("count", articleCategoryNum);
             return AjaxResult.success("操作成功", map);
         } catch (Exception e) {
@@ -144,6 +176,7 @@ public class WebArticleCategoryServiceImpl extends ServiceImpl<WebArticleCategor
     @Override
     public AjaxResult WebArticleCategoryUpdate(WebArticleCategory webArticleCategory) {
         try {
+            webArticleCategory.setWeight(webArticleCategoryMapper.KidArticleNum(webArticleCategory.getParentId())+1);
             webArticleCategoryMapper.UpdateWebArticleCategory(webArticleCategory);
         } catch (Exception e) {
             System.out.println(e.getMessage());

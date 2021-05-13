@@ -26,17 +26,17 @@ public class WebArticleCategory extends Model<WebArticleCategory> {
 
     private static final long serialVersionUID=1L;
 
-    @ApiModelProperty(value = "id")
+    @ApiModelProperty(value = "id，后端生成")
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
     /**
      * 栏目名称
      */
-    @ApiModelProperty(value = "栏目名称")
+    @ApiModelProperty(value = "栏目名称，必填")
     private String name;
 
-    @ApiModelProperty(value = "id")
+    @ApiModelProperty(value = "weight，后端生成")
     private Integer weight;
 
     /**
