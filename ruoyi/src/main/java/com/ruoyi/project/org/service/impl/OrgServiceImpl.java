@@ -101,7 +101,7 @@ public class OrgServiceImpl extends ServiceImpl<OrgDao, Org> implements IOrgServ
 
     @Override
     public AjaxResult updateOrg(Org org) {
-        if(isRepeat(org.getName(), org.getParentId()))
+        if(isRepeat(org.getName(), org.getId(), org.getParentId()))
             return AjaxResult.error("当前机构下存在同名机构，机构名<" + org.getName() + ">不可用");
 
         org.setUpdatedTime(System.currentTimeMillis() / 1000);
@@ -138,7 +138,7 @@ public class OrgServiceImpl extends ServiceImpl<OrgDao, Org> implements IOrgServ
     public AjaxResult removeOrg(Integer orgId, Integer parentId) {
         Org org = orgDao.selectById(orgId);
         Org orgParent = orgDao.selectById(parentId);
-        if(isRepeat(org.getName(), parentId))
+        if(isRepeat(org.getName(), null, parentId))
             return AjaxResult.error("目标机构下存在同名机构，机构名<" + org.getName() + ">不可用");
 
         String orgCode = orgParent.getOrgCode() + org.getId() + ".";
@@ -168,8 +168,9 @@ public class OrgServiceImpl extends ServiceImpl<OrgDao, Org> implements IOrgServ
      * 同名机构校检
      */
     @Override
-    public boolean isRepeat(String orgName, Integer parentId) {
-        List<Org> repeatOrg = orgDao.selectList(new QueryWrapper<Org>().eq(Org.NAME, orgName).eq(Org.PARENTID, parentId));
+    public boolean isRepeat(String orgName, Integer orgId, Integer parentId) {
+        List<Org> repeatOrg = orgDao.selectList(new QueryWrapper<Org>().eq(Org.NAME, orgName).eq(Org.PARENTID, parentId)
+                .ne(null != orgId, Org.ID, orgId));
         return repeatOrg.size() > 0;
     }
     /******************************************************************************************************************/

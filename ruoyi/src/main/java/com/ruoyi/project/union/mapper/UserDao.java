@@ -30,5 +30,12 @@ public interface UserDao extends BaseMapper<User> {
 
     List<UserShowPojo> searchOrgUser(OrgUserSearchPojo orgUserSearchPojo);
 
-    List<UserVo> searchAccount(@Param("userIds") Set<Long> userIds, @Param("current") Integer current, @Param("size") Integer size);
+    List<UserVo> searchAccount(@Param("userIds") Set<Long> userIds,
+                               @Param("nickname") String nickname,
+                               @Param("truename") String truename,
+                               @Param("orgId") Integer orgId,
+                               @Param("current") Integer current,
+                               @Param("size") Integer size);
+
+    List<User> selectUserByMobile(@Param("mobile") String mobile);
 }
