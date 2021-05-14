@@ -2,6 +2,7 @@ package com.ruoyi.project.chairmanOnline.controller;
 
 import com.github.tobato.fastdfs.domain.fdfs.StorePath;
 import com.github.tobato.fastdfs.domain.proto.storage.DownloadByteArray;
+import com.ruoyi.common.utils.file.FileTypeUtils;
 import com.ruoyi.common.utils.file.FileUploadUtils;
 import com.ruoyi.common.utils.file.FileUtils;
 import com.ruoyi.framework.web.domain.AjaxResult;
@@ -83,16 +84,18 @@ public class SocketChatRecordController {
     }
 
 
+    @ApiIgnore
     @ApiOperation("fastDFS文件上传")
-    @PostMapping("upload")
+    @PostMapping("fastUpload")
     public AjaxResult upload(MultipartFile file) throws IOException {
         fastDfsUtil.uploadFile(file);
         return AjaxResult.success(fastDfsUtil.uploadFile(file));
     }
 
 
+    @ApiIgnore
     @ApiOperation("fastDFS文件下载")
-    @PostMapping("download")
+    @PostMapping("fastDownload")
     public void download(HttpServletResponse response,String fileUrl) throws IOException {
          fastDfsUtil.downLoadFile(response ,fileUrl,"file"+String.valueOf(System.currentTimeMillis()));
     }
@@ -109,7 +112,7 @@ public class SocketChatRecordController {
 
 
     @ApiOperation("文件上传")
-    @PostMapping("upload2")
+    @PostMapping("upload")
     public AjaxResult upload2(MultipartFile file) throws IOException {
         String uploadUrl = FileUploadUtils.upload(file);
         return AjaxResult.success(uploadUrl);
@@ -117,10 +120,15 @@ public class SocketChatRecordController {
 
 
     @ApiOperation("文件下载")
-    @PostMapping("download2")
+    @GetMapping("download")
     public void download2(HttpServletResponse response, HttpServletRequest request,String fileUrl) throws IOException {
 
-
-
+        String fileName = FileUtils.getFileName(fileUrl);
+        response.setCharacterEncoding("utf-8");
+        response.setContentType("multipart/form-data");
+//        response.setContentType("image/png;charset=utf-8");
+        response.setHeader("Content-Disposition",
+                "attachment;fileName=" + FileUtils.setFileDownloadHeader(request, fileName));
+        FileUtils.writeBytes(fileUrl, response.getOutputStream());
     }
 }

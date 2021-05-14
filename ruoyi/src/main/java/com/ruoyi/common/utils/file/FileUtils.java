@@ -139,4 +139,26 @@ public class FileUtils
         }
         return filename;
     }
+
+
+    /**
+     * 通过linux路径获取文件名
+     * <p>
+     * 例如:/home/ruoyi/uploadPath/c4a9c19f16e672d544103957360b36e6.docx, 返回: c4a9c19f16e672d544103957360b36e6
+     *
+     * @param fileUrl 文件路径
+     * @return
+     */
+    public static String getFileName(String fileUrl)
+    {
+        int separatorIndex = fileUrl.lastIndexOf("/");
+
+        if (separatorIndex < 0)
+        {
+            return "";
+        }
+
+        return fileUrl.substring(separatorIndex + 1).toLowerCase();
+
+    }
 }

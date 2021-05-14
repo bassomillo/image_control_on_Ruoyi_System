@@ -10,6 +10,7 @@ import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -102,12 +103,16 @@ public class WebsocketRoom {
     @OnMessage
     public void onMessage(Session session, String message) {
         SocketChatroomRecord socketChatroomRecord = JSON.parseObject(message, SocketChatroomRecord.class);
+        //token验证
+        //群聊信息
+        socketChatroomRecord.setCreatedtime(new Date());
+        socketChatroomRecord.setToken("");
         socketChatroomRecordService.insert(socketChatroomRecord);
         SocketChatroomRecord record = socketChatroomRecordService.getUserInfo(socketChatroomRecord);
         List<WebsocketRoom> arraySet = roomClients.get(record.getTagid());
         for (WebsocketRoom webScoketServer : arraySet) {
             try {
-                webScoketServer.onSend(record.toString());
+                webScoketServer.onSend(JSON.toJSON(record).toString());
             } catch (IOException e) {
                 e.printStackTrace();
                 continue;

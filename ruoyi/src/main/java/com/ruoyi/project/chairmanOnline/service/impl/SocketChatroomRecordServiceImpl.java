@@ -3,9 +3,11 @@ package com.ruoyi.project.chairmanOnline.service.impl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.ruoyi.framework.web.domain.AjaxResult;
+import com.ruoyi.project.chairmanOnline.entity.IMUserProfile;
 import com.ruoyi.project.chairmanOnline.entity.SocketChatroomRecord;
 import com.ruoyi.project.chairmanOnline.dao.SocketChatroomRecordDao;
 import com.ruoyi.project.chairmanOnline.entity.SocketUser;
+import com.ruoyi.project.chairmanOnline.service.IMUserProfileService;
 import com.ruoyi.project.chairmanOnline.service.SocketChatroomRecordService;
 import com.ruoyi.project.chairmanOnline.service.SocketUserService;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,10 @@ public class SocketChatroomRecordServiceImpl implements SocketChatroomRecordServ
 
     @Resource
     private SocketUserService socketUserService;
+
+    @Resource
+    private IMUserProfileService imUserProfileService;
+
 
     /**
      * 通过ID查询单条数据
@@ -107,8 +113,9 @@ public class SocketChatroomRecordServiceImpl implements SocketChatroomRecordServ
      */
     @Override
     public SocketChatroomRecord getUserInfo(SocketChatroomRecord socketChatroomRecord) {
+        IMUserProfile userProfile = imUserProfileService.queryById(socketChatroomRecord.getSenderid());
+        socketChatroomRecord.setTrueName(userProfile.getTruename());
         SocketUser user = socketUserService.queryById(socketChatroomRecord.getSenderid());
-        socketChatroomRecord.setNickname(user.getNickname());
         socketChatroomRecord.setSmallAvatar(user.getSmallavatar());
         return socketChatroomRecord;
     }

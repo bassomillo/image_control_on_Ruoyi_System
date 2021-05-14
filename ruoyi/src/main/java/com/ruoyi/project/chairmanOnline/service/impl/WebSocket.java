@@ -93,7 +93,7 @@ public class WebSocket {
 
     @OnOpen
     public void onOpen(@PathParam("userId") Integer userId, Session session, EndpointConfig conf, @PathParam("token") String token) throws Exception {
-        //判断token的有效性
+        // //token验证
         if (null == loginTokenService.getLoginUser(token)) {
             logger.info("token无效" + userId);
         }
@@ -217,6 +217,5 @@ public class WebSocket {
                 this.sendMessageTo(record);
             }
         }
-
     }
 }

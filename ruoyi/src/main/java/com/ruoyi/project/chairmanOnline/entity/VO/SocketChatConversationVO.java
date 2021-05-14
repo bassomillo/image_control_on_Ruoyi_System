@@ -20,6 +20,7 @@ public class SocketChatConversationVO extends SocketChatConversation {
     private String largeAvatar;
     private Integer orgId;
     private String orgName;
+    private String trueName;
 
 
 }

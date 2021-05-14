@@ -63,7 +63,7 @@ public class SocketChatroomRecord implements Serializable {
      * 发送者姓名
      */
     @Transient
-    private  String nickname;
+    private  String trueName;
 
 
 

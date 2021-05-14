@@ -247,76 +247,106 @@
 
     <!--通过发送者和接受者查询聊天记录 three join-->
     <select id="queryConversationByUserId" resultMap="SocketChatConversationVOMap">
-   SELECT
-	t3.id,
-	t3.senderId,
-	t3.receiverId,
-	t3.messageNum,
-	t3.latestMessageUserId,
-	t3.latestMessageTime,
-	t3.latestMessageContent,
-	t3.latestMessageType,
-	t3.module,
-	t3.latestTagId,
-	t3.isSticky,
-	t3.unreadNum,
-	t3.createdTime,
-	t3.updatedTime,
-	t3.topic,
-	t3.isDelete,
-	t3.userId,
-	t3.nickname,
-	t3.smallAvatar,
-	t3.mediumAvatar,
-	t3.largeAvatar,
-	t3.orgId,
-	org.`name` AS orgName
-FROM
-	(
-	SELECT
-		t2.id,
-		t2.senderId,
-		t2.receiverId,
-		t2.messageNum,
-		t2.latestMessageUserId,
-		t2.latestMessageTime,
-		t2.latestMessageContent,
-		t2.latestMessageType,
-		t2.module,
-		t2.latestTagId,
-		t2.isSticky,
-		t2.unreadNum,
-		t2.createdTime,
-		t2.updatedTime,
-		t2.topic,
-		t2.isDelete,
-		t2.userId,
-		user.nickname,
-		user.smallAvatar,
-		user.mediumAvatar,
-		user.largeAvatar,
-		user.orgId
-	FROM
-		(
-		SELECT
-			*,
-		CASE
-				senderId
-				WHEN #{userId} THEN
-				t1.receiverId ELSE t1.senderId
-			END 'userId'
-FROM
-	( SELECT * FROM socket_chat_conversation WHERE ( senderId = #{userId} OR receiverId = #{userId} ) AND isDelete = 0 ) t1
-	) t2
-	LEFT JOIN user ON t2.userId = user.id
-	) t3
-	LEFT JOIN org ON t3.orgId = org.id
+        SELECT
+        t4.id,
+        t4.senderId,
+        t4.receiverId,
+        t4.messageNum,
+        t4.latestMessageUserId,
+        t4.latestMessageTime,
+        t4.latestMessageContent,
+        t4.latestMessageType,
+        t4.module,
+        t4.latestTagId,
+        t4.isSticky,
+        t4.unreadNum,
+        t4.createdTime,
+        t4.updatedTime,
+        t4.topic,
+        t4.isDelete,
+        t4.userId,
+        t4.nickname,
+        t4.smallAvatar,
+        t4.mediumAvatar,
+        t4.largeAvatar,
+        t4.orgId,
+        t4.orgName,
+        `user_profile`.truename as trueName
+        FROM
+        (
+        SELECT
+        t3.id,
+        t3.senderId,
+        t3.receiverId,
+        t3.messageNum,
+        t3.latestMessageUserId,
+        t3.latestMessageTime,
+        t3.latestMessageContent,
+        t3.latestMessageType,
+        t3.module,
+        t3.latestTagId,
+        t3.isSticky,
+        t3.unreadNum,
+        t3.createdTime,
+        t3.updatedTime,
+        t3.topic,
+        t3.isDelete,
+        t3.userId,
+        t3.nickname,
+        t3.smallAvatar,
+        t3.mediumAvatar,
+        t3.largeAvatar,
+        t3.orgId,
+        org.`name` AS orgName
+        FROM
+        (
+        SELECT
+        t2.id,
+        t2.senderId,
+        t2.receiverId,
+        t2.messageNum,
+        t2.latestMessageUserId,
+        t2.latestMessageTime,
+        t2.latestMessageContent,
+        t2.latestMessageType,
+        t2.module,
+        t2.latestTagId,
+        t2.isSticky,
+        t2.unreadNum,
+        t2.createdTime,
+        t2.updatedTime,
+        t2.topic,
+        t2.isDelete,
+        t2.userId,
+        `user`.nickname,
+        `user`.smallAvatar,
+        `user`.mediumAvatar,
+        `user`.largeAvatar,
+        `user`.orgId
+        FROM
+        (
+        SELECT
+        *,
+        CASE
+        senderId
+        WHEN #{userId} THEN
+        t1.receiverId ELSE t1.senderId
+        END 'userId'
+        FROM
+        ( SELECT * FROM socket_chat_conversation WHERE ( senderId = #{userId} OR receiverId = #{userId} ) AND isDelete = 0 ) t1
+        ) t2
+        LEFT JOIN `user` ON t2.userId = `user`.id
+        ) t3
+        LEFT JOIN org ON t3.orgId = org.id
+        ORDER BY
+        t3.updatedTime DESC
+        ) t4
+        LEFT JOIN `user_profile` ON t4.userId = user_profile.id
         <where>
-        <if test="socketChatConversationQO.name != null">
-            t3.nickname LIKE CONCAT('%', #{socketChatConversationQO.name}, '%')
-        </if>
+            <if test="socketChatConversationQO.name != null">
+                user_profile.truename LIKE CONCAT('%', #{socketChatConversationQO.name}, '%')
+            </if>
         </where>
-	ORDER BY t3.updatedTime DESC
     </select>
 </mapper>
 
