@@ -7,22 +7,27 @@ import java.util.Date;
 import java.util.List;
 
 @Data
-public class WebTagGroupVO {
+public class WebArticleCategoryBtreeVO {
     private Integer id;
 
     private String name;
 
-    private String scope;
+    private Integer weight;
 
-    private Integer tagNum;
+    private Integer publishArticle;
 
-    private List<Integer> tagIds;
+    private String seoTitle;
 
-    private Integer resident;
+    private String seoKeyword;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private Date updatedTime;
+    private String seoDesc;
+
+    private Integer published;
+
+    private Integer parentId;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createdTime;
+
+    private List<WebArticleCategoryVO> children;
 }

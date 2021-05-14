@@ -63,7 +63,7 @@ public class WebTagGroup extends Model<WebTagGroup> {
      * 是否常驻,常驻不可删除
      */
     @ApiModelProperty(value = "是否常驻,常驻不可删除 0-非常驻，1-常驻")
-    private Boolean resident;
+    private Integer resident;
 
     /**
      * 更新时间

@@ -18,7 +18,7 @@ import java.util.List;
 public interface VoteMemberMapper extends BaseMapper<VoteMember> {
 
     /**
-     * 条件查询参考人员列表
+     * 条件查询问卷人员列表
      * @param quId
      * @param name
      * @param employmentForm
@@ -29,5 +29,18 @@ public interface VoteMemberMapper extends BaseMapper<VoteMember> {
                                           @Param("name") String name,
                                           @Param("employmentForm") String employmentForm,
                                           @Param("mobile") String mobile);
+
+    /**
+     * 条件查询投票人员列表
+     * @param voteId
+     * @param name
+     * @param employmentForm
+     * @param mobile
+     * @return
+     */
+    List<MemberInfoVO> selectVoteMemberList(@Param("voteId") Integer voteId,
+                                            @Param("name") String name,
+                                            @Param("employmentForm") String employmentForm,
+                                            @Param("mobile") String mobile);
 
 }

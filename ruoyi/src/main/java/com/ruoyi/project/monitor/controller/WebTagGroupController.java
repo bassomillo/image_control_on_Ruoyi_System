@@ -2,6 +2,7 @@ package com.ruoyi.project.monitor.controller;
 
 
 import com.ruoyi.framework.web.domain.AjaxResult;
+import com.ruoyi.project.monitor.domain.VO.WebTagGroupVO;
 import com.ruoyi.project.monitor.domain.WebTagGroup;
 import com.ruoyi.project.monitor.service.WebTagGroupService;
 import com.ruoyi.project.monitor.service.WebTagService;
@@ -43,13 +44,13 @@ public class WebTagGroupController {
 
     /**
      * 创建标签组
-     * @param webTagGroup
+     * @param webTagGroupVO
      * @return
      */
     @ApiOperation("标签组管理-创建标签组")
     @PostMapping("/inserttaggroup")
-    public AjaxResult inserttaggroup(@RequestBody WebTagGroup webTagGroup){
-        AjaxResult result = webTagGroupService.WebTagGroupInsert(webTagGroup);
+    public AjaxResult inserttaggroup(@RequestBody WebTagGroupVO webTagGroupVO){
+        AjaxResult result = webTagGroupService.WebTagGroupInsert(webTagGroupVO);
         return result;
     }
 
@@ -80,13 +81,13 @@ public class WebTagGroupController {
 
     /**
      * 编辑
-     * @param webTagGroup
+     * @param webTagGroupVO
      * @return
      */
     @ApiOperation("标签组管理-编辑标签组")
     @PostMapping("updatewebtaggroup")
-    public AjaxResult update(@RequestBody WebTagGroup webTagGroup){
-        AjaxResult result = webTagGroupService.WebTagGroupUpdate(webTagGroup);
+    public AjaxResult update(@RequestBody WebTagGroupVO webTagGroupVO){
+        AjaxResult result = webTagGroupService.WebTagGroupUpdate(webTagGroupVO);
         return result;
     }
 

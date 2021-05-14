@@ -254,4 +254,48 @@ public class VoteGroupServiceImpl extends ServiceImpl<VoteGroupMapper, VoteGroup
         }
         return AjaxResult.success("加入成功");
     }
+
+    /**
+     * 加入投票
+     * @param group
+     * @return
+     */
+    @Override
+    public AjaxResult addToVote(GroupToExamVO group) {
+        try {
+            List<Integer> groupList = group.getGroupIdList();
+            List<Integer> idList = new ArrayList<>();
+
+            for (Integer groupId : groupList){
+                //查询分组下人员
+                List<VoteGroupMember> groupMemberList = voteGroupMemberMapper.selectList(new QueryWrapper<VoteGroupMember>().
+                        eq(VoteGroupMember.GROUPID, groupId));
+                for (VoteGroupMember groupMember : groupMemberList){
+                    //查是否有用户已被加入投票
+                    VoteMember examMember = voteMemberMapper.selectOne(new QueryWrapper<VoteMember>().
+                            eq(VoteMember.VOTEID, group.getEqvId()).
+                            eq(VoteMember.USERID, groupMember.getUserId()).
+                            eq(VoteMember.TYPE, "vote"));
+                    //不存在，放入新增列表中
+                    if (examMember == null){
+                        idList.add(groupMember.getUserId());
+                    }
+                }
+            }
+            //查这部分新增人员的信息
+            if (idList.size() > 0) {
+                List<UserProfile> profileList = userProfileDao.selectList(new QueryWrapper<UserProfile>().
+                        in(UserProfile.ID, idList));
+
+                boolean flag = voteMemberService.insertVoteMember(profileList, group.getEqvId());
+                if (!flag) {
+                    return AjaxResult.error("加入失败，请联系管理员");
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            return AjaxResult.error("加入失败，请联系管理员", e.getMessage());
+        }
+        return AjaxResult.success("加入成功");
+    }
 }
