@@ -18,7 +18,7 @@ import java.util.*;
 
 public class MysqlGenerator {
 
-	private static final String PACKAGE_NAME = "com.ruoyi.project.unionhelp";//包名
+	private static final String PACKAGE_NAME = "com.ruoyi.project.activityreport";//包名
 	private static final String OUT_PATH = "D:\\zhgh-help";//输出文件的路径
 	private static final String AUTHOR = "crl";//代码生成者
 	/**
@@ -105,7 +105,7 @@ public class MysqlGenerator {
 								// .setTablePrefix(new String[]{"unionpay_"})//
 								// 此处可以修改为您的表前缀
 								.setNaming(NamingStrategy.underline_to_camel)// 表名生成策略
-								.setInclude(new String[] {"user_profile"}) // 需要生成的表
+								.setInclude(new String[] {"activity_report"}) // 需要生成的表
 								// .setExclude(new String[]{"test"}) // 排除生成的表
 								// 自定义实体，公共字段
 								// .setSuperEntityColumns(new
