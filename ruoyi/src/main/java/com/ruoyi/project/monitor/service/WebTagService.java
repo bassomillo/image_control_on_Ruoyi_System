@@ -23,6 +23,6 @@ public interface WebTagService extends IService<WebTag> {
 
     AjaxResult WebTagUpdate(WebTag webTag);
 
-    AjaxResult TagNamesGet(Integer pagesize, Integer page);
+    AjaxResult TagNamesGet(String name, Integer pagesize, Integer page);
 
 }

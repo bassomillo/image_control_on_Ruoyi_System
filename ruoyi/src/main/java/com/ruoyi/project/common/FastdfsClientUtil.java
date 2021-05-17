@@ -136,7 +136,7 @@ public class FastdfsClientUtil {
 		String suffix = fileUrl.substring(fileUrl.lastIndexOf("."));
 		//使用以下setHeader方法,fileName可为中文
 		response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(fileName + suffix, "UTF-8"));
-//        response.setHeader("Content-Disposition", "attachment; filename=" + fileName + suffix);
+//      response.setHeader("Content-Disposition", "attachment; filename=" + fileName + suffix);
 		response.setContentType("application/vnd.ms-excel");
 		response.setCharacterEncoding("utf-8");
 		OutputStream output = response.getOutputStream();

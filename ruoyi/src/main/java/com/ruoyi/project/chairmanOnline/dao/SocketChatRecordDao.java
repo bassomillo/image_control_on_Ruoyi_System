@@ -101,7 +101,6 @@ public interface SocketChatRecordDao {
 
     List<SocketChatRecord> selectChatRecordsByCondition(SocketChatRecordQO socketChatRecordQO);
 
-
     /**
      * 查询用户的未读信息条数
      *

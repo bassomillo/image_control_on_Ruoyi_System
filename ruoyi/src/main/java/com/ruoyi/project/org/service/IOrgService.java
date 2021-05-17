@@ -31,10 +31,11 @@ public interface IOrgService extends IService<Org> {
     /**
      * 校检A部门下是否存在B名称部门
      * @param orgName B名称
+     * @param orgId B部门orgId
      * @param parentId A部门orgId
      * @return true-存在/false-不存在
      */
-    boolean isRepeat(String orgName, Integer parentId);
+    boolean isRepeat(String orgName, Integer orgId, Integer parentId);
 
     /******************************************************************************************************************/
     /**

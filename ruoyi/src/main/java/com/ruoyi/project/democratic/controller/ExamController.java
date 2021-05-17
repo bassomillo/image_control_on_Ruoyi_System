@@ -253,10 +253,9 @@ public class ExamController {
     @ApiOperation(value = "后台-导出答题数据")
     @GetMapping("/exportPaperData")
     public AjaxResult exportPaperData(@RequestParam("examId") Integer examId,
-                                      @RequestParam("userId") Integer userId,
                                       HttpServletResponse response){
 
-        return examService.exportPaperData(examId, userId, response);
+        return examService.exportPaperData(examId, response);
     }
 
     @ApiOperation(value = "后台-发布情况")

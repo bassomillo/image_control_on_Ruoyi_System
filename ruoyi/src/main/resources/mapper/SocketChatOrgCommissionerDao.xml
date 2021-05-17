@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.chairmanOnline.dao. SocketChatOrgCommissionerDao">
+
+    <resultMap type="com.ruoyi.project.chairmanOnline.entity.SocketChatOrgCommissioner" id="OrgCommissionerMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="orgid" column="orgId" jdbcType="INTEGER"/>
+        <result property="userid" column="userId" jdbcType="INTEGER"/>
+        <result property="position" column="position" jdbcType="VARCHAR"/>
+        <result property="createdtime" column="createdTime" jdbcType="INTEGER"/>
+        <result property="updatedtime" column="updatedTime" jdbcType="INTEGER"/>
+    </resultMap>
+
+
+</mapper>
+

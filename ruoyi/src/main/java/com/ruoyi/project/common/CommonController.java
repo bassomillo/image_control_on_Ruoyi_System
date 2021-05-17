@@ -2,6 +2,9 @@ package com.ruoyi.project.common;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +26,7 @@ import com.ruoyi.framework.web.domain.AjaxResult;
  * @author ruoyi
  */
 @RestController
+@Api(tags = "通用请求处理")
 public class CommonController
 {
     private static final Logger log = LoggerFactory.getLogger(CommonController.class);
@@ -36,6 +40,7 @@ public class CommonController
      * @param fileName 文件名称
      * @param delete 是否删除
      */
+    @ApiOperation("下载")
     @GetMapping("common/download")
     public void fileDownload(String fileName, Boolean delete, HttpServletResponse response, HttpServletRequest request)
     {
@@ -67,6 +72,7 @@ public class CommonController
     /**
      * 通用上传请求
      */
+    @ApiOperation("上传")
     @PostMapping("/common/upload")
     public AjaxResult uploadFile(MultipartFile file) throws Exception
     {
@@ -91,6 +97,7 @@ public class CommonController
     /**
      * 本地资源通用下载
      */
+    @ApiOperation("本地下载")
     @GetMapping("/common/download/resource")
     public void resourceDownload(String name, HttpServletRequest request, HttpServletResponse response) throws Exception
     {

@@ -1,7 +1,9 @@
 package com.ruoyi.project.chairmanOnline.controller;
 
 import com.ruoyi.framework.web.domain.AjaxResult;
+import com.ruoyi.project.chairmanOnline.entity.VO.GeneralManagerVO;
 import com.ruoyi.project.chairmanOnline.service.SocketUserService;
+import com.ruoyi.project.democratic.tool.ToolUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -9,6 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * (User)表控制层
@@ -18,13 +23,16 @@ import javax.annotation.Resource;
  */
 @RestController
 @RequestMapping("socketuser")
-@Api(tags = "web端-民主管理-总经理在线-hwd")
+@Api(tags = "web端-心理咨询-hwd")
 public class SocketUserController {
     /**
      * 服务对象
      */
     @Resource
     private SocketUserService userService;
+
+    @Resource
+    private ToolUtils toolUtils;
 
     /**
      * 心理咨询师列表
@@ -38,4 +46,9 @@ public class SocketUserController {
         return AjaxResult.success(this.userService.selectPsychologicalCounselors());
     }
 
+    @ApiOperation("通过用户的组织orgid，查询省总经理和市总经理")
+    @PostMapping("selectGeneralManager")
+    public AjaxResult selectGeneralManager1(int orgId) {
+        return AjaxResult.success(toolUtils.getManagerId(orgId)) ;
+    }
 }

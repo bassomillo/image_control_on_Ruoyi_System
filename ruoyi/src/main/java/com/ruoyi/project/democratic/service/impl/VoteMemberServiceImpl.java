@@ -212,4 +212,173 @@ public class VoteMemberServiceImpl extends ServiceImpl<VoteMemberMapper, VoteMem
         boolean flag = saveBatch(quMembers);
         return flag;
     }
+
+    /**
+     * 添加单个/多个人员至投票
+     * @param treeMember
+     * @return
+     */
+    @Override
+    public AjaxResult addMemberVote(AddTreeMemberVO treeMember) {
+        try {
+            List<Integer> idList = new ArrayList<>();
+            for (Integer userId : treeMember.getUserIdList()){
+                //查询该成员是否已添加至投票
+                VoteMember voteMember = voteMemberMapper.selectOne(new QueryWrapper<VoteMember>().
+                        eq(VoteMember.VOTEID, treeMember.getEqvId()).
+                        eq(VoteMember.USERID, userId).
+                        eq(VoteMember.TYPE, "vote"));
+                if (voteMember == null){
+                    idList.add(userId);
+                }
+            }
+
+            if (idList.size() > 0){
+                List<UserProfile> profileList = userProfileDao.selectList(new QueryWrapper<UserProfile>().
+                        in(UserProfile.ID, idList));
+                List<VoteMember> memberList = new ArrayList<>();
+                for (UserProfile profile : profileList){
+                    VoteMember voteMember = new VoteMember();
+                    voteMember.setVoteId(treeMember.getEqvId());
+                    voteMember.setUserId(profile.getId());
+                    voteMember.setTel(profile.getMobile());
+                    voteMember.setType("vote");
+                    memberList.add(voteMember);
+                }
+                saveBatch(memberList);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            return AjaxResult.error("添加失败，请联系管理员", e.getMessage());
+        }
+        return AjaxResult.success("添加成功");
+    }
+
+    /**
+     * 添加全部人员至投票
+     * @param getMember
+     * @return
+     */
+    @Override
+    public AjaxResult addAllMemberVote(GetMemberVO getMember) {
+        try {
+            //获得组织树下人员id列表
+            List<Integer> userIdList = new ArrayList<>();
+            for (Integer id : getMember.getIdList()){
+                userIdList.addAll(orgService.searchOrgMem(id));
+            }
+
+            getMember.setMobile(Str.fuzzyQuery(getMember.getMobile()));
+            getMember.setName(Str.fuzzyQuery(getMember.getName()));
+            getMember.setEmploymentForm(Str.fuzzyQuery(getMember.getEmploymentForm()));
+            //查询人员信息
+            List<MemberInfoVO> userList0 = examMemberMapper.selectMemberInfo(userIdList, getMember.getName(),
+                    getMember.getEmploymentForm(), getMember.getMobile());
+
+            List<MemberInfoVO> userIdList0 = new ArrayList<>();
+            for (MemberInfoVO user : userList0){
+                //查询该人员是否已经加入投票
+                VoteMember voteMember = voteMemberMapper.selectOne(new QueryWrapper<VoteMember>().
+                        eq(VoteMember.USERID, user.getId()).
+                        eq(VoteMember.VOTEID, getMember.getEqvId()).
+                        eq(VoteMember.TYPE, "vote"));
+                if (voteMember == null){
+                    userIdList0.add(user);
+                }
+            }
+
+            List<VoteMember> memberList = new ArrayList<>();
+            for (MemberInfoVO member : userIdList0){
+                VoteMember voteMember = new VoteMember();
+                voteMember.setVoteId(getMember.getEqvId());
+                voteMember.setUserId(member.getId());
+                voteMember.setTel(member.getMobile());
+                voteMember.setType("vote");
+                memberList.add(voteMember);
+            }
+            saveBatch(memberList);
+        }catch (Exception e){
+            e.printStackTrace();
+            return AjaxResult.error("添加失败，请联系管理员", e.getMessage());
+        }
+        return AjaxResult.success("添加成功");
+    }
+
+    /**
+     * 条件查询投票人员列表
+     * @param voteId
+     * @param name
+     * @param employmentForm
+     * @param mobile
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    @Override
+    public AjaxResult getVoteMemberList(Integer voteId, String name, String employmentForm, String mobile, Integer pageNum, Integer pageSize) {
+        try {
+            name = Str.fuzzyQuery(name);
+            employmentForm = Str.fuzzyQuery(employmentForm);
+            mobile = Str.fuzzyQuery(mobile);
+
+            PageHelper.startPage(pageNum, pageSize);
+            List<MemberInfoVO> memberList = voteMemberMapper.selectVoteMemberList(voteId, name, employmentForm, mobile);
+            PageInfo pageInfo = new PageInfo<>(memberList);
+            List<MemberInfoVO> memberList0 = voteMemberMapper.selectVoteMemberList(voteId, name, employmentForm, mobile);
+
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("total", pageInfo.getTotal());
+            jsonObject.put("list", pageInfo.getList());
+            jsonObject.put("totalList", memberList0);
+
+            return AjaxResult.success("查询成功", jsonObject);
+        }catch (Exception e){
+            e.printStackTrace();
+            return AjaxResult.error("查询失败，请联系管理员", e.getMessage());
+        }
+    }
+
+    /**
+     * 删除投票参考人员
+     * @param voteId
+     * @param userId
+     * @return
+     */
+    @Override
+    public AjaxResult deleteVoteMember(Integer voteId, Integer userId) {
+        try {
+            voteMemberMapper.delete(new QueryWrapper<VoteMember>().
+                    eq(VoteMember.VOTEID, voteId).
+                    eq(VoteMember.USERID, userId).
+                    eq(VoteMember.TYPE, "vote"));
+        }catch (Exception e){
+            e.printStackTrace();
+            return AjaxResult.error("删除失败，请联系管理员", e.getMessage());
+        }
+        return AjaxResult.success("删除成功");
+    }
+
+    /**
+     * 加入投票成员
+     * @param memberList
+     * @param voteId
+     * @return
+     */
+    @Override
+    public boolean insertVoteMember(List<UserProfile> memberList, Integer voteId) {
+        if (memberList == null || memberList.size() == 0){
+            return true;
+        }
+        List<VoteMember> voteMembers = new ArrayList<>();
+        for (UserProfile profile : memberList){
+            VoteMember voteMember = new VoteMember();
+            voteMember.setVoteId(voteId);
+            voteMember.setUserId(profile.getId());
+            voteMember.setTel(profile.getMobile());
+            voteMember.setType("vote");
+            voteMembers.add(voteMember);
+        }
+        boolean flag = saveBatch(voteMembers);
+        return flag;
+    }
 }

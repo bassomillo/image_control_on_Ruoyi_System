@@ -16,6 +16,7 @@ import java.util.List;
  */
 @Service("userService")
 public class SocketUserServiceImpl implements SocketUserService {
+
     @Resource
     private SocketUserDao socketUserDao;
 
@@ -77,8 +78,16 @@ public class SocketUserServiceImpl implements SocketUserService {
         return this.socketUserDao.deleteById(id) > 0;
     }
 
+    /**
+     * 查询心理咨询师
+     *
+     * @param
+     * @return
+     */
     @Override
     public List<SocketUser> selectPsychologicalCounselors() {
         return socketUserDao.selectPsychologicalCounselors();
     }
+
+
 }

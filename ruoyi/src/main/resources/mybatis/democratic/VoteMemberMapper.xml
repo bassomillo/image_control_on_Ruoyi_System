@@ -7,7 +7,7 @@
         id, userId, tel, voteId
     </sql>
 
-    <!--条件查询参考人员-->
+    <!--条件查询问卷人员-->
     <select id="selectQuMemberList" resultType="com.ruoyi.project.democratic.entity.VO.MemberInfoVO">
         select up.*
         from vote_member vm
@@ -27,6 +27,30 @@
             1 = 1
             <if test="quId != null">
                 and vm.voteId = #{quId}
+            </if>
+        </where>
+        order by vm.userId asc
+    </select>
+
+    <select id="selectVoteMemberList" resultType="com.ruoyi.project.democratic.entity.VO.MemberInfoVO">
+        select up.*
+        from vote_member vm
+        inner join user_profile up on (
+            up.id = vm.userId
+            <if test="name != null and name != ''">
+                and up.truename like concat('%', #{name}, '%') escape '/'
+            </if>
+            <if test="employmentForm != null and employmentForm != ''">
+                and up.employmentForm like concat('%', #{employmentForm}, '%') escape '/'
+            </if>
+            <if test="mobile != null and mobile != ''">
+                and up.mobile like concat('%', #{mobile}, '%') escape '/'
+            </if>
+        )
+        <where>
+            1 = 1
+            <if test="voteId != null">
+                and vm.voteId = #{voteId}
             </if>
         </where>
         order by vm.userId asc

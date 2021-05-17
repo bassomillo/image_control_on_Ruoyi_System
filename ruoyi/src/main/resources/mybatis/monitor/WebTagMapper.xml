@@ -15,4 +15,21 @@
         limit ${pagesize} OFFSET ${index}
     </select>-->
 
+    <select id="GetWebTagNames" resultType="com.ruoyi.project.monitor.domain.VO.WebTagNamesVO">
+        SELECT id, name
+        FROM tag
+        WHERE 1=1
+        <if test="name != null">
+            and name like concat('%',#{name},'%') escape '/'
+        </if>
+        limit ${pagesize} OFFSET ${index}
+    </select>
+
+    <select id="GetWebTags" resultType="com.ruoyi.project.monitor.domain.VO.WebTagVO2">
+         SELECT tag.id,tag.name,tag.createdTime,GROUP_CONCAT(tag_group.name) as groupName, tag.orgId, tag.orgCode
+         FROM (tag LEFT JOIN tag_group_tag ON tag.id=tag_group_tag.tagId) LEFT JOIN tag_group ON tag_group_tag.groupId=tag_group.id
+         GROUP BY tag.name
+         ORDER BY createdTime DESC
+         limit ${pagesize} OFFSET ${index}
+    </select>
 </mapper>

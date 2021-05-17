@@ -32,7 +32,6 @@ public interface SocketUserDao {
      */
     List<SocketUser> queryAllByLimit(@Param("offset") int offset, @Param("limit") int limit);
 
-
     /**
      * 通过实体作为筛选条件查询
      *
@@ -76,6 +75,12 @@ public interface SocketUserDao {
      */
     int deleteById(Integer id);
 
+    /**
+     * 心理咨询师查询
+     *
+     * @param
+     * @return 影响行数
+     */
     List<SocketUser> selectPsychologicalCounselors();
 
 }

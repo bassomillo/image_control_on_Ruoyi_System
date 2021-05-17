@@ -1,5 +1,6 @@
 package com.ruoyi.project.chairmanOnline.service.impl;
 
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.project.chairmanOnline.dao.SocketChatConversationDao;
@@ -12,13 +13,10 @@ import com.ruoyi.project.chairmanOnline.entity.VO.SocketChatConversationVO;
 import com.ruoyi.project.chairmanOnline.service.SocketChatConversationService;
 import com.ruoyi.project.chairmanOnline.service.SocketChatRecordService;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 聊天会话表(SocketChatConversation)表服务实现类
@@ -105,22 +103,18 @@ public class SocketChatConversationServiceImpl implements SocketChatConversation
      * @description 查询用户所有对话
      **/
 
-
     @Override
     public AjaxResult queryConversation(int userId, int pageNum, int pageSize, SocketChatConversationQO socketChatConversationQO) {
-        int total = socketChatConversationDao.queryConversationByUserId(userId, socketChatConversationQO).size();
-        PageHelper.startPage(pageNum, pageSize);
+        Page<Object> page = PageHelper.startPage(pageNum, pageSize);
         List<SocketChatConversationVO> socketChatConversations = socketChatConversationDao.queryConversationByUserId(userId, socketChatConversationQO);
-        return AjaxResult.success(this.conversationUnreadRecords(userId,socketChatConversations), total);
+        return AjaxResult.success(this.conversationUnreadRecords(userId,socketChatConversations), (int)page.getTotal());
     }
-
 
     /**
      * @param
      * @Author
      * @description 创建对话
      **/
-
     @Override
     public int createConversation(SocketChatRecord socketChatRecord) {
         //查看当前对话的两人是否已有创建对话框
@@ -146,7 +140,6 @@ public class SocketChatConversationServiceImpl implements SocketChatConversation
      * @param
      * @description
      **/
-
     @Override
     public void conversationStatistics(int id) {
         SocketChatConversation conversation = this.queryById(id);
@@ -157,7 +150,6 @@ public class SocketChatConversationServiceImpl implements SocketChatConversation
         this.update(socketChatConversation);
     }
 
-
     /**
      * 检查对话是否有存在未读信息，并计算数值
      *
@@ -165,7 +157,6 @@ public class SocketChatConversationServiceImpl implements SocketChatConversation
      * @Author
      * @description
      **/
-
     @Override
     public List<SocketChatConversationVO> conversationUnreadRecords(int userId, List<SocketChatConversationVO> socketChatConversationVOs) {
 

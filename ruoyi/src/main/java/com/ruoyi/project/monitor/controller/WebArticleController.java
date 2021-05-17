@@ -33,8 +33,9 @@ public class WebArticleController {
     @ApiOperation("网站管理-栏目管理-展示所有一级栏目")
     @GetMapping("/gettopArticle")
     public AjaxResult getTopArticle(@RequestParam("pagesize") Integer pagesize,
-                                    @RequestParam("page") Integer page){
-        AjaxResult result = webArticleCategoryService.TopArticleCategoryGet(pagesize, page);
+                                    @RequestParam("page") Integer page,
+                                    @RequestParam(value = "name", required = false)String name){
+        AjaxResult result = webArticleCategoryService.TopArticleCategoryGet(pagesize, page, name);
         return result;
     }
 

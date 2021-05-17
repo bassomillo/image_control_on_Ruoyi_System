@@ -1,7 +1,6 @@
 package com.ruoyi.project.chairmanOnline.service;
 
 import com.ruoyi.project.chairmanOnline.entity.SocketUser;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -53,7 +52,6 @@ public interface SocketUserService {
      * @return 是否成功
      */
     boolean deleteById(Integer id);
-
 
     List<SocketUser> selectPsychologicalCounselors();
 
