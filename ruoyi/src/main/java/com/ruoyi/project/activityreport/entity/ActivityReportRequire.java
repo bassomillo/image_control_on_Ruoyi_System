@@ -13,6 +13,8 @@ public class ActivityReportRequire {
     private static final long serialVersionUID=1L;
 
 
+    @ApiModelProperty(value = "id")
+    private Integer id;
 
     /**
      * 标题

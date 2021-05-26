@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.activityreport.mapper.ActivityReportDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, title, content, itemId, startTime, endTime, createUser, mobile, unitGroup, createdUserId, budget, orgId, auditStatus, auditReason, createdTime, updatedTime
+    </sql>
+
+    <select id="activityReportSearch" resultType="com.ruoyi.project.activityreport.entity.ActivityReport">
+        select id, title, content, itemId, startTime, endTime, createUser, mobile, unitGroup, createdUserId,
+               budget, orgId, auditStatus, auditReason, createdTime, updatedTime
+        from activity_report
+        where 1=1
+
+        <if test="orgId != ''">
+            and orgId = #{orgId}
+        </if>
+
+        <if test="unitGroup != ''">
+            and unitGroup like concat('%',#{unitGroup},'%') escape '/'
+        </if>
+
+        <if test="title != ''">
+            and title like concat('%',#{title},'%') escape '/'
+        </if>
+
+    </select>
+</mapper>

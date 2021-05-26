@@ -79,8 +79,8 @@ public class StaffServiceSympathyController {
      * 批量导出
      */
     @ApiOperation(value = "工会管理-慰问记录-批量导出")
-    @PostMapping("/outputSite")
-    public AjaxResult outputSiteSetting(@RequestBody StaffServiceSympathySearch1 staffServiceSympathySearch1, HttpServletResponse response, HttpServletRequest request){
+    @GetMapping("/outputSite")
+    public AjaxResult outputSiteSetting(StaffServiceSympathySearch1 staffServiceSympathySearch1, HttpServletResponse response, HttpServletRequest request){
         AjaxResult result = staffServiceSympathyService.export(staffServiceSympathySearch1,response,request);
         return result;
     }

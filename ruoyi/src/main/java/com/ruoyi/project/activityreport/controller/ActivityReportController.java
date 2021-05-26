@@ -11,15 +11,13 @@ import com.ruoyi.project.unionhelp.service.IDifficultEmployeesHelpRecordService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -30,7 +28,7 @@ import java.util.Date;
  * @since 2021-05-10
  */
 @Api(tags = "网站管理-基层活动管理")
-@Controller
+@RestController
 @RequestMapping("//activityReport")
 public class ActivityReportController {
     @Autowired
@@ -78,16 +76,17 @@ public class ActivityReportController {
         activityReport.setCreatedTime(createTime);
         activityReport.setUnitGroup(activityReportRequire.getUnitGroup());
         activityReport.setOrgId(activityReportRequire.getOrgId());
-
-        if (iActivityReportService.save(activityReport)) {
-            return AjaxResult.success("提交成功");
-        } else {
-            return AjaxResult.error("提交失败");
-        }
+        iActivityReportService.save(activityReport);
+        return AjaxResult.success("提交成功");
+//        if () {
+//
+//        } else {
+//            return AjaxResult.error("提交失败");
+//        }
     }
 
-    @ApiOperation(value = "工会管理-困难员工-困难员工帮扶救助-操作-编辑")
-    @PutMapping("/updateUnionHelp/{id}")
+    @ApiOperation(value = "网站管理-基层活动管理-编辑")
+    @PutMapping("/update")
     private AjaxResult updateUnionHelpUpdate(@RequestBody ActivityReportRequire activityReportRequire) {
 
         Date time = new Date();
@@ -95,6 +94,7 @@ public class ActivityReportController {
         Integer createdUserId = activityReportRequire.getCreatedUserId();
         String createdUserName = staffServiceSympathyMapper.StaffServiceSympathyFindCreaterName(createdUserId);
         ActivityReport activityReport = new ActivityReport();
+        activityReport.setId(activityReportRequire.getId());
         activityReport.setAuditReason(activityReportRequire.getAuditReason());
         activityReport.setContent(activityReportRequire.getContent());
         activityReport.setAuditStatus(activityReportRequire.getAuditStatus());
@@ -109,12 +109,31 @@ public class ActivityReportController {
         activityReport.setUnitGroup(activityReportRequire.getUnitGroup());
         activityReport.setOrgId(activityReportRequire.getOrgId());
 
-        if (iActivityReportService.save(activityReport)) {
+        if (iActivityReportService.updateById(activityReport)) {
             return AjaxResult.success("提交成功");
         } else {
             return AjaxResult.error("提交失败");
         }
 
+    }
+
+    @ApiOperation(value = "网站管理-基层活动管理-删除单个或多个接口")
+    @PostMapping("/delete")
+    private AjaxResult deleteUnionHelpUpdate(@RequestBody List<Integer> idList) {
+        for(Integer id : idList){
+            iActivityReportService.removeById(id);
+        }
+        return AjaxResult.success("提交成功");
+    }
+
+
+    @ApiOperation(value = "网站管理-基层活动管理-活动管理查询")
+    @PostMapping("/activitymanage/search")
+    private AjaxResult activityManageSearch(@RequestBody List<Integer> idList) {
+        for(Integer id : idList){
+            iActivityReportService.removeById(id);
+        }
+        return AjaxResult.success("提交成功");
     }
 }
 

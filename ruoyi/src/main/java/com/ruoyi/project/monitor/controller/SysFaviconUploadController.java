@@ -26,7 +26,7 @@ public class SysFaviconUploadController {
     @Resource
     FastdfsClientUtil fastdfsClientUtil;
 
-
+//
 //    @PostMapping("/admin/setting/site/uploadFavicon")
 //    @ApiOperation("系统管理-站点设置-基础信息-上传浏览器图标到服务器")
 //    @ApiImplicitParam(name = "file",value = "图片文件",required = true,dataType = "MultipartFile")
