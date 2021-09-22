@@ -1,8 +1,7 @@
 package com.ruoyi.project.monitor.service.impl;
 
 import com.ruoyi.framework.web.domain.AjaxResult;
-import com.ruoyi.project.democratic.entity.DO.FileUrlNameDO;
-import com.ruoyi.project.democratic.entity.DO.ManageExportDO;
+
 import com.ruoyi.project.monitor.domain.*;
 import com.ruoyi.project.monitor.mapper.StaffServiceSympathyMapper;
 import com.ruoyi.project.monitor.service.StaffServiceSympathyService;

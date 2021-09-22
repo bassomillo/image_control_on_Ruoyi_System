@@ -3,6 +3,7 @@ package com.ruoyi.project.chairmanOnline.controller;
 import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.project.chairmanOnline.entity.VO.GeneralManagerVO;
 import com.ruoyi.project.chairmanOnline.service.SocketUserService;
+
 import com.ruoyi.project.democratic.tool.ToolUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

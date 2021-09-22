@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.images.mapper.ImagesMapper">
+    <insert id="ImageSetting" parameterType="com.ruoyi.project.images.domain.Images">
+        insert into images
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            id, imagePath, imageName, imageTag, imageAttribute, imagePrivateUser
+            , remark, createdTime, updatedTime
+        </trim>
+
+        <trim prefix="select" suffixOverrides=",">
+            #{id}, #{imagePath}, #{imageName}, #{imageTag},
+            #{imageAttribute}, #{imagePrivateUser}, #{remark}, #{createdTime}
+            ,#{updatedTime}
+        </trim>
+
+    </insert>
+
+    <update id="ImageUpdate" parameterType="com.ruoyi.project.images.domain.Images">
+        UPDATE images SET imagePath = #{imagePath}, imageName = #{imageName},
+                          imageTag = #{imageTag},
+                          imageAttribute = #{imageAttribute}, imagePrivateUser = #{imagePrivateUser},
+                          remark = #{remark}, createdTime = #{createdTime},
+                          updatedTime = #{updatedTime}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="ImageDelete">
+        delete from images where id = #{id}
+                             and (imagePrivateUser = #{imagePrivateUser} or imageAttribute = 0)
+    </delete>
+
+    <select id="ImageSearch" resultType="com.ruoyi.project.images.domain.Images">
+        select id, imagePath, imageName,
+        imageTag, imageAttribute, imagePrivateUser, remark, createdTime, updatedTime
+        from images
+        where 1=1
+        <if test="imageTag != null and imageTag != ''">
+            and imageTag like concat('%',#{imageTag},'%') escape '/'
+        </if>
+
+        <if test="imageName != null and imageName != ''">
+            and imageName like concat('%',#{imageName},'%') escape '/'
+        </if>
+
+        <if test="remark != null and remark != ''">
+            and remark like concat('%',#{remark},'%') escape '/'
+        </if>
+        and (imagePrivateUser = #{imagePrivateUser}
+        or imageAttribute = 0)
+    </select>
+
+    <select id="ImageSearchCounting" resultType="java.lang.Integer">
+        select count(id)
+        from images
+        where 1=1
+        <if test="imageTag != null and imageTag != ''">
+            and imageTag like concat('%',#{imageTag},'%') escape '/'
+        </if>
+
+        <if test="imageName != null and imageName != ''">
+            and imageName like concat('%',#{imageName},'%') escape '/'
+        </if>
+
+        <if test="remark != null and remark != ''">
+            and remark like concat('%',#{remark},'%') escape '/'
+        </if>
+        and (imagePrivateUser = #{imagePrivateUser}
+        or imageAttribute = 0)
+    </select>
+
+</mapper>
